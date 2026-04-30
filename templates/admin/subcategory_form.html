@@ -1,0 +1,45 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="page-header" style="margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
+    <div class="header-left">
+        <h1 style="font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 5px;">Add New SubCategory</h1>
+    </div>
+    <div class="header-right">
+        <p style="color: var(--text-muted);">Create a nested subcategory under an existing parent category.</p>
+    </div>
+</div>
+
+<div class="section-card" style="background: #fff; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); padding: 40px;">
+    <form action="{{ url_for('admin_add_subcategory', cat_id=0) }}" method="POST" id="subcatForm">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 40px;">
+            <div class="form-group">
+                <label style="display: block; margin-bottom: 12px; font-weight: 700; color: var(--secondary);">Parent Category</label>
+                <select name="category_id" id="parentCat" required style="width: 100%; padding: 15px; border: 1.5px solid #eee; border-radius: 15px; font-family: inherit; appearance: none; background: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22/%3E%3C/svg%3E') no-repeat right 15px top 50%; background-size: 12px; background-color: #fff;">
+                    <option value="" disabled selected>Select Parent Category...</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat.id }}">{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label style="display: block; margin-bottom: 12px; font-weight: 700; color: var(--secondary);">SubCategory Name</label>
+                <input type="text" name="name" placeholder="e.g. Jeans, Sarees, etc." required style="width: 100%; padding: 15px; border: 1.5px solid #eee; border-radius: 15px; font-family: inherit;">
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 15px;">
+            <button type="submit" class="btn btn-primary" style="padding: 15px 40px; border-radius: 15px; font-weight: 700; font-size: 1rem;">Save SubCategory</button>
+            <a href="{{ url_for('admin_categories') }}" class="btn" style="padding: 15px 40px; border-radius: 15px; font-weight: 700; font-size: 1rem; background: #F0F4F7; color: var(--secondary);">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.getElementById('parentCat').addEventListener('change', function() {
+        const catId = this.value;
+        const form = document.getElementById('subcatForm');
+        form.action = `/admin/categories/add-subcategory/${catId}`;
+    });
+</script>
+{% endblock %}

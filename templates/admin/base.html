@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Luvtale</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #CC0D39; /* Luvtale theme color - Deep Red */
+            --primary-light: #ff3d68;
+            --secondary: #000;
+            --bg-main: #FFFAF3; /* Cream */
+            --sidebar-bg: #fff;
+            --card-bg: #fff;
+            --text-main: #000;
+            --text-muted: #5E626F;
+            --border-color: #FEEB9D; /* Yellow-Gold accent */
+            --sand: #FFF9F3;
+            --cream: #FFFAF3;
+        }
+        .brand-name {
+            font-family: 'DM Sans', sans-serif;
+            color: #000;
+        }
+        body {
+            background-color: var(--bg-main);
+        }
+        .sidebar-nav li.active a {
+            background: var(--border-color);
+            color: var(--primary);
+            border-left-color: var(--primary);
+        }
+        .btn-primary {
+            background: var(--primary);
+        }
+        .btn-primary:hover {
+            background: #a30b2e;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <span class="brand-name" style="font-size: 1.5rem; font-weight: 700;">Luvt<span style="color:var(--primary)">ale</span></span>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="{{ 'active' if request.endpoint == 'admin_dashboard' }}">
+                        <a href="{{ url_for('admin_dashboard') }}"><i class="fas fa-chart-line"></i> Dashboard</a>
+                    </li>
+                    <li class="{{ 'active' if request.endpoint == 'admin_products' }}">
+                        <a href="{{ url_for('admin_products') }}"><i class="fas fa-box"></i> Products</a>
+                    </li>
+                    <li class="{{ 'active' if request.endpoint == 'admin_categories' }}">
+                        <a href="{{ url_for('admin_categories') }}"><i class="fas fa-list"></i> Categories</a>
+                    </li>
+                    <li class="{{ 'active' if request.endpoint == 'admin_brands' }}">
+                        <a href="{{ url_for('admin_brands') }}"><i class="fas fa-copyright"></i> Brands</a>
+                    </li>
+                    <li class="{{ 'active' if request.endpoint == 'admin_attributes' }}">
+                        <a href="{{ url_for('admin_attributes') }}"><i class="fas fa-tags"></i> Attributes</a>
+                    </li>
+                    <li class="{{ 'active' if request.endpoint == 'admin_orders' }}">
+                        <a href="{{ url_for('admin_orders') }}"><i class="fas fa-shopping-cart"></i> Orders</a>
+                    </li>
+                    <li class="{{ 'active' if request.endpoint == 'admin_customers' }}">
+                        <a href="{{ url_for('admin_customers') }}"><i class="fas fa-users"></i> Customers</a>
+                    </li>
+                    <li class="{{ 'active' if request.endpoint == 'admin_reviews' }}">
+                        <a href="{{ url_for('admin_reviews') }}"><i class="fas fa-star"></i> Reviews</a>
+                    </li>
+                    <li class="{{ 'active' if request.endpoint == 'admin_coupons' }}">
+                        <a href="{{ url_for('admin_coupons') }}"><i class="fas fa-ticket-alt"></i> Coupons</a>
+                    </li>
+                    <li class="{{ 'active' if request.endpoint == 'admin_settings' }}">
+                        <a href="{{ url_for('admin_settings') }}"><i class="fas fa-cog"></i> Settings</a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="{{ url_for('home') }}" class="view-site-btn"><i class="fas fa-external-link-alt"></i>
+                    View Main Site</a>
+                <a href="{{ url_for('admin_logout') }}" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-header" style="padding: 15px 30px; background: #fff; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+                <div class="header-left" style="display: flex; align-items: center; gap: 20px; flex: 1;">
+                    <button class="mobile-toggle" id="sidebarToggle" style="display: none; background: none; border: none; font-size: 1.2rem; cursor: pointer;">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="search-bar" style="position: relative; width: 100%; max-width: 400px;">
+                        <i class="fas fa-search" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #888;"></i>
+                        <input type="text" placeholder="Search anything..." style="width: 100%; padding: 12px 15px 12px 45px; border-radius: 12px; border: 1.5px solid #eee; outline: none; background: #F8F9FB;">
+                    </div>
+                </div>
+                <div class="header-right" style="display: flex; align-items: center; gap: 25px;">
+                    <div class="admin-notifications" style="position: relative; cursor: pointer;">
+                        <i class="far fa-bell" style="font-size: 1.4rem; color: #555;"></i>
+                        {% if notif_count > 0 %}
+                        <span style="position: absolute; top: -5px; right: -5px; background: var(--primary); color: #fff; width: 18px; height: 18px; border-radius: 50%; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; border: 2px solid #fff;">{{ notif_count }}</span>
+                        {% endif %}
+                        <div class="notifications-dropdown" style="position: absolute; right: 0; top: 120%; background: #fff; width: 320px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); display: none; z-index: 1000; padding: 15px; border: 1px solid #eee;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                <h4 style="margin: 0; font-size: 1rem; font-weight: 700;">Notifications</h4>
+                                <span id="markAllRead" style="font-size: 0.75rem; color: var(--primary); font-weight: 600; cursor: pointer;">Mark all as read</span>
+                            </div>
+                            <div class="notification-list" style="max-height: 300px; overflow-y: auto;">
+                                {% for n in admin_notifications %}
+                                <div style="padding: 12px; border-radius: 10px; background: {{ n.bg }}; margin-bottom: 10px;">
+                                    <div style="font-weight: 700; font-size: 0.85rem; color: #333; margin-bottom: 3px;">{{ n.title }}</div>
+                                    <div style="font-size: 0.8rem; color: #666;">{{ n.message }}</div>
+                                    <div style="font-size: 0.7rem; color: #888; margin-top: 5px;">{{ n.time }}</div>
+                                </div>
+                                {% else %}
+                                <div style="text-align: center; padding: 20px; color: #888; font-size: 0.9rem;">No new notifications</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="admin-profile-dropdown" style="position: relative; cursor: pointer;">
+                        <div class="user-profile" style="display: flex; align-items: center; gap: 12px; background: #FDE2E7; padding: 6px 15px; border-radius: 50px;">
+                            <div class="profile-circle" style="width: 35px; height: 35px; background: var(--primary); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem;">AD</div>
+                            <span style="font-weight: 600; color: #333;">Admin <i class="fas fa-chevron-down" style="font-size: 0.8rem; margin-left: 5px;"></i></span>
+                        </div>
+                        <div class="dropdown-content" style="position: absolute; right: 0; top: 120%; background: #fff; width: 220px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); display: none; z-index: 1000; padding: 10px; border: 1px solid #eee;">
+                            <div style="padding: 12px 15px; font-size: 0.75rem; color: #888; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Account</div>
+                            <a href="{{ url_for('admin_profile') }}" style="display: flex; align-items: center; gap: 12px; padding: 12px 15px; color: #333; text-decoration: none; font-weight: 600; border-radius: 10px; transition: background 0.2s;"><i class="far fa-user-circle" style="color: #666;"></i> Profile</a>
+                            <a href="{{ url_for('admin_settings') }}" style="display: flex; align-items: center; gap: 12px; padding: 12px 15px; color: #333; text-decoration: none; font-weight: 600; border-radius: 10px; transition: background 0.2s;"><i class="fas fa-cog" style="color: #666;"></i> Settings</a>
+                            <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
+                            <a href="{{ url_for('admin_logout') }}" style="display: flex; align-items: center; gap: 12px; padding: 12px 15px; color: var(--primary); text-decoration: none; font-weight: 700; border-radius: 10px; transition: background 0.2s;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <style>
+                .dropdown-content a:hover { background: #F8F9FB; }
+            </style>
+
+            <section class="content-area">
+                {% block content %}{% endblock %}
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Profile Dropdown Toggle
+        const profileDropdown = document.querySelector('.admin-profile-dropdown');
+        const dropdownContent = document.querySelector('.dropdown-content');
+
+        profileDropdown.addEventListener('click', function (e) {
+            e.stopPropagation();
+            dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
+        });
+
+        document.addEventListener('click', function () {
+            dropdownContent.style.display = 'none';
+            document.querySelector('.notifications-dropdown').style.display = 'none';
+        });
+
+        // Notifications Toggle
+        const notifyBtn = document.querySelector('.admin-notifications');
+        const notifyDropdown = document.querySelector('.notifications-dropdown');
+
+        notifyBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            notifyDropdown.style.display = notifyDropdown.style.display === 'block' ? 'none' : 'block';
+            dropdownContent.style.display = 'none';
+        });
+
+        // Mark All as Read Functional
+        const markReadBtn = document.getElementById('markAllRead');
+        if (markReadBtn) {
+            markReadBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                const badge = document.querySelector('.admin-notifications span');
+                if (badge) badge.style.display = 'none';
+                const list = document.querySelector('.notification-list');
+                list.innerHTML = '<div style="text-align: center; padding: 20px; color: #888; font-size: 0.9rem;">All caught up!</div>';
+            });
+        }
+
+        document.getElementById('sidebarToggle').addEventListener('click', function () {
+            document.querySelector('.admin-container').classList.toggle('sidebar-active');
+        });
+
+        // Auto-hide flash messages after 3 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            const flashes = document.querySelectorAll('.flash-alert');
+            flashes.forEach(flash => {
+                setTimeout(() => {
+                    flash.style.opacity = '0';
+                    flash.style.transition = 'opacity 0.5s ease';
+                    setTimeout(() => flash.remove(), 500);
+                }, 3000);
+            });
+        });
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>

@@ -1,0 +1,37 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="page-header">
+    <div class="header-left">
+        <h1>{{ title }}</h1>
+        <p>Define or update a brand for your boutique.</p>
+    </div>
+</div>
+
+<div class="section-card">
+    <form action="{% if brand %}{{ url_for('admin_edit_brand', id=brand.id) }}{% else %}{{ url_for('admin_add_brand') }}{% endif %}" 
+          method="POST" enctype="multipart/form-data" style="max-width: 600px;">
+        
+        <div class="form-group" style="margin-bottom: 25px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Brand Name</label>
+            <input type="text" name="name" value="{{ brand.name if brand else '' }}" placeholder="e.g. Gucci" required style="width: 100%; padding: 12px; border: 1.5px solid var(--border-color); border-radius: 12px;">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 25px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Brand Logo</label>
+            <input type="file" name="logo" style="width: 100%; padding: 12px; border: 1.5px solid var(--border-color); border-radius: 12px;">
+            {% if brand and brand.logo %}
+            <div style="margin-top: 15px;">
+                <p style="font-size: 0.85rem; font-weight: 700; color: var(--secondary); margin-bottom: 8px;">Current Logo:</p>
+                <img src="{{ brand.logo }}" alt="" style="height: 80px; border-radius: 10px; border: 1.5px solid #eee; padding: 10px; background: #fff;">
+            </div>
+            {% endif %}
+        </div>
+
+        <div style="display: flex; gap: 15px; margin-top: 40px;">
+            <button type="submit" class="btn btn-primary">Save Brand</button>
+            <a href="{{ url_for('admin_brands') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

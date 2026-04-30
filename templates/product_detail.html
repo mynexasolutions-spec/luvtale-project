@@ -1,0 +1,394 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} | Luvtale Boutique{% endblock %}
+
+{% block extra_css %}
+<style>
+.product-page-wrap {
+    padding: 80px 0;
+    background: var(--light);
+}
+
+.product-detail-container {
+    max-width: 1320px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 80px;
+    padding: 0 24px;
+}
+
+.product-gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.main-img-box {
+    background: #FFF5F5;
+    border-radius: var(--radius);
+    padding: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.main-img-box img {
+    max-width: 85%;
+    max-height: 600px;
+    object-fit: contain;
+    filter: drop-shadow(0 30px 60px rgba(0,0,0,0.1));
+    transition: 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.main-img-box:hover img {
+    transform: scale(1.05);
+}
+
+.thumbs-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.thumb-card {
+    background: #fff;
+    border-radius: 15px;
+    padding: 15px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.thumb-card.active, .thumb-card:hover {
+    border-color: var(--primary);
+    background: #FFF5F5;
+}
+
+.thumb-card img {
+    max-width: 100%;
+    height: 100px;
+    object-fit: contain;
+}
+
+.product-info-panel {
+    padding-top: 20px;
+}
+
+.p-cat-badge {
+    display: inline-block;
+    padding: 8px 20px;
+    background: var(--primary);
+    color: #fff;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-bottom: 25px;
+}
+
+.p-title-serif {
+    font-size: 4rem;
+    font-weight: 800;
+    margin-bottom: 20px;
+    color: var(--secondary);
+    line-height: 1;
+    font-family: 'Playfair Display', serif;
+}
+
+.p-price-row {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 35px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.p-price-row .curr { color: var(--primary); }
+.p-price-row .old { color: #ccc; text-decoration: line-through; font-size: 1.5rem; font-weight: 400; }
+
+.p-desc-text {
+    font-size: 1.15rem;
+    line-height: 1.8;
+    color: var(--body);
+    margin-bottom: 45px;
+}
+
+.p-actions-row {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin-bottom: 50px;
+}
+
+.qty-input-box {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border-radius: 50px;
+    padding: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.qty-btn-luxe {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: none;
+    background: var(--light);
+    cursor: pointer;
+    font-weight: 800;
+    transition: 0.3s;
+}
+
+.qty-btn-luxe:hover {
+    background: var(--primary);
+    color: #fff;
+}
+
+.qty-display-val {
+    width: 60px;
+    text-align: center;
+    font-weight: 800;
+    font-size: 1.2rem;
+}
+
+.add-to-bag-big {
+    flex: 1;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    padding: 22px;
+    border-radius: 50px;
+    font-weight: 800;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: 0.4s;
+}
+
+.add-to-bag-big:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(204, 13, 57, 0.3);
+}
+
+.p-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    border-top: 1px solid var(--border);
+    padding-top: 40px;
+}
+
+.meta-item-box {
+    text-align: center;
+}
+
+.meta-item-box i {
+    font-size: 1.5rem;
+    color: var(--primary);
+    margin-bottom: 10px;
+    display: block;
+}
+
+.meta-item-box span {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #999;
+}
+
+@media (max-width: 992px) {
+    .product-detail-container { grid-template-columns: 1fr; gap: 40px; }
+    .p-title-serif { font-size: 3rem; }
+}
+.attr-group { margin-bottom: 30px; }
+.attr-title { font-weight: 700; margin-bottom: 12px; display: block; text-transform: uppercase; font-size: 0.85rem; color: #888; }
+.attr-values { display: flex; gap: 10px; flex-wrap: wrap; }
+.attr-val-btn { padding: 10px 20px; border: 2px solid #eee; border-radius: 50px; cursor: pointer; font-weight: 700; transition: 0.3s; background: #fff; color: var(--secondary); }
+.attr-val-btn.active { border-color: var(--primary); background: #FFF5F5; color: var(--primary); }
+.attr-val-btn:hover:not(.active) { border-color: #ccc; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="product-page-wrap">
+    <div class="product-detail-container">
+        <div class="product-gallery">
+            <div class="main-img-box">
+                <img src="{{ current_variation.img_primary if current_variation and current_variation.img_primary else product.img_primary }}" alt="{{ product.name }}" id="main-view">
+            </div>
+            <div class="thumbs-grid">
+                <!-- Always show Primary Image first -->
+                <div class="thumb-card active" onclick="switchImg('{{ product.img_primary }}', this)">
+                    <img src="{{ product.img_primary }}" alt="Primary View">
+                </div>
+                <!-- Gallery Images -->
+                {% for p_img in product.images %}
+                <div class="thumb-card" onclick="switchImg('{{ p_img.img_url }}', this)">
+                    <img src="{{ p_img.img_url }}" alt="Gallery Image">
+                </div>
+                {% endfor %}
+                <!-- Secondary Image -->
+                {% if product.img_secondary %}
+                <div class="thumb-card" onclick="switchImg('{{ product.img_secondary }}', this)">
+                    <img src="{{ product.img_secondary }}" alt="Secondary View">
+                </div>
+                {% endif %}
+                <!-- Variation Images -->
+                {% for var in product.variations %}
+                {% if var.img_primary %}
+                <div class="thumb-card" onclick="switchImg('{{ var.img_primary }}', this)">
+                    <img src="{{ var.img_primary }}" alt="Variation View">
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="product-info-panel">
+            <span class="p-cat-badge">{{ product.category.name if product.category else 'Luxury' }}</span>
+            <div class="p-rating" style="color: #FFD700; margin-bottom: 10px; font-size: 0.9rem;">
+                {% for i in range(5) %}
+                    <i class="{% if i < product.rating %}fas{% else %}far{% endif %} fa-star"></i>
+                {% endfor %}
+                <span style="color: #888; margin-left: 5px; font-weight: 600;">(4.8/5)</span>
+            </div>
+            <h1 class="p-title-serif">{{ product.name }}</h1>
+
+            <div class="p-price-row" style="margin-bottom: 20px;">
+                <span class="curr" id="display-price">₹{{ product.price }}</span>
+                {% if product.old_price %}
+                <span class="old">₹{{ product.old_price }}</span>
+                {% endif %}
+            </div>
+
+            <div class="stock-status" style="margin-bottom: 30px;" id="display-stock">
+                {% set target = current_variation if current_variation else product %}
+                {% if target.stock_count > 0 %}
+                <span style="color: #2E7D32; font-weight: 700; font-size: 0.9rem;"><i class="fas fa-check-circle"></i> In Stock ({{ target.stock_count }} available)</span>
+                {% else %}
+                <span style="color: var(--primary); font-weight: 700; font-size: 0.9rem;"><i class="fas fa-times-circle"></i> Out of Stock</span>
+                {% endif %}
+            </div>
+
+            <div class="p-desc-text" style="margin-bottom: 30px;">
+                {{ product.description or "Elevate your wardrobe with this exquisite piece. Crafted with the finest materials and an eye for timeless detail, this selection from Luvtale Boutique defines modern luxury and sophistication." }}
+            </div>
+
+            {% if product.product_type == 'variable' %}
+            <div class="variation-selectors" style="margin-bottom: 40px;">
+                <!-- We'll simplify this to a single select or dynamic buttons for the demo -->
+                <div class="attr-group">
+                    <span class="attr-title">Available Options</span>
+                    <div class="attr-values">
+                        {% for var in product.variations %}
+                        <div class="attr-val-btn {% if current_variation and current_variation.id == var.id %}active{% endif %}" 
+                             onclick="selectVariation(this, {{ var.id }}, '{{ var.img_primary or product.img_primary }}', {{ var.price }}, {{ var.stock_count }})">
+                            {{ var.sku.split('-', 1)[1] if '-' in var.sku else var.sku }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="p-actions-row">
+                <div class="qty-input-box">
+                    <button class="qty-btn-luxe" onclick="changeQty(-1)">-</button>
+                    <div class="qty-display-val" id="p-qty">1</div>
+                    <button class="qty-btn-luxe" onclick="changeQty(1)">+</button>
+                </div>
+                <button id="add-to-cart-btn" class="add-to-bag-big" onclick="addToCart({{ product.id }}, parseInt(document.getElementById('p-qty').innerText), {{ current_variation.id if current_variation else 'null' }})">
+                    <i class="fas fa-shopping-bag"></i> Add to Bag
+                </button>
+                <div class="p-wish-btn" onclick="addToWishlist({{ product.id }})" style="position: static;">
+                    <i class="far fa-heart"></i>
+                </div>
+            </div>
+
+            <div class="p-meta-grid">
+                <div class="meta-item-box">
+                    <i class="fas fa-shipping-fast"></i>
+                    <span>Free Shipping</span>
+                </div>
+                <div class="meta-item-box">
+                    <i class="fas fa-undo"></i>
+                    <span>Easy Returns</span>
+                </div>
+                <div class="meta-item-box">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Secure Pay</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function changeQty(delta) {
+        const el = document.getElementById('p-qty');
+        let val = parseInt(el.innerText);
+        val = Math.max(1, val + delta);
+        el.innerText = val;
+    }
+
+    function switchImg(src, el) {
+        document.getElementById('main-view').src = src;
+        document.querySelectorAll('.thumb-card').forEach(t => t.classList.remove('active'));
+        if (el) el.classList.add('active');
+    }
+
+    let selectedVarId = {{ current_variation.id if current_variation else 'null' }};
+
+    function selectVariation(el, id, img, price, stock) {
+        const cartBtn = document.getElementById('add-to-cart-btn');
+        const priceEl = document.getElementById('display-price');
+        const stockEl = document.getElementById('display-stock');
+
+        if (el.classList.contains('active')) {
+            // UNSELECT
+            el.classList.remove('active');
+            selectedVarId = null;
+            
+            // Revert to Product Defaults
+            switchImg('{{ product.img_primary }}', null);
+            priceEl.innerText = '₹{{ product.price }}';
+            
+            {% if product.stock_count > 0 %}
+            stockEl.innerHTML = `<span style="color: #2E7D32; font-weight: 700; font-size: 0.9rem;"><i class="fas fa-check-circle"></i> In Stock ({{ product.stock_count }} available)</span>`;
+            {% else %}
+            stockEl.innerHTML = `<span style="color: var(--primary); font-weight: 700; font-size: 0.9rem;"><i class="fas fa-times-circle"></i> Out of Stock</span>`;
+            {% endif %}
+            
+            cartBtn.setAttribute('onclick', `addToCart({{ product.id }}, parseInt(document.getElementById('p-qty').innerText), null)`);
+            return;
+        }
+
+        // SELECT
+        switchImg(img, null);
+        priceEl.innerText = '₹' + price;
+        
+        if (stock > 0) {
+            stockEl.innerHTML = `<span style="color: #2E7D32; font-weight: 700; font-size: 0.9rem;"><i class="fas fa-check-circle"></i> In Stock (${stock} available)</span>`;
+        } else {
+            stockEl.innerHTML = `<span style="color: var(--primary); font-weight: 700; font-size: 0.9rem;"><i class="fas fa-times-circle"></i> Out of Stock</span>`;
+        }
+
+        // Active state for buttons
+        document.querySelectorAll('.attr-val-btn').forEach(b => b.classList.remove('active'));
+        el.classList.add('active');
+
+        // Update global selection
+        selectedVarId = id;
+        
+        // Update Add to Cart button handler
+        cartBtn.setAttribute('onclick', `addToCart({{ product.id }}, parseInt(document.getElementById('p-qty').innerText), ${id})`);
+    }
+</script>
+{% endblock %}

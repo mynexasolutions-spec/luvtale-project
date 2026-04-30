@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us | Luvtale Boutique{% endblock %}
+
+{% block content %}
+<section style="padding: 60px 0; background: var(--sand); min-height: 80vh; display: flex; align-items: center; justify-content: center;">
+    <div class="container" style="max-width: 900px; text-align: center;">
+        <div style="margin-bottom: 40px;">
+            <h1 style="font-size: 2.2rem; font-weight: 600; margin-bottom: 15px;">Get in Touch</h1>
+            <p style="color: var(--body); font-size: 0.95rem; max-width: 600px; margin: 0 auto;">We'd love to hear from you. Whether you have a question about our collection or need assistance, we're here to help.</p>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 30px; background: #fff; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); text-align: left;">
+            <div style="padding-right: 20px; border-right: 1px solid var(--border);">
+                <div style="margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 5px; font-size: 1rem; font-weight: 600;">Address</h4>
+                    <p style="color: var(--body); font-size: 0.9rem;">123 Boutique Street,<br>Fashion District, NY 10001</p>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 5px; font-size: 1rem; font-weight: 600;">Email</h4>
+                    <p style="color: var(--body); font-size: 0.9rem;">hello@luvtale.com</p>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 5px; font-size: 1rem; font-weight: 600;">Phone</h4>
+                    <p style="color: var(--body); font-size: 0.9rem;">+1 (234) 567-890</p>
+                </div>
+            </div>
+            
+            <form action="#" style="display: grid; gap: 15px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <input type="text" placeholder="Your Name" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); outline: none; font-size: 0.9rem;">
+                    <input type="email" placeholder="Your Email" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); outline: none; font-size: 0.9rem;">
+                </div>
+                <input type="text" placeholder="Subject" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); outline: none; font-size: 0.9rem;">
+                <textarea placeholder="Your Message" rows="4" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); outline: none; font-size: 0.9rem;"></textarea>
+                <button type="submit" class="btn btn-primary" style="width: fit-content; padding: 10px 30px; font-size: 0.9rem;">Send Message</button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

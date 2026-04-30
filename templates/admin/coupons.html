@@ -1,0 +1,62 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="page-header" style="margin-bottom: 30px;">
+    <div class="header-left">
+        <h1 style="font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 5px;">Coupons</h1>
+        <p style="color: var(--text-muted);">Manage discount codes and promotions.</p>
+    </div>
+    <div class="header-right">
+        <a href="{{ url_for('admin_add_coupon') }}" class="btn btn-primary" style="border-radius: 12px; font-weight: 600; padding: 12px 25px;"><i class="fas fa-plus"></i> Add New Coupon</a>
+    </div>
+</div>
+
+<div class="section-card" style="background: #fff; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); padding: 30px;">
+    <div class="table-responsive">
+        <table style="width: 100%; border-collapse: separate; border-spacing: 0 15px;">
+            <thead>
+                <tr style="text-align: left; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;">
+                    <th style="padding: 0 20px;">Coupon Code</th>
+                    <th>Discount</th>
+                    <th>Threshold</th>
+                    <th>Expiry</th>
+                    <th>Status</th>
+                    <th style="text-align: right; padding-right: 20px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for coupon in coupons %}
+                <tr style="background: #fff; transition: transform 0.2s;">
+                    <td style="padding: 20px; border-radius: 15px 0 0 15px;">
+                        <span style="font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.1rem; color: var(--primary);">{{ coupon.code }}</span>
+                    </td>
+                    <td style="font-weight: 600;">
+                        {% if coupon.discount_type == 'Percentage' %}
+                        {{ coupon.discount_value }}% Off
+                        {% else %}
+                        ₹{{ coupon.discount_value }} Off
+                        {% endif %}
+                    </td>
+                    <td>₹{{ coupon.threshold }}</td>
+                    <td style="color: var(--text-muted);">{{ coupon.expiry_date.strftime('%d-%m-%Y') if coupon.expiry_date else 'No Expiry' }}</td>
+                    <td>
+                        {% if coupon.is_active %}
+                        <span style="background: #E8F5E9; color: #2E7D32; padding: 6px 15px; border-radius: 20px; font-size: 0.85rem; font-weight: 600;">Active</span>
+                        {% else %}
+                        <span style="background: #FFEBEE; color: #C62828; padding: 6px 15px; border-radius: 20px; font-size: 0.85rem; font-weight: 600;">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td style="text-align: right; padding-right: 20px; border-radius: 0 15px 15px 0;">
+                        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                            <a href="{{ url_for('admin_delete_coupon', id=coupon.id) }}" onclick="return confirm('Delete this coupon?')" style="width: 40px; height: 40px; background: #FDE2E7; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--primary); transition: all 0.2s;"><i class="fas fa-trash"></i></a>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--text-muted);">No coupons found. Click "Add New Coupon" to create one.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

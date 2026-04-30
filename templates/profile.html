@@ -1,0 +1,242 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile | Luvtale Boutique{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-page {
+        background: #fcfcfc;
+        padding: 80px 0;
+        min-height: 80vh;
+    }
+    .profile-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 350px 1fr;
+        gap: 40px;
+        padding: 0 20px;
+    }
+    .profile-sidebar {
+        background: #fff;
+        padding: 40px;
+        border-radius: 30px;
+        box-shadow: 0 15px 50px rgba(0,0,0,0.03);
+        height: fit-content;
+        position: sticky;
+        top: 100px;
+    }
+    .avatar-box {
+        width: 120px;
+        height: 120px;
+        background: var(--primary);
+        color: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        font-weight: 800;
+        margin: 0 auto 25px;
+        box-shadow: 0 10px 25px rgba(204, 13, 57, 0.2);
+        font-family: 'Playfair Display', serif;
+    }
+    .profile-nav {
+        margin-top: 40px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .nav-item {
+        padding: 15px 20px;
+        border-radius: 15px;
+        text-decoration: none;
+        color: var(--secondary);
+        font-weight: 700;
+        transition: 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        cursor: pointer;
+    }
+    .nav-item i { font-size: 1.1rem; color: #ccc; transition: 0.3s; }
+    .nav-item.active {
+        background: var(--primary);
+        color: #fff;
+    }
+    .nav-item.active i { color: #fff; }
+    .nav-item:hover:not(.active) {
+        background: #fff9fa;
+        color: var(--primary);
+    }
+    .nav-item:hover i { color: var(--primary); }
+
+    .profile-content-box {
+        background: #fff;
+        padding: 50px;
+        border-radius: 30px;
+        box-shadow: 0 15px 50px rgba(0,0,0,0.03);
+    }
+    .section-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.2rem;
+        margin-bottom: 35px;
+        color: var(--secondary);
+    }
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 25px;
+    }
+    .profile-form label {
+        display: block;
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: #888;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+    }
+    .profile-form input, .profile-form textarea {
+        width: 100%;
+        padding: 15px 20px;
+        border-radius: 15px;
+        border: 1.5px solid #eee;
+        outline: none;
+        font-size: 1rem;
+        transition: 0.3s;
+        background: #fdfdfd;
+    }
+    .profile-form input:focus { border-color: var(--primary); background: #fff; }
+    
+    .order-card {
+        padding: 25px;
+        border-radius: 20px;
+        border: 1.5px solid #f5f5f5;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: 0.3s;
+    }
+    .order-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.03); border-color: var(--primary); }
+    .status-badge {
+        padding: 8px 18px;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+    .status-pending { background: #fff8eb; color: #b7791f; }
+    .status-completed { background: #e6fffa; color: #234e52; }
+
+    @media (max-width: 992px) {
+        .profile-container { grid-template-columns: 1fr; }
+        .profile-sidebar { position: static; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-page">
+    <div class="profile-container">
+        <div class="profile-sidebar">
+            <div class="avatar-box">
+                {{ user.username[0]|upper }}
+            </div>
+            <div style="text-align: center;">
+                <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem;">{{ user.username }}</h3>
+                <p style="color: #888; font-size: 0.9rem;">Member since {{ user.id + 2023 }}</p>
+            </div>
+            
+            <div class="profile-nav">
+                <div class="nav-item active" onclick="showTab('settings', this)">
+                    <i class="fas fa-user-cog"></i> Account Settings
+                </div>
+                <div class="nav-item" onclick="showTab('orders', this)">
+                    <i class="fas fa-shopping-bag"></i> My Orders
+                </div>
+                <div class="nav-item" onclick="showTab('wishlist', this)">
+                    <i class="fas fa-heart"></i> Wishlist
+                </div>
+                <a href="{{ url_for('logout') }}" class="nav-item" style="margin-top: 20px; color: #ff4d4d;">
+                    <i class="fas fa-sign-out-alt" style="color: #ff4d4d;"></i> Logout
+                </a>
+            </div>
+        </div>
+
+        <div class="profile-content">
+            <!-- Settings Tab -->
+            <div id="settings-tab" class="profile-content-box tab-content">
+                <h2 class="section-title">Account Settings</h2>
+                <form action="{{ url_for('update_profile') }}" method="POST" class="profile-form">
+                    <div class="form-grid">
+                        <div style="grid-column: span 2;">
+                            <label>Full Name</label>
+                            <input type="text" value="{{ user.username }}" readonly style="background: #f5f5f5;">
+                        </div>
+                        <div>
+                            <label>Email Address</label>
+                            <input type="email" name="email" value="{{ user.email or '' }}" placeholder="Enter your email">
+                        </div>
+                        <div>
+                            <label>Phone Number</label>
+                            <input type="text" name="phone" value="{{ user.phone or '' }}" placeholder="+91 XXXXX XXXXX">
+                        </div>
+                        <div style="grid-column: span 2;">
+                            <label>Shipping Address</label>
+                            <textarea name="address" rows="4" placeholder="Enter your full delivery address">{{ user.address or '' }}</textarea>
+                        </div>
+                    </div>
+                    <button type="submit" class="add-to-bag-big" style="margin-top: 40px; max-width: 250px;">Save Changes</button>
+                </form>
+            </div>
+
+            <!-- Orders Tab -->
+            <div id="orders-tab" class="profile-content-box tab-content" style="display: none;">
+                <h2 class="section-title">My Orders</h2>
+                {% for order in orders %}
+                <div class="order-card">
+                    <div>
+                        <h4 style="font-weight: 800; margin-bottom: 5px;">Order #{{ order.order_number }}</h4>
+                        <p style="color: #888; font-size: 0.85rem;">Placed on {{ order.date.strftime('%d %b, %Y') }}</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <span style="font-weight: 800; font-size: 1.2rem; display: block; margin-bottom: 5px;">₹{{ order.total_amount }}</span>
+                        <p style="font-size: 0.8rem; color: #888;">{{ (order.total_amount / 500)|int }} Items</p>
+                    </div>
+                    <span class="status-badge status-{{ 'pending' if order.status == 'Pending' else 'completed' }}">
+                        {{ order.status }}
+                    </span>
+                </div>
+                {% else %}
+                <div style="text-align: center; padding: 50px 0;">
+                    <i class="fas fa-box-open" style="font-size: 4rem; color: #eee; margin-bottom: 20px;"></i>
+                    <h3 style="color: #888;">No orders yet.</h3>
+                    <a href="{{ url_for('home') }}" style="color: var(--primary); font-weight: 700; text-decoration: none; margin-top: 10px; display: block;">Start Shopping →</a>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Wishlist Tab -->
+            <div id="wishlist-tab" class="profile-content-box tab-content" style="display: none;">
+                <h2 class="section-title">My Wishlist</h2>
+                <p style="color: #888;">Your favorite items are saved here.</p>
+                <div style="text-align: center; padding: 50px 0;">
+                    <i class="fas fa-heart" style="font-size: 4rem; color: #eee; margin-bottom: 20px;"></i>
+                    <h3 style="color: #888;">Wishlist is empty.</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showTab(tabId, el) {
+        document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
+        document.getElementById(tabId + '-tab').style.display = 'block';
+        
+        document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+        el.classList.add('active');
+    }
+</script>
+{% endblock %}

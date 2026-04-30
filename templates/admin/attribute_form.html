@@ -1,0 +1,56 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="breadcrumb" style="font-size: 0.9rem; margin-bottom: 20px;">
+    <a href="{{ url_for('admin_attributes') }}" style="color: var(--primary); text-decoration: none;">Attributes</a>
+    <span style="color: #888; margin: 0 10px;">/</span>
+    <span style="color: #333;">{{ title }}</span>
+</div>
+
+<div class="page-header" style="margin-bottom: 30px;">
+    <div class="header-left">
+        <h1 style="font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 5px;">Create Product Attribute</h1>
+        <p style="color: var(--text-muted);">Define a property that products can vary by.</p>
+    </div>
+</div>
+
+<div class="section-card" style="background: #fff; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); padding: 40px; max-width: 700px;">
+    <form action="{% if attribute %}{{ url_for('admin_edit_attribute', id=attribute.id) }}{% else %}{{ url_for('admin_add_attribute') }}{% endif %}" method="POST">
+        
+        <div class="form-group" style="margin-bottom: 30px;">
+            <label style="display: block; margin-bottom: 12px; font-weight: 700; color: var(--secondary);">Attribute Name *</label>
+            <input type="text" name="name" value="{{ attribute.name if attribute else '' }}" placeholder="e.g. Power (SPH) or Color" required style="width: 100%; padding: 15px; border: 1.5px solid #eee; border-radius: 12px; font-family: inherit;">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 30px;">
+            <label style="display: block; margin-bottom: 12px; font-weight: 700; color: var(--secondary);">Slug</label>
+            <input type="text" name="slug" value="{{ attribute.slug if attribute else '' }}" placeholder="e.g. power-sph" style="width: 100%; padding: 15px; border: 1.5px solid #eee; border-radius: 12px; font-family: inherit;">
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 8px;">Unique identifier used in URLs. Leave blank to auto-generate.</p>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 30px;">
+            <label style="display: block; margin-bottom: 12px; font-weight: 700; color: var(--secondary);">Attribute Values</label>
+            <textarea name="values" placeholder="e.g. Red, Blue, Green (Comma separated)" style="width: 100%; padding: 15px; border: 1.5px solid #eee; border-radius: 12px; font-family: inherit; resize: vertical;">{{ vals_str if vals_str else '' }}</textarea>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 8px;">Enter the possible values for this attribute, separated by commas.</p>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 40px;">
+            <label style="display: block; margin-bottom: 12px; font-weight: 700; color: var(--secondary);">Display Type</label>
+            <select name="type" style="width: 100%; padding: 15px; border: 1.5px solid #eee; border-radius: 12px; font-family: inherit; appearance: none; background: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22/%3E%3C/svg%3E') no-repeat right 15px top 50%; background-size: 12px; background-color: #fff;">
+                <option value="select" {% if attribute and attribute.type == 'select' %}selected{% endif %}>Dropdown Select (Best for Sizes)</option>
+                <option value="color" {% if attribute and attribute.type == 'color' %}selected{% endif %}>Color Swatch (Best for Colors)</option>
+                <option value="button" {% if attribute and attribute.type == 'button' %}selected{% endif %}>Button Group (Selection Boxes)</option>
+            </select>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 10px;">
+                <strong>How it works:</strong> This determines how customers will select the attribute on the product page. 
+                Use <em>Color Swatch</em> for visual color picks and <em>Dropdown</em> for lists like Power or Size.
+            </p>
+        </div>
+
+        <div style="display: flex; gap: 15px;">
+            <button type="submit" class="btn btn-primary" style="padding: 15px 40px; border-radius: 15px; font-weight: 700; font-size: 1rem;">Create Attribute</button>
+            <a href="{{ url_for('admin_attributes') }}" class="btn" style="padding: 15px 40px; border-radius: 15px; font-weight: 700; font-size: 1rem; background: #FDE2E7; color: var(--primary);">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

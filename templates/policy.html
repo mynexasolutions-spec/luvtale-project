@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} | Luvtale Boutique{% endblock %}
+
+{% block content %}
+<section style="padding: 60px 0; background: var(--sand); min-height: 70vh; display: flex; align-items: center; justify-content: center;">
+    <div class="container" style="max-width: 800px; background: #fff; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); text-align: center;">
+        <h1 style="font-size: 2.2rem; font-weight: 600; margin-bottom: 25px;">{{ title }}</h1>
+        <div style="line-height: 1.8; color: var(--body);">
+            <p style="margin-bottom: 20px; max-width: 600px; margin-left: auto; margin-right: auto;">{{ content }}</p>
+            
+            <h3 style="margin: 30px 0 15px; font-weight: 600;">1. Introduction</h3>
+            <p style="margin-bottom: 20px;">Welcome to Luvtale Boutique. We value your trust and want to ensure a transparent and secure shopping experience.</p>
+            
+            <h3 style="margin: 30px 0 15px; font-weight: 600;">2. Key Provisions</h3>
+            <p style="margin-bottom: 20px;">Detailed terms regarding our operations, your rights as a consumer, and our commitments as a boutique service provider are outlined here. We reserve the right to update these policies periodically.</p>
+            
+            <h3 style="margin: 30px 0 15px; font-weight: 600;">3. Contact Us</h3>
+            <p>If you have any questions about our {{ title }}, please contact us at <a href="mailto:hello@luvtale.com" style="color: var(--primary); font-weight: 600;">hello@luvtale.com</a>.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

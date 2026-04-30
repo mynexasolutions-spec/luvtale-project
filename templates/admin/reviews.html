@@ -1,0 +1,129 @@
+{% extends "admin/base.html" %}
+{% block content %}
+<div class="page-header" style="margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
+    <div class="header-left">
+        <h1 style="font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 5px;">Customer Reviews</h1>
+        <p style="color: var(--text-muted);">Manage and showcase testimonials on your boutique.</p>
+    </div>
+    <button onclick="document.getElementById('addReviewModal').style.display='flex'" class="btn btn-primary" style="border-radius: 12px; font-weight: 600; padding: 12px 20px;">
+        <i class="fas fa-plus"></i> Add New Review
+    </button>
+</div>
+
+<div class="section-card" style="background: #fff; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); padding: 30px;">
+    <div class="table-responsive">
+        <table style="width: 100%; border-collapse: separate; border-spacing: 0 15px;">
+            <thead>
+                <tr style="text-align: left; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;">
+                    <th style="padding: 0 20px;">Customer</th>
+                    <th>Product</th>
+                    <th>Rating</th>
+                    <th>Comment</th>
+                    <th style="text-align: right; padding-right: 20px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for review in reviews %}
+                <tr style="background: #fff;">
+                    <td style="padding: 15px 20px; border-radius: 15px 0 0 15px;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 40px; height: 40px; background: #FDE2E7; color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">
+                                {{ review.customer_name[0]|upper }}
+                            </div>
+                            <span style="font-weight: 700;">{{ review.customer_name }}</span>
+                        </div>
+                    </td>
+                    <td>{{ review.product.name if review.product else 'General Site' }}</td>
+                    <td>
+                        <div style="color: #FFD700;">
+                            {% for i in range(review.rating) %}<i class="fas fa-star"></i>{% endfor %}
+                        </div>
+                    </td>
+                    <td style="color: var(--text-muted); max-width: 300px;">{{ review.comment }}</td>
+                    <td style="text-align: right; padding-right: 20px; border-radius: 0 15px 15px 0;">
+                        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                            <button onclick="openEditReviewModal('{{ review.id }}', '{{ review.customer_name }}', '{{ review.rating }}', `{{ review.comment }}`)" style="width: 40px; height: 40px; background: #F5F5F5; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #555; transition: all 0.2s; border: none; cursor: pointer;"><i class="fas fa-edit"></i></button>
+                            <a href="{{ url_for('admin_delete_review', id=review.id) }}" onclick="return confirm('Delete this review?')" style="width: 40px; height: 40px; background: #F5F5F5; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; color: #555; transition: all 0.2s;"><i class="fas fa-trash"></i></a>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="5" style="text-align:center; padding: 40px; color: var(--text-muted);">No reviews found. Click the button above to add one!</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add Review Modal -->
+<div id="addReviewModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center;">
+    <div style="background: #fff; padding: 40px; border-radius: 20px; width: 100%; max-width: 500px; box-shadow: 0 20px 50px rgba(0,0,0,0.1);">
+        <h2 style="font-family: 'Playfair Display', serif; margin-bottom: 25px;">Add Testimonial</h2>
+        <form action="{{ url_for('admin_add_review') }}" method="POST">
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Customer Name</label>
+                <input type="text" name="customer_name" required placeholder="e.g. Sarah J." style="width: 100%; padding: 12px; border: 1.5px solid #eee; border-radius: 12px; outline: none;">
+            </div>
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Rating</label>
+                <select name="rating" style="width: 100%; padding: 12px; border: 1.5px solid #eee; border-radius: 12px; outline: none;">
+                    <option value="5">5 Stars</option>
+                    <option value="4">4 Stars</option>
+                    <option value="3">3 Stars</option>
+                    <option value="2">2 Stars</option>
+                    <option value="1">1 Star</option>
+                </select>
+            </div>
+            <div class="form-group" style="margin-bottom: 25px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Comment</label>
+                <textarea name="comment" rows="4" required placeholder="What did they say about Luvtale?" style="width: 100%; padding: 12px; border: 1.5px solid #eee; border-radius: 12px; outline: none; resize: vertical;"></textarea>
+            </div>
+            <div style="display: flex; gap: 15px;">
+                <button type="submit" class="btn btn-primary" style="flex: 1; padding: 15px; border-radius: 12px; font-weight: 700;">Save Review</button>
+                <button type="button" onclick="document.getElementById('addReviewModal').style.display='none'" class="btn" style="flex: 1; padding: 15px; border-radius: 12px; font-weight: 700; background: #eee;">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Review Modal -->
+<div id="editReviewModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center;">
+    <div style="background: #fff; padding: 40px; border-radius: 20px; width: 100%; max-width: 500px; box-shadow: 0 20px 50px rgba(0,0,0,0.1);">
+        <h2 style="font-family: 'Playfair Display', serif; margin-bottom: 25px;">Edit Testimonial</h2>
+        <form id="editReviewForm" method="POST">
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Customer Name</label>
+                <input type="text" id="editCustomerName" name="customer_name" required style="width: 100%; padding: 12px; border: 1.5px solid #eee; border-radius: 12px; outline: none;">
+            </div>
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Rating</label>
+                <select id="editRating" name="rating" style="width: 100%; padding: 12px; border: 1.5px solid #eee; border-radius: 12px; outline: none;">
+                    <option value="5">5 Stars</option>
+                    <option value="4">4 Stars</option>
+                    <option value="3">3 Stars</option>
+                    <option value="2">2 Stars</option>
+                    <option value="1">1 Star</option>
+                </select>
+            </div>
+            <div class="form-group" style="margin-bottom: 25px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Comment</label>
+                <textarea id="editComment" name="comment" rows="4" required style="width: 100%; padding: 12px; border: 1.5px solid #eee; border-radius: 12px; outline: none; resize: vertical;"></textarea>
+            </div>
+            <div style="display: flex; gap: 15px;">
+                <button type="submit" class="btn btn-primary" style="flex: 1; padding: 15px; border-radius: 12px; font-weight: 700;">Update Review</button>
+                <button type="button" onclick="document.getElementById('editReviewModal').style.display='none'" class="btn" style="flex: 1; padding: 15px; border-radius: 12px; font-weight: 700; background: #eee;">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openEditReviewModal(id, name, rating, comment) {
+        document.getElementById('editReviewForm').action = '/admin/reviews/edit/' + id;
+        document.getElementById('editCustomerName').value = name;
+        document.getElementById('editRating').value = rating;
+        document.getElementById('editComment').value = comment;
+        document.getElementById('editReviewModal').style.display = 'flex';
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,110 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="page-header">
+    <div class="header-left">
+        <h1>{{ title }}</h1>
+        <p>Manage your boutique's product categories and sub-categories.</p>
+    </div>
+</div>
+
+<div class="section-card">
+    <form action="{% if category %}{{ url_for('admin_edit_category', id=category.id) }}{% else %}{{ url_for('admin_add_category') }}{% endif %}" 
+          method="POST" enctype="multipart/form-data" style="max-width: 600px;">
+        
+        <div class="form-group" style="margin-bottom: 25px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Category Name</label>
+            <input type="text" name="name" value="{{ category.name if category else '' }}" placeholder="e.g. Traditional Wear" required style="width: 100%; padding: 12px; border: 1.5px solid var(--border-color); border-radius: 12px;">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 25px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Category Image</label>
+            <input type="file" name="img" style="width: 100%; padding: 12px; border: 1.5px solid var(--border-color); border-radius: 12px;">
+            {% if category and category.img %}
+            <div style="margin-top: 15px;">
+                <p style="font-size: 0.85rem; font-weight: 700; color: var(--secondary); margin-bottom: 8px;">Current Image:</p>
+                <img src="{{ category.img }}" alt="" style="height: 100px; width: 100px; object-fit: cover; border-radius: 15px; border: 1.5px solid #eee;">
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group" style="margin-bottom: 25px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Category Background Color</label>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <input type="color" name="bg" value="{{ category.bg if category and not category.bg.startswith('linear') else '#FFFAF3' }}" style="width: 60px; height: 60px; padding: 5px; border: 1.5px solid var(--border-color); border-radius: 12px; cursor: pointer;">
+                <input type="text" id="bgColorText" value="{{ category.bg if category else '#FFFAF3' }}" placeholder="#hex" style="flex: 1; padding: 12px; border: 1.5px solid var(--border-color); border-radius: 12px;">
+            </div>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">Pick a solid color or manually enter a gradient string.</p>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 25px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Add Sub-Category</label>
+            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                <input type="text" id="subInput" placeholder="Enter subcategory name..." style="flex: 1; padding: 12px; border: 1.5px solid var(--border-color); border-radius: 12px;">
+                <button type="button" onclick="addSubTag()" class="btn" style="background: var(--border-color); color: var(--primary); font-weight: 700; border-radius: 12px;">Add</button>
+            </div>
+            
+            <div id="subTagsContainer" style="display: flex; flex-wrap: wrap; gap: 10px; padding: 15px; background: #f9f9f9; border-radius: 12px; min-height: 60px; border: 1px dashed #ccc;">
+                {% if sub_list %}
+                    {% for sub in sub_list %}
+                    <div class="sub-tag" style="background: #fff; border: 1px solid var(--primary); color: var(--primary); padding: 5px 12px; border-radius: 8px; display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.9rem;">
+                        <input type="hidden" name="subcategories_list[]" value="{{ sub }}">
+                        <span>{{ sub }}</span>
+                        <i class="fas fa-times" onclick="this.parentElement.remove()" style="cursor: pointer; font-size: 0.8rem;"></i>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 8px;">Type a subcategory and click 'Add'. These will be the subcategories for this category.</p>
+        </div>
+
+        <div style="display: flex; gap: 15px; margin-top: 40px;">
+            <button type="submit" class="btn btn-primary" style="padding: 12px 30px; border-radius: 12px; font-weight: 700;">Save Category</button>
+            <a href="{{ url_for('admin_categories') }}" class="btn" style="padding: 12px 30px; border-radius: 12px; font-weight: 700; background: #eee;">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    const subInput = document.getElementById('subInput');
+    const container = document.getElementById('subTagsContainer');
+
+    subInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            addSubTag();
+        }
+    });
+
+    function addSubTag() {
+        const val = subInput.value.trim();
+        if (!val) return;
+
+        const tag = document.createElement('div');
+        tag.className = 'sub-tag';
+        tag.style = "background: #fff; border: 1px solid var(--primary); color: var(--primary); padding: 5px 12px; border-radius: 8px; display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.9rem;";
+        tag.innerHTML = `
+            <input type="hidden" name="subcategories_list[]" value="${val}">
+            <span>${val}</span>
+            <i class="fas fa-times" onclick="this.parentElement.remove()" style="cursor: pointer; font-size: 0.8rem;"></i>
+        `;
+        container.appendChild(tag);
+        subInput.value = '';
+    }
+
+    // Sync color picker with text input
+    const colorPicker = document.querySelector('input[type="color"]');
+    const colorText = document.getElementById('bgColorText');
+    
+    colorPicker.addEventListener('input', (e) => {
+        colorText.value = e.target.value;
+    });
+    
+    colorText.addEventListener('input', (e) => {
+        if (e.target.value.startsWith('#')) {
+            colorPicker.value = e.target.value;
+        }
+    });
+</script>
+
+{% endblock %}

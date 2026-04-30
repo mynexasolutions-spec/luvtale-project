@@ -1,0 +1,61 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="page-header">
+    <div class="header-left">
+        <h1>Settings</h1>
+        <p>Configure your store preferences.</p>
+    </div>
+</div>
+
+<div class="section-card" style="background: #fff; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); padding: 40px; margin-bottom: 30px;">
+    <form>
+        <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 25px; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-coins" style="color: var(--primary);"></i> Currency & Global Settings
+        </h3>
+        
+        <div style="margin-bottom: 30px; max-width: 500px;">
+            <label style="display: block; margin-bottom: 10px; font-weight: 700; color: #444;">Store Currency</label>
+            <select style="width: 100%; padding: 14px; border: 1.5px solid #eee; border-radius: 12px; font-family: inherit; font-size: 1rem; outline: none;">
+                <option>USD ($)</option>
+                <option selected>INR (₹)</option>
+                <option>EUR (€)</option>
+                <option>GBP (£)</option>
+            </select>
+        </div>
+
+        <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 25px; margin-top: 40px; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-shipping-fast" style="color: var(--primary);"></i> Shipping Configuration
+        </h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
+            <div class="form-group">
+                <label style="display: block; margin-bottom: 10px; font-weight: 700; color: #444;">Standard Shipping Charges</label>
+                <div style="position: relative;">
+                    <span style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); font-weight: 600; color: #555;">₹</span>
+                    <input type="number" value="99" style="width: 100%; padding: 12px 12px 12px 35px; border: 1.5px solid #eee; border-radius: 12px; font-family: inherit;">
+                </div>
+            </div>
+            <div class="form-group">
+                <label style="display: block; margin-bottom: 10px; font-weight: 700; color: #444;">Free Shipping Threshold</label>
+                <div style="position: relative;">
+                    <span style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); font-weight: 600; color: #555;">₹</span>
+                    <input type="number" value="999" style="width: 100%; padding: 12px 12px 12px 35px; border: 1.5px solid #eee; border-radius: 12px; font-family: inherit;">
+                </div>
+            </div>
+        </div>
+
+        <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 25px; margin-top: 40px; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-credit-card" style="color: var(--primary);"></i> Payment Methods
+        </h3>
+        <div style="margin-bottom: 30px;">
+            <label style="display: block; margin-bottom: 10px; font-weight: 700; color: #444;">Enabled Payment Methods (Comma separated)</label>
+            <input type="text" value="COD, Razorpay, UPI" style="width: 100%; padding: 12px; border: 1.5px solid #eee; border-radius: 12px; font-family: inherit;">
+            <p style="font-size: 0.85rem; color: #888; margin-top: 8px;">Separate each method with a comma.</p>
+        </div>
+
+        <div style="margin-top: 40px;">
+            <button type="button" class="btn btn-primary" style="padding: 15px 40px; border-radius: 50px; font-weight: 700; box-shadow: 0 10px 20px rgba(188, 30, 67, 0.1);">Save All Settings</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

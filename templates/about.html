@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}About Us | Luvtale Boutique{% endblock %}
+
+{% block content %}
+<section style="padding: 60px 0; background: var(--sand);">
+    <div class="container">
+        <div style="max-width: 600px; margin: 0 auto; text-align: center;">
+            <h1 style="font-size: 2.2rem; font-weight: 700; margin-bottom: 20px;">Our Story</h1>
+            <p style="font-size: 1.1rem; color: var(--body); line-height: 1.6;">
+                Luvtale Boutique was born from a passion for premium fashion and a commitment to quality. 
+                We believe that style is a reflection of your personality, and our mission is to provide 
+                curated collections that inspire confidence and elegance.
+            </p>
+        </div>
+    </div>
+</section>
+
+<section style="padding: 100px 0;">
+    <div class="container">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;">
+            <div>
+                <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800" style="width: 100%; border-radius: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.1);">
+            </div>
+            <div>
+                <h2 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 15px;">Quality & Elegance</h2>
+                <p style="color: var(--body); margin-bottom: 20px; font-size: 0.95rem;">
+                    Every piece in our boutique is hand-selected for its craftsmanship, material, and timeless design. 
+                    We partner with artisans and brands that share our values of sustainability and excellence.
+                </p>
+                <a href="/shop" class="btn btn-primary" style="padding: 8px 20px; font-size: 0.9rem;">Discover the Collection</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,315 @@
+{% extends "base.html" %}
+
+{% block title %}Home | Luvtale Boutique{% endblock %}
+
+
+
+{% block content %}
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-container">
+        <div class="hero-content">
+            <div class="hero-tag">
+                <svg viewBox="0 0 12 12">
+                    <path d="M6 0l1.5 4.5H12L8.25 7.5l1.5 4.5L6 9.75 2.25 12l1.5-4.5L0 4.5h4.5L6 0z" />
+                </svg>
+                New Collection 2026
+            </div>
+            <h1>
+                Your Ultimate
+                <span class="icons-heros">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 68 68" fill="none">
+                        <path
+                            d="M34 0L43.6167 24.3833L68 34L43.6167 43.6167L34 68L24.3833 43.6167L0 34L24.3833 24.3833L34 0Z"
+                            fill="var(--primary)" />
+                    </svg>
+                    Online Store
+                </span>
+                for All Your Needs
+            </h1>
+            <p>Discover fashion that speaks to you. Free shipping on orders over $99 with no code needed.</p>
+            <div class="hero-btns">
+                <a href="/shop" class="btn btn-primary">Shop Now →</a>
+                <a href="/shop" class="btn btn-outline">VIEW DETAILS</a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat"><span class="stat-num">6.3k+</span><span class="stat-label">Happy Customers</span>
+                </div>
+                <div class="stat"><span class="stat-num">500+</span><span class="stat-label">Products</span></div>
+                <div class="stat"><span class="stat-num">50+</span><span class="stat-label">Brands</span></div>
+            </div>
+        </div>
+        <div class="hero-image-wrap">
+            <div class="hero-banner">
+                <div class="hero-content t1">
+                    <img src="{{ url_for('static', filename='images/blue_1/product_1.png') }}" alt="">
+                    <div class="hero-title">Summer Collection</div>
+                    <div class="hero-subtitle">Explore 200+ styles</div>
+                </div>
+                <div class="hero-badge">Get 20% Off</div>
+            </div>
+            <div class="hero-float-card">
+                <div class="float-icon">👜</div>
+                <div>
+                    <h6>Cozy Cardigan</h6>
+                    <p>$80.00</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CATEGORIES -->
+<section id="categories">
+    <div class="category-section">
+        <div class="container">
+            <div class="category-grid">
+                <div class="category-item">
+                    <a href="/shop?category=1">
+                        <img src="https://picsum.photos/id/20/600/800" class="img right-radius">
+                        <span class="label left">Jacket</span>
+                    </a>
+                </div>
+                <div class="category-item">
+                    <a href="/shop?category=2">
+                        <img src="https://picsum.photos/id/26/600/800" class="img left-radius">
+                        <span class="label left">Jeans</span>
+                    </a>
+                </div>
+                <div class="category-item">
+                    <a href="/shop?category=3">
+                        <img src="https://picsum.photos/id/133/600/800" class="img right-radius">
+                        <span class="label left">Shirts</span>
+                    </a>
+                </div>
+                <div class="category-item">
+                    <a href="/shop?category=4">
+                        <img src="https://picsum.photos/id/204/600/800" class="img left-radius">
+                        <span class="label right">Shorts</span>
+                    </a>
+                </div>
+                <div class="category-item">
+                    <a href="/shop?category=5">
+                        <img src="https://picsum.photos/id/215/600/800" class="img left-radius">
+                        <span class="label right">T-Shirt</span>
+                    </a>
+                </div>
+                <div class="category-item">
+                    <a href="/shop?category=6">
+                        <img src="https://picsum.photos/id/108/600/800" class="img left-radius">
+                        <span class="label right">Blazer</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+    <div class="marquee-track" id="marquee">
+        {% for i in range(2) %}
+        <span class="marquee-item">Jacket</span><span class="marquee-sep">✦</span>
+        <span class="marquee-item">Jeans</span><span class="marquee-sep">✦</span>
+        <span class="marquee-item">Shirts</span><span class="marquee-sep">✦</span>
+        <span class="marquee-item">Shorts</span><span class="marquee-sep">✦</span>
+        <span class="marquee-item">T-Shirt</span><span class="marquee-sep">✦</span>
+        <span class="marquee-item">Blazer</span><span class="marquee-sep">✦</span>
+        <span class="marquee-item">Dresses</span><span class="marquee-sep">✦</span>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- SHOP BY CATEGORY -->
+<section id="shop-categories" style="padding: 100px 0;">
+    <div class="section">
+        <div class="section-header">
+            <div>
+                <h2 class="section-title">Shop by Category</h2>
+                <p class="section-sub">Find exactly what you're looking for</p>
+            </div>
+            <a href="/shop" class="btn btn-outline" style="flex-shrink:0">View All</a>
+        </div>
+        <div class="categories-grid">
+            {% for cat in categories %}
+            <div class="cat-card" onclick="window.location.href='/shop?category={{ cat.id }}'"
+                style="background: {{ cat.bg }}; border-radius: 24px; padding: 30px; position: relative; height: 320px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; transition: transform 0.3s; cursor: pointer;">
+                <div
+                    style="flex: 1; display: flex; align-items: center; justify-content: center; position: relative; z-index: 2;">
+                    <img src="{{ cat.img }}" alt="{{ cat.name }}"
+                        style="width: 120px; height: 120px; object-fit: contain; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));">
+                </div>
+                <div style="position: relative; z-index: 2;">
+                    <h3
+                        style="font-size: 1.5rem; font-weight: 700; color: #fff; margin-bottom: 5px; text-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                        {{ cat.name }}</h3>
+                    <span style="font-size: 0.9rem; color: rgba(255,255,255,0.9); font-weight: 500;">{{
+                        cat.products|length }} Items</span>
+                </div>
+                <div
+                    style="position: absolute; bottom: 0; left: 0; right: 0; height: 40%; background: linear-gradient(to top, rgba(0,0,0,0.2), transparent); z-index: 1;">
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- TRENDING PRODUCTS -->
+<section class="products-section" id="trending">
+    <div class="products-inner">
+        <div class="section-header" style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px;">
+            <div>
+                <h2 class="section-title">Trending Now</h2>
+                <p class="section-sub">Discover what's popular this season</p>
+            </div>
+            <a href="/shop" class="btn btn-primary" style="flex-shrink:0; padding: 10px 25px; font-size: 0.9rem;">View All</a>
+        </div>
+
+        <!-- CATEGORY FILTER BAR -->
+        <div class="filter-bar" style="margin-bottom: 40px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 8px; background: #fff; border-radius: 50px; border: 1.5px solid #eee; width: fit-content;">
+            <button class="filter-btn active" data-filter="all" style="padding: 10px 25px; border-radius: 50px; border: none; background: #000; color: #fff; font-weight: 600; cursor: pointer; transition: 0.3s; font-size: 0.9rem;">All</button>
+            {% for cat in categories %}
+            <button class="filter-btn" data-filter="{{ cat.name|lower }}" style="padding: 10px 25px; border-radius: 50px; border: none; background: transparent; color: #555; font-weight: 600; cursor: pointer; transition: 0.3s; font-size: 0.9rem;">{{ cat.name }}</button>
+            {% endfor %}
+        </div>
+        <div class="products-grid" id="products-grid">
+            {% for product in products %}
+            <div class="product-card" data-category="{{ product.category.name|lower }}">
+                <div class="product-image-wrap"
+                    style="background: {{ product.category.bg if product.category else 'var(--sand)' }}; border-radius: 20px 20px 0 0; padding: 25px 15px; min-height: 280px; display: flex; align-items: center; justify-content: center; position: relative;">
+                    {% if product.badge %}
+                    <span
+                        style="position: absolute; top: 15px; left: 15px; background: #fff; color: #000; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 600; z-index: 5;">{{
+                        product.badge }}</span>
+                    {% endif %}
+                    <div class="image-container"
+                        style="position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                        <img src="{{ product.img_primary }}" alt="{{ product.name }}" class="product-image primary"
+                            style="max-width: 160px; max-height: 160px; object-fit: contain; filter: drop-shadow(0 15px 20px rgba(0,0,0,0.08));">
+                    </div>
+                    <div class="product-card-actions">
+                        <a href="/product/{{ product.id }}" class="quick-view-btn">Quick View</a>
+                        <div class="action-icons">
+                            <button class="circle-btn" onclick="addToWishlist({{ product.id }})"><i
+                                    class="far fa-heart"></i></button>
+                            <button class="circle-btn" onclick="addToCart({{ product.id }})"><i
+                                    class="fas fa-shopping-cart"></i></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <a href="/product/{{ product.id }}" class="product-name">{{ product.name }}</a>
+                    <div class="price-rating-wrap">
+                        <div class="product-price">
+                            <span class="curr-price">₹{{ product.price }}</span>
+                            {% if product.old_price %}
+                            <span class="old-price">₹{{ product.old_price }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="rating">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                class="fas fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- PROMO BANNERS -->
+<div class="promo-section" style="padding: 60px 0;">
+    <div class="promo-inner">
+        <div class="promo-grid">
+            <div class="promo-card promo-card-1">
+                <div class="promo-discount">30%<span>OFF</span></div>
+                <h3>Summer Sale</h3>
+                <p>Limited time offer on selected items from our new collection</p>
+                <a href="/shop" class="btn btn-primary" style="width:fit-content">Shop Sale →</a>
+            </div>
+            <div class="promo-card promo-card-2">
+                <h3 style="color:#fff">New Arrivals</h3>
+                <p style="color:rgba(255,255,255,.7)">Fresh styles dropping every week. Be the first to shop the latest
+                    trends.</p>
+                <a href="/shop" class="btn"
+                    style="background:#fff;color:#000;border-color:#fff;width:fit-content">Explore Now →</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<section style="padding: 60px 0; background: #fff;">
+    <div class="container">
+        <div class="section-header" style="text-align: center; margin-bottom: 60px;">
+            <div style="margin: 0 auto;">
+                <h2 class="section-title">What Our Customers Say</h2>
+                <p class="section-sub">Real feedback from our boutique community</p>
+            </div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+            {% for review in reviews %}
+            <div style="background: #FFFAF3; padding: 25px; border-radius: 20px; border: 1.5px solid #FEEB9D; position: relative;">
+                <div style="display: flex; gap: 4px; color: #FFD700; margin-bottom: 15px;">
+                    {% for i in range(review.rating) %}<i class="fas fa-star" style="font-size: 0.8rem;"></i>{% endfor %}
+                </div>
+                <p style="font-style: italic; color: #444; line-height: 1.6; margin-bottom: 20px; font-size: 0.95rem;">"{{ review.comment }}"</p>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div style="width: 45px; height: 45px; background: var(--primary); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">
+                        {{ review.customer_name[0]|upper }}
+                    </div>
+                    <div>
+                        <h4 style="font-weight: 700; font-size: 1rem; margin-bottom: 2px;">{{ review.customer_name }}</h4>
+                        <span style="font-size: 0.8rem; color: #888; font-weight: 600;">Verified Customer</span>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #888;">
+                <p>No reviews yet. Be the first to share your experience!</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+    <script>
+        // Category Filtering Logic
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            const productCards = document.querySelectorAll('.product-card');
+
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Update active button
+                    filterBtns.forEach(b => {
+                        b.classList.remove('active');
+                        b.style.background = 'transparent';
+                        b.style.color = '#555';
+                    });
+                    btn.classList.add('active');
+                    btn.style.background = '#000';
+                    btn.style.color = '#fff';
+
+                    const filter = btn.getAttribute('data-filter');
+
+                    // Filter products
+                    productCards.forEach(card => {
+                        const cardCategory = card.getAttribute('data-category').toLowerCase();
+                        if (filter === 'all' || cardCategory === filter) {
+                            card.style.display = 'block';
+                            card.style.opacity = '0';
+                            setTimeout(() => {
+                                card.style.opacity = '1';
+                                card.style.transition = 'opacity 0.4s ease';
+                            }, 10);
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+{% endblock %}

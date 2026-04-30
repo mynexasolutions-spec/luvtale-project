@@ -1,0 +1,351 @@
+{% extends "base.html" %}
+
+{% block title %}Your Shopping Bag | Luvtale Boutique{% endblock %}
+
+{% block extra_css %}
+<style>
+.cart-page-wrap {
+    padding: 80px 40px;
+    background: var(--light);
+    min-height: 80vh;
+}
+
+.cart-header-title {
+    text-align: center;
+    margin-bottom: 60px;
+    margin-top: 60px;
+}
+
+.cart-header-title h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-top: 60px;
+    margin-bottom: 10px;
+    color: var(--secondary);
+}
+
+.cart-layout {
+    max-width: 1320px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 40px;
+    padding: 20px 30px;
+    border-bottom: 1px solid var(--border);
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #999;
+    letter-spacing: 1px;
+}
+
+.cart-items-list {
+    background: #fff;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+}
+
+.cart-item-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1.5fr 1fr auto;
+    padding: 30px;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+}
+
+.cart-item-row:last-child { border-bottom: none; }
+
+.product-info-cell {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.p-img {
+    width: 100px;
+    height: 100px;
+    background: var(--light);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.p-img img {
+    max-width: 80%;
+    max-height: 80%;
+    object-fit: contain;
+}
+
+.p-details h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.p-details span {
+    font-size: 0.8rem;
+    color: #bbb;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.price-cell, .total-cell {
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.total-cell { color: var(--primary); }
+
+.qty-cell {
+    display: flex;
+    align-items: center;
+    background: var(--light);
+    border-radius: 50px;
+    padding: 5px;
+    width: fit-content;
+}
+
+.qty-btn-mini {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    border: none;
+    background: #fff;
+    cursor: pointer;
+    font-weight: 700;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.qty-val-mini {
+    width: 40px;
+    text-align: center;
+    font-weight: 700;
+}
+
+.remove-cell i {
+    color: #ccc;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.remove-cell i:hover { color: var(--primary); }
+
+.cart-summary-card {
+    background: #fff;
+    padding: 40px;
+    border-radius: var(--radius);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    height: fit-content;
+    position: sticky;
+    top: 120px;
+}
+
+.summary-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 30px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    font-size: 1rem;
+    color: var(--body);
+}
+
+.summary-total-row {
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.summary-total-row span:first-child {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.summary-total-row .total-val {
+    font-size: 1.5rem;
+    font-weight: 800;
+}
+
+.checkout-btn-full {
+    width: 100%;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    padding: 20px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-top: 30px;
+    cursor: pointer;
+    transition: 0.4s;
+}
+
+.checkout-btn-full:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(204, 13, 57, 0.2);
+}
+
+.continue-shopping-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 30px;
+    color: var(--primary);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+@media (max-width: 1024px) {
+    .cart-grid-container { grid-template-columns: 1fr; }
+    .cart-table-header { display: none; }
+    .cart-item-row { grid-template-columns: 1fr auto; gap: 20px; }
+}
+{% endblock %}
+
+{% block content %}
+<div class="cart-page-wrap">
+    <div class="cart-header-title">
+        <h1>Your Shopping Bag</h1>
+        <p id="cart-item-count-text">You have 0 items in your bag</p>
+    </div>
+
+    <div class="cart-grid-container">
+        <div>
+            <div class="cart-items-list">
+                <div class="cart-table-header">
+                    <span>Product</span>
+                    <span>Price</span>
+                    <span>Quantity</span>
+                    <span>Total</span>
+                    <span></span>
+                </div>
+                <div id="cart-items-container">
+                    <!-- Loaded via JS -->
+                </div>
+            </div>
+            
+            <div id="cart-empty-state" style="display: none; text-align: center; padding: 60px;">
+                <div style="font-size: 4rem; margin-bottom: 20px;">🛍️</div>
+                <h2>Your bag is empty</h2>
+                <a href="/shop" class="continue-shopping-link" style="margin-top: 20px;">Browse our collection</a>
+            </div>
+
+            <a href="/shop" class="continue-shopping-link">
+                <i class="fas fa-arrow-left"></i> Continue Shopping
+            </a>
+        </div>
+
+        <aside class="cart-summary-card">
+            <h2 class="summary-title">Order Summary</h2>
+            <div class="summary-row">
+                <span>Subtotal</span>
+                <span id="summary-subtotal">₹0</span>
+            </div>
+            <div class="summary-row">
+                <span>Shipping</span>
+                <span style="color: #4CAF50; font-weight: 700;">FREE</span>
+            </div>
+            
+            <div class="summary-total-row">
+                <span>Estimated Total</span>
+                <span class="total-val" id="summary-total">₹0</span>
+            </div>
+            
+            <p style="font-size: 0.8rem; color: #999; margin-top: 15px; text-align: center;">
+                Tax included. Shipping calculated at checkout.
+            </p>
+
+            <button class="checkout-btn-full" onclick="proceedToCheckout()">Proceed to Checkout</button>
+            
+            <div style="margin-top: 30px; display: flex; align-items: center; justify-content: center; gap: 10px; color: #999; font-size: 0.85rem;">
+                <i class="fas fa-shield-alt" style="color: #4CAF50;"></i> Secure SSL Encryption & Data Protection
+            </div>
+        </aside>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    async function loadCartPage() {
+        const res = await fetch('/api/cart-data');
+        const data = await res.json();
+
+        const container = document.getElementById('cart-items-container');
+        const emptyState = document.getElementById('cart-empty-state');
+        const countText = document.getElementById('cart-item-count-text');
+
+        countText.innerText = `You have ${data.count} items in your bag`;
+
+        if (data.count === 0) {
+            emptyState.style.display = 'block';
+            container.parentElement.style.display = 'none';
+            return;
+        }
+
+        emptyState.style.display = 'none';
+        container.parentElement.style.display = 'block';
+        container.innerHTML = '';
+
+        for (const [id, item] of Object.entries(data.cart)) {
+            const itemTotal = item.price * item.quantity;
+            container.innerHTML += `
+                <div class="cart-item-row">
+                    <div class="product-info-cell">
+                        <div class="p-img">
+                            <img src="${item.img}" alt="${item.name}">
+                        </div>
+                        <div class="p-details">
+                            <span>${item.category || 'Luxury'}</span>
+                            <h3>${item.name}</h3>
+                        </div>
+                    </div>
+                    <div class="price-cell">₹${item.price}</div>
+                    <div class="qty-cell">
+                        <button class="qty-btn-mini" onclick="updateItem(${id}, -1)">-</button>
+                        <div class="qty-val-mini">${item.quantity}</div>
+                        <button class="qty-btn-mini" onclick="updateItem(${id}, 1)">+</button>
+                    </div>
+                    <div class="total-cell">₹${itemTotal}</div>
+                    <div class="remove-cell" onclick="updateItem(${id}, -${item.quantity})">
+                        <i class="fas fa-trash-alt"></i>
+                    </div>
+                </div>
+            `;
+        }
+
+        document.getElementById('summary-subtotal').innerText = `₹${data.total}`;
+        document.getElementById('summary-total').innerText = `₹${data.total}`;
+    }
+
+    async function updateItem(id, delta) {
+        await fetch(`/api/add-to-cart/${id}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ quantity: delta })
+        });
+        loadCartPage();
+        // Find current qty and add negative of that
+        const res = await fetch('/api/cart-data');
+        const data = await res.json();
+        const item = data.cart[id];
+        if (item) {
+            await addToCart(id, -item.quantity);
+            loadCartPage();
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadCartPage);
+</script>
+{% endblock %}
