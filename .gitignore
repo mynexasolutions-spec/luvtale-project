@@ -14,3 +14,11 @@ htmlcov/
 *.db
 *.sqlite
 *.pem
+
+# Config & Deployment
+deployment_summary.conf
+*.conf
+
+# Temporary Scripts
+scratch_*.py
+migrate_to_cloud.py

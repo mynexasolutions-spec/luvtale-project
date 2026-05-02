@@ -25,7 +25,7 @@ async function openQuickView(productId) {
     try {
         const res = await fetch(`/api/product/${productId}`);
         const product = await res.json();
-        
+
         document.getElementById('modal-img').src = product.img_primary;
         document.getElementById('modal-name').innerText = product.name;
         document.getElementById('modal-price').innerText = `₹${product.price}`;
@@ -34,7 +34,7 @@ async function openQuickView(productId) {
             addToCart(product.id);
             closeModal();
         };
-        
+
         document.getElementById('modal-overlay').classList.add('active');
         document.getElementById('modal-box').classList.add('active');
     } catch (err) {
@@ -62,7 +62,7 @@ async function addToCart(productId, quantity = 1, variationId = null) {
     try {
         let url = `/api/add-to-cart/${productId}`;
         if (variationId) url += `?v=${variationId}`;
-        
+
         const response = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -98,16 +98,16 @@ async function addToWishlist(productId) {
 async function updateCartUI() {
     const res = await fetch('/api/cart-data');
     const data = await res.json();
-    
+
     const container = document.getElementById('cart-items');
     const countHeader = document.getElementById('cart-header-count');
     const totalEl = document.getElementById('cart-total');
-    
+
     if (!container) return;
-    
+
     countHeader.innerText = `(${data.count} items)`;
     totalEl.innerText = `₹${data.total.toFixed(2)}`;
-    
+
     container.innerHTML = '';
     for (const [id, item] of Object.entries(data.cart)) {
         container.innerHTML += `
@@ -187,7 +187,7 @@ function showToast(title, message) {
     `;
     toast.innerHTML = `<span style="color:var(--primary); margin-right:10px;">✦</span> ${message}`;
     document.body.appendChild(toast);
-    
+
     setTimeout(() => {
         toast.style.animation = 'slideDown 0.5s ease forwards';
         setTimeout(() => toast.remove(), 500);

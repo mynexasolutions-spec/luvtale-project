@@ -97,7 +97,7 @@ function updateCartCount() {
     const count = cart.reduce((sum, item) => sum + item.qty, 0);
     const cartCountEl = document.getElementById('cart-count');
     if (cartCountEl) cartCountEl.textContent = count;
-    
+
     const mobileCartCountEl = document.getElementById('mobile-cart-count');
     if (mobileCartCountEl) mobileCartCountEl.textContent = count;
 }
@@ -184,7 +184,7 @@ function openModal(id) {
     document.getElementById('modal-price').textContent = '$' + p.price;
     document.getElementById('modal-img-wrap').innerHTML = `<div style="font-size:100px">${p.emoji}</div>`;
     document.getElementById('modal-img-wrap').style.background = p.bg;
-    
+
     // Use description from backend
     const descEl = document.getElementById('modal-desc');
     if (descEl) descEl.textContent = p.desc || "Premium quality product with exceptional design.";
@@ -240,8 +240,8 @@ function handleSearch(query) {
         return;
     }
 
-    const filtered = products.filter(p => 
-        p.name.toLowerCase().includes(query.toLowerCase()) || 
+    const filtered = products.filter(p =>
+        p.name.toLowerCase().includes(query.toLowerCase()) ||
         p.cat.toLowerCase().includes(query.toLowerCase())
     );
 
@@ -265,14 +265,14 @@ function handleSearch(query) {
 async function subscribeNewsletter(event) {
     event.preventDefault();
     const email = event.target.querySelector('input').value;
-    
+
     try {
         const response = await fetch('/api/subscribe', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email })
         });
-        
+
         const data = await response.json();
         alert(data.message || "Thank you for subscribing!");
         event.target.reset();

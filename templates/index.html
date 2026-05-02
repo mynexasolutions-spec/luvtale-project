@@ -66,20 +66,20 @@
             <div class="category-grid">
                 <div class="category-item">
                     <a href="/shop?category=1">
-                        <img src="https://picsum.photos/id/20/600/800" class="img right-radius">
-                        <span class="label left">Jacket</span>
+                        <img src="https://picsum.photos/id/20/600/800" class="img left-radius">
+                        <span class="label right">Jacket</span>
                     </a>
                 </div>
                 <div class="category-item">
                     <a href="/shop?category=2">
                         <img src="https://picsum.photos/id/26/600/800" class="img left-radius">
-                        <span class="label left">Jeans</span>
+                        <span class="label right">Jeans</span>
                     </a>
                 </div>
                 <div class="category-item">
                     <a href="/shop?category=3">
-                        <img src="https://picsum.photos/id/133/600/800" class="img right-radius">
-                        <span class="label left">Shirts</span>
+                        <img src="https://picsum.photos/id/133/600/800" class="img left-radius">
+                        <span class="label right">Shirts</span>
                     </a>
                 </div>
                 <div class="category-item">
@@ -158,19 +158,25 @@
 <!-- TRENDING PRODUCTS -->
 <section class="products-section" id="trending">
     <div class="products-inner">
-        <div class="section-header" style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px;">
+        <div class="section-header"
+            style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px;">
             <div>
                 <h2 class="section-title">Trending Now</h2>
                 <p class="section-sub">Discover what's popular this season</p>
             </div>
-            <a href="/shop" class="btn btn-primary" style="flex-shrink:0; padding: 10px 25px; font-size: 0.9rem;">View All</a>
+            <a href="/shop" class="btn btn-primary" style="flex-shrink:0; padding: 10px 25px; font-size: 0.9rem;">View
+                All</a>
         </div>
 
         <!-- CATEGORY FILTER BAR -->
-        <div class="filter-bar" style="margin-bottom: 40px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 8px; background: #fff; border-radius: 50px; border: 1.5px solid #eee; width: fit-content;">
-            <button class="filter-btn active" data-filter="all" style="padding: 10px 25px; border-radius: 50px; border: none; background: #000; color: #fff; font-weight: 600; cursor: pointer; transition: 0.3s; font-size: 0.9rem;">All</button>
+        <div class="filter-bar"
+            style="margin-bottom: 40px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 8px; background: #fff; border-radius: 50px; border: 1.5px solid #eee; width: fit-content;">
+            <button class="filter-btn active" data-filter="all"
+                style="padding: 10px 25px; border-radius: 50px; border: none; background: #000; color: #fff; font-weight: 600; cursor: pointer; transition: 0.3s; font-size: 0.9rem;">All</button>
             {% for cat in categories %}
-            <button class="filter-btn" data-filter="{{ cat.name|lower }}" style="padding: 10px 25px; border-radius: 50px; border: none; background: transparent; color: #555; font-weight: 600; cursor: pointer; transition: 0.3s; font-size: 0.9rem;">{{ cat.name }}</button>
+            <button class="filter-btn" data-filter="{{ cat.name|lower }}"
+                style="padding: 10px 25px; border-radius: 50px; border: none; background: transparent; color: #555; font-weight: 600; cursor: pointer; transition: 0.3s; font-size: 0.9rem;">{{
+                cat.name }}</button>
             {% endfor %}
         </div>
         <div class="products-grid" id="products-grid">
@@ -240,8 +246,50 @@
     </div>
 </div>
 
+<!-- WHY SHOP WITH US -->
+<section class="features-section">
+    <div class="container">
+        <div class="section-header" style="text-align: center; margin-bottom: 60px;">
+            <div style="margin: 0 auto;">
+                <h2 class="section-title">Why Shop With Us?</h2>
+                <p class="section-sub">Experience the best in fashion</p>
+            </div>
+        </div>
+        <div class="features-grid">
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-shipping-fast"></i>
+                </div>
+                <h3>Fast Shipping</h3>
+                <p>Free express delivery on all orders over ₹2000. Delivered to your doorstep in 3-5 days.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Secure Payment</h3>
+                <p>Your security is our priority. We use 256-bit SSL encryption for all transactions.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-undo"></i>
+                </div>
+                <h3>Easy Returns</h3>
+                <p>Not satisfied? No problem. Return any item within 30 days for a full refund.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-medal"></i>
+                </div>
+                <h3>Premium Quality</h3>
+                <p>Hand-picked materials and ethical manufacturing for a touch of luxury in every stitch.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- TESTIMONIALS -->
-<section style="padding: 60px 0; background: #fff;">
+<section style="padding: 80px 0; background: #fff;">
     <div class="container">
         <div class="section-header" style="text-align: center; margin-bottom: 60px;">
             <div style="margin: 0 auto;">
@@ -249,20 +297,20 @@
                 <p class="section-sub">Real feedback from our boutique community</p>
             </div>
         </div>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+        <div class="testimonials-grid">
             {% for review in reviews %}
-            <div style="background: #FFFAF3; padding: 25px; border-radius: 20px; border: 1.5px solid #FEEB9D; position: relative;">
-                <div style="display: flex; gap: 4px; color: #FFD700; margin-bottom: 15px;">
-                    {% for i in range(review.rating) %}<i class="fas fa-star" style="font-size: 0.8rem;"></i>{% endfor %}
+            <div class="testimonial-card">
+                <div class="testimonial-stars">
+                    {% for i in range(review.rating) %}<i class="fas fa-star"></i>{% endfor %}
                 </div>
-                <p style="font-style: italic; color: #444; line-height: 1.6; margin-bottom: 20px; font-size: 0.95rem;">"{{ review.comment }}"</p>
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <div style="width: 45px; height: 45px; background: var(--primary); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">
+                <p class="testimonial-comment">"{{ review.comment }}"</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">
                         {{ review.customer_name[0]|upper }}
                     </div>
-                    <div>
-                        <h4 style="font-weight: 700; font-size: 1rem; margin-bottom: 2px;">{{ review.customer_name }}</h4>
-                        <span style="font-size: 0.8rem; color: #888; font-weight: 600;">Verified Customer</span>
+                    <div class="author-info">
+                        <h4>{{ review.customer_name }}</h4>
+                        <span>Verified Customer</span>
                     </div>
                 </div>
             </div>
@@ -274,42 +322,163 @@
         </div>
     </div>
 </section>
-    <script>
-        // Category Filtering Logic
-        document.addEventListener('DOMContentLoaded', function() {
-            const filterBtns = document.querySelectorAll('.filter-btn');
-            const productCards = document.querySelectorAll('.product-card');
 
-            filterBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    // Update active button
-                    filterBtns.forEach(b => {
-                        b.classList.remove('active');
-                        b.style.background = 'transparent';
-                        b.style.color = '#555';
-                    });
-                    btn.classList.add('active');
-                    btn.style.background = '#000';
-                    btn.style.color = '#fff';
+<!-- FAQ SECTION -->
+<section class="faq-section">
+    <div class="container">
+        <div class="section-header" style="text-align: center; margin-bottom: 60px;">
+            <div style="margin: 0 auto;">
+                <h2 class="section-title">Frequently Asked Questions</h2>
+                <p class="section-sub">Everything you need to know about our boutique</p>
+            </div>
+        </div>
+        <div class="faq-container">
+            <div class="faq-item">
+                <button class="faq-question">
+                    What is your return policy?
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>We offer a 30-day return policy for all unworn and unwashed items with original tags attached. Simply visit our returns portal to start your process.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">
+                    Do you ship internationally?
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>Yes, we ship to over 50 countries worldwide! Shipping costs and delivery times vary by location and will be calculated at checkout.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">
+                    How can I track my order?
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>Once your order ships, you'll receive an email with a tracking number and a link to follow your package's journey to your doorstep.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">
+                    Are your materials sustainable?
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>We are committed to ethical fashion. 70% of our current collection is made from sustainable or recycled materials, and we're working towards 100% by 2027.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
-                    const filter = btn.getAttribute('data-filter');
+<!-- NEWSLETTER -->
+<section class="newsletter-section">
+    <div class="newsletter-inner">
+        <h2>Join the Club</h2>
+        <p>Subscribe to receive updates, access to exclusive deals, and more.</p>
+        <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Thanks for subscribing!');">
+            <input type="email" placeholder="Enter your email" required>
+            <button type="submit" class="btn">Subscribe</button>
+        </form>
+    </div>
+</section>
+<script>
+    // Category Filtering Logic
+    document.addEventListener('DOMContentLoaded', function () {
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const productCards = document.querySelectorAll('.product-card');
 
-                    // Filter products
-                    productCards.forEach(card => {
-                        const cardCategory = card.getAttribute('data-category').toLowerCase();
-                        if (filter === 'all' || cardCategory === filter) {
-                            card.style.display = 'block';
-                            card.style.opacity = '0';
-                            setTimeout(() => {
-                                card.style.opacity = '1';
-                                card.style.transition = 'opacity 0.4s ease';
-                            }, 10);
-                        } else {
-                            card.style.display = 'none';
-                        }
-                    });
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Update active button
+                filterBtns.forEach(b => {
+                    b.classList.remove('active');
+                    b.style.background = 'transparent';
+                    b.style.color = '#555';
+                });
+                btn.classList.add('active');
+                btn.style.background = '#000';
+                btn.style.color = '#fff';
+
+                const filter = btn.getAttribute('data-filter');
+
+                // Filter products
+                productCards.forEach(card => {
+                    const cardCategory = card.getAttribute('data-category').toLowerCase();
+                    if (filter === 'all' || cardCategory === filter) {
+                        card.style.display = 'block';
+                        card.style.opacity = '0';
+                        setTimeout(() => {
+                            card.style.opacity = '1';
+                            card.style.transition = 'opacity 0.4s ease';
+                        }, 10);
+                    } else {
+                        card.style.display = 'none';
+                    }
                 });
             });
         });
-    </script>
+    });
+
+    // FAQ Accordion Logic
+    document.querySelectorAll('.faq-question').forEach(button => {
+        button.addEventListener('click', () => {
+            const faqItem = button.parentElement;
+            faqItem.classList.toggle('active');
+            
+            // Close other items if one is opened
+            document.querySelectorAll('.faq-item').forEach(item => {
+                if (item !== faqItem) {
+                    item.classList.remove('active');
+                }
+            });
+        });
+    });
+
+    // Hamburger Menu Logic
+    window.toggleMenu = function(e) {
+        if(e) e.stopPropagation();
+        const hamburger = document.getElementById('hamburger');
+        const mobileNav = document.getElementById('mobile-nav');
+        
+        if (hamburger && mobileNav) {
+            hamburger.classList.toggle('active');
+            mobileNav.classList.toggle('open');
+            
+            if (mobileNav.classList.contains('open')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        }
+    };
+
+    // Close nav when tapping outside
+    document.addEventListener('click', function(e) {
+        const mobileNav = document.getElementById('mobile-nav');
+        const hamburger = document.getElementById('hamburger');
+        if (mobileNav && mobileNav.classList.contains('open')) {
+            if (!mobileNav.contains(e.target) && !hamburger.contains(e.target)) {
+                hamburger.classList.remove('active');
+                mobileNav.classList.remove('open');
+                document.body.style.overflow = '';
+            }
+        }
+    });
+
+    // Close nav when any link inside is tapped
+    document.querySelectorAll('.mobile-nav a').forEach(link => {
+        link.addEventListener('click', () => {
+            const mobileNav = document.getElementById('mobile-nav');
+            const hamburger = document.getElementById('hamburger');
+            if (mobileNav) {
+                hamburger.classList.remove('active');
+                mobileNav.classList.remove('open');
+                document.body.style.overflow = '';
+            }
+        });
+    });
+</script>
 {% endblock %}
