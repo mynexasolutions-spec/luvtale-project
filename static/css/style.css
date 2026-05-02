@@ -2710,4 +2710,28 @@
             .newsletter-section h2 {
                 font-size: 2rem;
             }
+
+            /* About & Contact Responsive Fixes */
+            .about-grid {
+                grid-template-columns: 1fr !important;
+                gap: 40px !important;
+                text-align: center;
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr !important;
+                padding: 25px !important;
+            }
+
+            .contact-info {
+                border-right: none !important;
+                border-bottom: 1px solid var(--border);
+                padding-right: 0 !important;
+                padding-bottom: 25px;
+                margin-bottom: 10px;
+            }
+
+            .contact-form-row {
+                grid-template-columns: 1fr !important;
+            }
         }

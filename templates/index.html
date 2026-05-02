@@ -422,62 +422,8 @@
         });
     });
 
-    // FAQ Accordion Logic
-    document.querySelectorAll('.faq-question').forEach(button => {
-        button.addEventListener('click', () => {
-            const faqItem = button.parentElement;
-            faqItem.classList.toggle('active');
-            
-            // Close other items if one is opened
-            document.querySelectorAll('.faq-item').forEach(item => {
-                if (item !== faqItem) {
-                    item.classList.remove('active');
-                }
+                });
             });
-        });
-    });
-
-    // Hamburger Menu Logic
-    window.toggleMenu = function(e) {
-        if(e) e.stopPropagation();
-        const hamburger = document.getElementById('hamburger');
-        const mobileNav = document.getElementById('mobile-nav');
-        
-        if (hamburger && mobileNav) {
-            hamburger.classList.toggle('active');
-            mobileNav.classList.toggle('open');
-            
-            if (mobileNav.classList.contains('open')) {
-                document.body.style.overflow = 'hidden';
-            } else {
-                document.body.style.overflow = '';
-            }
-        }
-    };
-
-    // Close nav when tapping outside
-    document.addEventListener('click', function(e) {
-        const mobileNav = document.getElementById('mobile-nav');
-        const hamburger = document.getElementById('hamburger');
-        if (mobileNav && mobileNav.classList.contains('open')) {
-            if (!mobileNav.contains(e.target) && !hamburger.contains(e.target)) {
-                hamburger.classList.remove('active');
-                mobileNav.classList.remove('open');
-                document.body.style.overflow = '';
-            }
-        }
-    });
-
-    // Close nav when any link inside is tapped
-    document.querySelectorAll('.mobile-nav a').forEach(link => {
-        link.addEventListener('click', () => {
-            const mobileNav = document.getElementById('mobile-nav');
-            const hamburger = document.getElementById('hamburger');
-            if (mobileNav) {
-                hamburger.classList.remove('active');
-                mobileNav.classList.remove('open');
-                document.body.style.overflow = '';
-            }
         });
     });
 </script>

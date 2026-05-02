@@ -251,15 +251,103 @@
         color: #fff;
     }
 
-    @media (max-width: 1200px) {
-        .products-grid-3 {
-            grid-template-columns: repeat(3, 1fr);
-        }
+    /* Mobile Filter Bar */
+    .mobile-filter-wrap {
+        display: none;
+        background: #fff;
+        padding: 15px 0;
+        border-bottom: 1px solid #eee;
+        position: sticky;
+        top: 70px;
+        z-index: 100;
+        margin-bottom: 20px;
+    }
+
+    .mobile-chips-scroll {
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        padding: 0 20px;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .mobile-chips-scroll::-webkit-scrollbar {
+        display: none;
+    }
+
+    .filter-chip {
+        white-space: nowrap;
+        padding: 8px 18px;
+        background: #f8f8f8;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #555;
+        border: 1.5px solid transparent;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .filter-chip.active {
+        background: var(--primary);
+        color: #fff;
+        border-color: var(--primary);
+    }
+
+    .mobile-filter-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px 0;
+        margin-top: 10px;
+        border-top: 1px solid #f8f8f8;
+    }
+
+    .m-action-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--secondary);
+        background: none;
+        border: none;
+    }
+
+    /* Price Popover */
+    .price-popover {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #fff;
+        padding: 20px;
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        z-index: 101;
     }
 
     @media (max-width: 1024px) {
+        .shop-sidebar {
+            display: none;
+        }
+
         .shop-container {
             grid-template-columns: 1fr;
+            padding: 0;
+        }
+
+        .mobile-filter-wrap {
+            display: block;
+        }
+
+        .shop-page-wrap {
+            padding: 0 0 60px;
+        }
+
+        main {
+            padding: 0 20px;
         }
 
         .products-grid-3 {
@@ -273,9 +361,14 @@
         }
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 480px) {
         .products-grid-3 {
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        
+        .p-card-img-wrap {
+            height: 180px;
         }
     }
 </style>
@@ -283,6 +376,40 @@
 
 {% block content %}
 <div class="shop-page-wrap">
+    <!-- MOBILE FILTER BAR -->
+    <div class="mobile-filter-wrap">
+        <div class="mobile-chips-scroll">
+            <div class="filter-chip {% if not request.args.get('category') %}active{% endif %}" onclick="clearFilters()">All</div>
+            {% for cat in categories %}
+            <div class="filter-chip {% if cat.id|string in request.args.getlist('category') %}active{% endif %}" onclick="toggleMobileCategory({{ cat.id }})">
+                {{ cat.name }}
+            </div>
+            {% endfor %}
+        </div>
+        <div class="mobile-filter-actions">
+            <button class="m-action-btn" onclick="togglePricePopover()">
+                <i class="fas fa-sliders-h"></i> Price Range
+            </button>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 0.75rem; color: #999;">Sort:</span>
+                <select class="m-sort-select" style="border: none; font-weight: 700; font-size: 0.85rem; outline: none; background: none;" onchange="applyFilters()">
+                    <option value="new">Newest</option>
+                    <option value="low">Price: Low</option>
+                    <option value="high">Price: High</option>
+                </select>
+            </div>
+        </div>
+        <!-- Price Range Popover -->
+        <div class="price-popover" id="price-popover">
+            <h4 style="font-size: 1rem; margin-bottom: 15px;">Price Range</h4>
+            <input type="range" class="price-slider" id="m-price-slider" min="0" max="10000" step="100" value="{{ request.args.get('max_price', 10000) }}" oninput="updateMPriceLabel(this.value)">
+            <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+                <span style="font-weight: 600;">₹0 - <span id="m-price-val">₹{{ request.args.get('max_price', '10,000+') }}</span></span>
+                <button class="btn btn-primary" style="padding: 5px 15px; font-size: 0.8rem;" onclick="applyFilters()">Apply</button>
+            </div>
+        </div>
+    </div>
+
     <div class="shop-container">
         <aside class="shop-sidebar">
             <div class="sidebar-card">
@@ -297,7 +424,7 @@
                     {% for cat in categories %}
                     <li style="margin-bottom: 20px;">
                         <label class="custom-checkbox" style="font-weight: 800; color: var(--primary);">
-                            <input type="checkbox" name="category" value="{{ cat.id }}" {% if cat.id in category_ids %}checked{% endif %} onchange="applyFilters()">
+                            <input type="checkbox" name="category" value="{{ cat.id }}" {% if cat.id|string in request.args.getlist('category') %}checked{% endif %} onchange="applyFilters()">
                             <span>{{ cat.name }}</span>
                         </label>
                         {% if cat.subcategories %}
@@ -305,7 +432,7 @@
                             {% for sub in cat.subcategories %}
                             <li style="margin-bottom: 8px;">
                                 <label class="custom-checkbox" style="font-size: 0.85rem; font-weight: 500; color: #666;">
-                                    <input type="checkbox" name="subcategory" value="{{ sub.id }}" {% if sub.id in subcategory_ids %}checked{% endif %} onchange="applyFilters()">
+                                    <input type="checkbox" name="subcategory" value="{{ sub.id }}" {% if sub.id|string in request.args.getlist('subcategory') %}checked{% endif %} onchange="applyFilters()">
                                     <span>{{ sub.name }}</span>
                                 </label>
                             </li>
@@ -330,33 +457,66 @@
 
             <div class="sidebar-card">
                 <h3>Sort By</h3>
-                <select class="sort-select" onchange="applyFilters()">
-                    <option value="new">Newest First</option>
-                    <option value="low">Price: Low to High</option>
-                    <option value="high">Price: High to Low</option>
+                <select class="sort-select" id="sort-select" onchange="applyFilters()">
+                    <option value="new" {% if request.args.get('sort') == 'new' %}selected{% endif %}>Newest First</option>
+                    <option value="low" {% if request.args.get('sort') == 'low' %}selected{% endif %}>Price: Low to High</option>
+                    <option value="high" {% if request.args.get('sort') == 'high' %}selected{% endif %}>Price: High to Low</option>
                 </select>
             </div>
         </aside>
 
         <script>
+            function togglePricePopover() {
+                const pop = document.getElementById('price-popover');
+                pop.style.display = pop.style.display === 'block' ? 'none' : 'block';
+            }
+
+            function updateMPriceLabel(val) {
+                document.getElementById('m-price-val').innerText = '₹' + (val >= 10000 ? '10,000+' : val);
+            }
+
+            function toggleMobileCategory(catId) {
+                const currentParams = new URLSearchParams(window.location.search);
+                const categories = currentParams.getAll('category');
+                
+                if (categories.includes(catId.toString())) {
+                    const newCategories = categories.filter(c => c !== catId.toString());
+                    currentParams.delete('category');
+                    newCategories.forEach(c => currentParams.append('category', c));
+                } else {
+                    currentParams.append('category', catId);
+                }
+                
+                window.location.search = currentParams.toString();
+            }
+
             function applyFilters() {
-                const cats = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(i => 'category=' + i.value);
-                const subs = Array.from(document.querySelectorAll('input[name="subcategory"]:checked')).map(i => 'subcategory=' + i.value);
-                const maxPrice = document.getElementById('price-slider').value;
+                // Desktop Inputs
+                const cats = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(i => i.value);
+                const subs = Array.from(document.querySelectorAll('input[name="subcategory"]:checked')).map(i => i.value);
+                let maxPrice = document.getElementById('price-slider').value;
+                let sort = document.getElementById('sort-select').value;
+
+                // Check Mobile Inputs if active
+                if (window.innerWidth <= 1024) {
+                    maxPrice = document.getElementById('m-price-slider').value;
+                    sort = document.querySelector('.m-sort-select').value;
+                }
                 
-                let url = '/shop?';
-                if (cats.length) url += cats.join('&') + '&';
-                if (subs.length) url += subs.join('&') + '&';
-                if (maxPrice < 10000) url += 'max_price=' + maxPrice + '&';
+                const params = new URLSearchParams();
+                cats.forEach(c => params.append('category', c));
+                subs.forEach(s => params.append('subcategory', s));
+                if (maxPrice < 10000) params.append('max_price', maxPrice);
+                if (sort !== 'new') params.append('sort', sort);
                 
-                window.location.href = url.slice(0, -1) || '/shop';
+                window.location.href = '/shop' + (params.toString() ? '?' + params.toString() : '');
             }
 
             function clearFilters() {
                 window.location.href = '/shop';
             }
 
-            // Update price label as slider moves
+            // Sync sliders
             document.getElementById('price-slider').oninput = function() {
                 document.getElementById('price-val').innerText = '₹' + (this.value >= 10000 ? '10,000+' : this.value);
             };
