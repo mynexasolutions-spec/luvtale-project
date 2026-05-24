@@ -11,25 +11,45 @@
     </div>
 </div>
 
-<div class="section-card" style="margin-bottom: 20px; padding: 15px;">
-    <form method="GET" action="{{ url_for('admin_products') }}" style="display: flex; gap: 15px; align-items: center;">
-        <div style="flex: 1;">
-            <select name="category" class="form-control" onchange="this.form.submit()">
-                <option value="">All Categories</option>
-                {% for cat in categories %}
-                <option value="{{ cat.id }}" {% if request.args.get('category')|int == cat.id %}selected{% endif %}>{{ cat.name }}</option>
-                {% endfor %}
-            </select>
+<div class="section-card" style="margin-bottom: 25px; padding: 20px; border: 1.5px solid var(--border-color); background: #FFFDF8;">
+    <form method="GET" action="{{ url_for('admin_products') }}" id="filter-form">
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            <!-- Categories Checkboxes -->
+            <div>
+                <h4 style="font-weight: 700; font-size: 0.95rem; margin: 0 0 12px 0; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-tags" style="color: var(--primary);"></i> Categories
+                </h4>
+                <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+                    {% for cat in categories %}
+                    <label style="display: inline-flex; align-items: center; gap: 8px; background: #fff; border: 1.5px solid {% if cat.id in category_ids %}var(--primary){% else %}var(--border-color){% endif %}; padding: 8px 16px; border-radius: 50px; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: all 0.2s; color: {% if cat.id in category_ids %}var(--primary){% else %}var(--text-muted){% endif %}; box-shadow: 0 2px 4px rgba(0,0,0,0.01);">
+                        <input type="checkbox" name="category" value="{{ cat.id }}" {% if cat.id in category_ids %}checked{% endif %} onchange="this.form.submit()" style="accent-color: var(--primary); cursor: pointer;">
+                        {{ cat.name }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Subcategories Checkboxes -->
+            <div>
+                <h4 style="font-weight: 700; font-size: 0.95rem; margin: 0 0 12px 0; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-list" style="color: var(--primary);"></i> Subcategories
+                </h4>
+                <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+                    {% for sub in subcategories %}
+                    <label style="display: inline-flex; align-items: center; gap: 8px; background: #fff; border: 1.5px solid {% if sub.id in subcategory_ids %}var(--primary){% else %}var(--border-color){% endif %}; padding: 8px 16px; border-radius: 50px; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: all 0.2s; color: {% if sub.id in subcategory_ids %}var(--primary){% else %}var(--text-muted){% endif %}; box-shadow: 0 2px 4px rgba(0,0,0,0.01);">
+                        <input type="checkbox" name="subcategory" value="{{ sub.id }}" {% if sub.id in subcategory_ids %}checked{% endif %} onchange="this.form.submit()" style="accent-color: var(--primary); cursor: pointer;">
+                        {{ sub.name }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            {% if category_ids or subcategory_ids %}
+            <div style="border-top: 1px solid var(--border-color); padding-top: 15px; display: flex; justify-content: flex-end;">
+                <a href="{{ url_for('admin_products') }}" class="btn btn-secondary" style="padding: 10px 20px; font-size: 0.9rem; border: 1px solid var(--border-color); display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-undo"></i> Clear Filters</a>
+            </div>
+            {% endif %}
         </div>
-        <div style="flex: 1;">
-            <select name="subcategory" class="form-control" onchange="this.form.submit()">
-                <option value="">All Subcategories</option>
-                {% for sub in subcategories %}
-                <option value="{{ sub.id }}" {% if request.args.get('subcategory')|int == sub.id %}selected{% endif %}>{{ sub.name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <a href="{{ url_for('admin_products') }}" class="btn btn-outline" style="padding: 10px 15px;">Clear</a>
     </form>
 </div>
 

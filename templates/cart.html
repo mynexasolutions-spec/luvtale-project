@@ -4,223 +4,63 @@
 
 {% block extra_css %}
 <style>
-.cart-page-wrap {
-    padding: 80px 40px;
-    background: var(--light);
-    min-height: 80vh;
-}
-
-.cart-header-title {
-    text-align: center;
-    margin-bottom: 60px;
-    margin-top: 60px;
-}
-
-.cart-header-title h1 {
-    font-size: 3.5rem;
-    font-weight: 800;
-    margin-top: 60px;
-    margin-bottom: 10px;
-    color: var(--secondary);
-}
-
-.cart-layout {
-    max-width: 1320px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1fr 380px;
-    gap: 40px;
-    padding: 20px 30px;
-    border-bottom: 1px solid var(--border);
-    text-transform: uppercase;
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: #999;
-    letter-spacing: 1px;
-}
-
-.cart-items-list {
-    background: #fff;
-    border-radius: var(--radius);
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.03);
-}
-
-.cart-item-row {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1.5fr 1fr auto;
-    padding: 30px;
-    align-items: center;
-    border-bottom: 1px solid var(--border);
-}
-
-.cart-item-row:last-child { border-bottom: none; }
-
-.product-info-cell {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-.p-img {
-    width: 100px;
-    height: 100px;
-    background: var(--light);
-    border-radius: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-}
-
-.p-img img {
-    max-width: 80%;
-    max-height: 80%;
-    object-fit: contain;
-}
-
-.p-details h3 {
-    font-size: 1.1rem;
-    font-weight: 700;
-    margin-bottom: 5px;
-}
-
-.p-details span {
-    font-size: 0.8rem;
-    color: #bbb;
-    text-transform: uppercase;
-    font-weight: 600;
-}
-
-.price-cell, .total-cell {
-    font-weight: 700;
-    font-size: 1.1rem;
-}
-
-.total-cell { color: var(--primary); }
-
-.qty-cell {
-    display: flex;
-    align-items: center;
-    background: var(--light);
-    border-radius: 50px;
-    padding: 5px;
-    width: fit-content;
-}
-
-.qty-btn-mini {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    border: none;
-    background: #fff;
-    cursor: pointer;
-    font-weight: 700;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-}
-
-.qty-val-mini {
-    width: 40px;
-    text-align: center;
-    font-weight: 700;
-}
-
-.remove-cell i {
-    color: #ccc;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.remove-cell i:hover { color: var(--primary); }
-
-.cart-summary-card {
-    background: #fff;
-    padding: 40px;
-    border-radius: var(--radius);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.03);
-    height: fit-content;
-    position: sticky;
-    top: 120px;
-}
-
-.summary-title {
-    font-size: 1.5rem;
-    font-weight: 800;
-    margin-bottom: 30px;
-}
-
-.summary-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    font-size: 1rem;
-    color: var(--body);
-}
-
-.summary-total-row {
-    border-top: 1px solid var(--border);
-    padding-top: 20px;
-    margin-top: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.summary-total-row span:first-child {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: var(--primary);
-}
-
-.summary-total-row .total-val {
-    font-size: 1.5rem;
-    font-weight: 800;
-}
-
-.checkout-btn-full {
-    width: 100%;
-    background: var(--primary);
-    color: #fff;
-    border: none;
-    padding: 20px;
-    border-radius: 50px;
-    font-weight: 700;
-    font-size: 1.1rem;
-    margin-top: 30px;
-    cursor: pointer;
-    transition: 0.4s;
-}
-
-.checkout-btn-full:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(204, 13, 57, 0.2);
-}
-
-.continue-shopping-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 30px;
-    color: var(--primary);
-    font-weight: 700;
-    text-decoration: none;
-}
-
-@media (max-width: 1024px) {
-    .cart-grid-container { grid-template-columns: 1fr; }
-    .cart-table-header { display: none; }
-    .cart-item-row { grid-template-columns: 1fr auto; gap: 20px; }
-}
+    .payment-method-btn {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 2px solid #eee;
+        background: #fff;
+        padding: 15px 10px;
+        border-radius: 12px;
+        text-align: center;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 0.85rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        color: var(--secondary);
+    }
+    .payment-method-btn:hover {
+        border-color: #ddd;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    }
+    .payment-method-btn.active {
+        border-color: var(--primary) !important;
+        background: #FFFDF8 !important;
+        color: var(--primary) !important;
+        box-shadow: 0 4px 15px rgba(204, 13, 57, 0.08) !important;
+    }
+    .payment-method-btn i {
+        font-size: 1.3rem;
+        transition: transform 0.3s ease;
+    }
+    .payment-method-btn:hover i {
+        transform: scale(1.1);
+    }
+    .payment-details-box {
+        margin-top: 15px;
+        padding: 15px;
+        background: #fff;
+        border-radius: 10px;
+        border: 1px solid #eee;
+        animation: slideDown 0.3s ease-out;
+    }
+    @keyframes slideDown {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
 {% endblock %}
 
 {% block content %}
-<div class="cart-page-wrap">
+<div class="cart-page-wrap reveal">
     <div class="cart-header-title">
         <h1>Your Shopping Bag</h1>
         <p id="cart-item-count-text">You have 0 items in your bag</p>
     </div>
 
-    <div class="cart-grid-container">
+    <div class="cart-layout">
         <div>
             <div class="cart-items-list">
                 <div class="cart-table-header">
@@ -254,7 +94,11 @@
             </div>
             <div class="summary-row">
                 <span>Shipping</span>
-                <span style="color: #4CAF50; font-weight: 700;">FREE</span>
+                <span id="summary-shipping" style="color: #4CAF50; font-weight: 700;">FREE</span>
+            </div>
+            <div class="summary-row" id="summary-discount-row" style="display: none; color: var(--primary);">
+                <span>Discount (<span id="coupon-code-applied"></span>)</span>
+                <span id="summary-discount">-₹0</span>
             </div>
             
             <div class="summary-total-row">
@@ -262,11 +106,22 @@
                 <span class="total-val" id="summary-total">₹0</span>
             </div>
             
+            <div id="shipping-alert" style="font-size: 0.8rem; color: var(--primary); font-weight: 700; margin-top: 12px; text-align: center; display: none; background: rgba(204, 13, 57, 0.05); padding: 8px; border-radius: 8px;"></div>
+            
             <p style="font-size: 0.8rem; color: #999; margin-top: 15px; text-align: center;">
                 Tax included. Shipping calculated at checkout.
             </p>
 
             <button class="checkout-btn-full" onclick="proceedToCheckout()">Proceed to Checkout</button>
+            
+            <div class="coupon-box" style="margin-top: 25px; border-top: 1.5px dashed var(--border); padding-top: 20px;">
+                <label style="display: block; font-weight: 700; font-size: 0.85rem; color: var(--secondary); margin-bottom: 8px;">Promo / Coupon Code</label>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="coupon-input" placeholder="e.g. LUVTALE10" style="flex: 1; padding: 10px 12px; border: 1.5px solid #eee; border-radius: 8px; font-family: inherit; font-size: 0.85rem; text-transform: uppercase;">
+                    <button class="btn btn-primary" onclick="applyCoupon()" style="padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 700; height: auto;">Apply</button>
+                </div>
+                <p id="coupon-message" style="font-size: 0.75rem; margin-top: 6px; font-weight: 600; display: none;"></p>
+            </div>
             
             <div style="margin-top: 30px; display: flex; align-items: center; justify-content: center; gap: 10px; color: #999; font-size: 0.85rem;">
                 <i class="fas fa-shield-alt" style="color: #4CAF50;"></i> Secure SSL Encryption & Data Protection
@@ -274,10 +129,103 @@
         </aside>
     </div>
 </div>
+
+<!-- CHECKOUT MODAL OVERLAY -->
+<div id="checkout-modal" class="checkout-modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
+    <div class="checkout-card" style="background: #fff; border-radius: 20px; width: 90%; max-width: 520px; padding: 30px; box-shadow: 0 15px 40px rgba(0,0,0,0.15); max-height: 90vh; overflow-y: auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1.5px solid #eee; padding-bottom: 15px;">
+            <h3 style="font-size: 1.3rem; font-weight: 800; font-family: var(--font-family-display);">Secure Checkout</h3>
+            <button onclick="closeCheckout()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #999;">&times;</button>
+        </div>
+        
+        <form id="checkout-form" onsubmit="submitCheckout(event)">
+            <!-- Delivery Info -->
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label style="display: block; font-weight: 700; font-size: 0.85rem; color: var(--secondary); margin-bottom: 6px;">Email Address</label>
+                <input type="email" id="checkout-email" required style="width: 100%; padding: 12px; border: 1.5px solid #eee; border-radius: 10px; font-family: inherit; font-size: 0.9rem;" placeholder="you@example.com">
+            </div>
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label style="display: block; font-weight: 700; font-size: 0.85rem; color: var(--secondary); margin-bottom: 6px;">Phone Number</label>
+                <input type="tel" id="checkout-phone" required style="width: 100%; padding: 12px; border: 1.5px solid #eee; border-radius: 10px; font-family: inherit; font-size: 0.9rem;" placeholder="e.g. +91 9876543210">
+            </div>
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display: block; font-weight: 700; font-size: 0.85rem; color: var(--secondary); margin-bottom: 6px;">Shipping Address</label>
+                <textarea id="checkout-address" required rows="3" style="width: 100%; padding: 12px; border: 1.5px solid #eee; border-radius: 10px; font-family: inherit; font-size: 0.9rem; resize: none;" placeholder="Street address, City, State, ZIP code"></textarea>
+            </div>
+            
+            <!-- Checkout Coupon Management -->
+            <div style="background: #FFFDF0; border: 1.5px solid #F5DCA0; border-radius: 12px; padding: 15px; margin-bottom: 20px;">
+                <label style="display: block; font-weight: 700; font-size: 0.85rem; color: var(--secondary); margin-bottom: 8px;">Apply Promo / Coupon Code</label>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="checkout-coupon-input" placeholder="e.g. LUVTALE10" style="flex: 1; padding: 10px; border: 1.5px solid #eee; border-radius: 8px; font-family: inherit; font-size: 0.85rem; text-transform: uppercase;">
+                    <button type="button" class="btn btn-primary" onclick="applyCheckoutCoupon()" style="padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 700; height: auto;">Apply</button>
+                    <button type="button" id="checkout-coupon-remove-btn" class="btn btn-outline" onclick="removeCheckoutCoupon()" style="padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; display: none; color: var(--primary); border-color: var(--primary);"><i class="fas fa-trash-alt"></i></button>
+                </div>
+                <p id="checkout-coupon-message" style="font-size: 0.75rem; margin-top: 6px; font-weight: 600; display: none;"></p>
+            </div>
+
+            <!-- Payment Method Selection -->
+            <div style="background: #F8F9FB; border-radius: 12px; padding: 15px; margin-bottom: 20px;">
+                <h4 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 12px; font-family: var(--font-family-display);">Select Payment Method</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                    <div class="payment-method-btn active" id="pay-razorpay" onclick="selectPaymentMethod('Razorpay')">
+                        <i class="fas fa-credit-card"></i>
+                        Razorpay
+                    </div>
+                    <div class="payment-method-btn" id="pay-cod" onclick="selectPaymentMethod('COD')">
+                        <i class="fas fa-money-bill-wave"></i>
+                        Cash on Delivery
+                    </div>
+                </div>
+                
+                <!-- Razorpay Details Box -->
+                <div id="payment-inputs-razorpay" class="payment-details-box">
+                    <p style="font-size: 0.8rem; color: #1565C0; margin: 0; text-align: center; font-weight: 700; background: #E3F2FD; padding: 12px; border-radius: 8px; border: 1px solid #BBDEFB; line-height: 1.4;">
+                        <i class="fas fa-shield-alt" style="margin-right: 6px;"></i> Pay securely using Cards, UPI, or NetBanking via Razorpay.
+                    </p>
+                </div>
+
+                <!-- COD Message -->
+                <div id="payment-inputs-cod" class="payment-details-box" style="display: none;">
+                    <p style="font-size: 0.8rem; color: #E65100; margin: 0; text-align: center; font-weight: 700; background: #FFF3E0; padding: 12px; border-radius: 8px; border: 1px solid #FFE0B2; line-height: 1.4;">
+                        <i class="fas fa-truck" style="margin-right: 6px;"></i> Pay ₹<span id="cod-payable-val">0</span> in cash upon delivery of your items.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Payment Summary Breakdown -->
+            <div style="background: #FFFDF8; border: 1px solid var(--border); border-radius: 12px; padding: 15px; margin-bottom: 20px;">
+                <h4 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 12px; font-family: var(--font-family-display);">Payment Summary</h4>
+                <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 8px;">
+                    <span style="color: var(--text-muted);">Subtotal:</span>
+                    <span id="checkout-subtotal" style="font-weight: 600; color: var(--secondary);">₹0</span>
+                </div>
+                <div id="checkout-discount-row" style="display: none; justify-content: space-between; font-size: 0.85rem; margin-bottom: 8px; color: var(--primary);">
+                    <span>Discount (<span id="checkout-coupon-code"></span>):</span>
+                    <span id="checkout-discount" style="font-weight: 700;">-₹0</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px dashed #eee;">
+                    <span style="color: var(--text-muted);">Shipping:</span>
+                    <span id="checkout-shipping" style="font-weight: 600;">₹0</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 1.1rem; color: var(--secondary);">
+                    <span>Total Payable:</span>
+                    <span id="checkout-payable-total" style="color: var(--primary);">₹0</span>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 15px; border-radius: 12px; font-weight: 700; font-size: 1rem;">Pay & Place Order</button>
+        </form>
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
+    let cartUserData = null;
+    let isUserLoggedIn = false;
+    let selectedPaymentMethod = 'Razorpay';
+
     async function loadCartPage() {
         const res = await fetch('/api/cart-data');
         const data = await res.json();
@@ -287,6 +235,9 @@
         const countText = document.getElementById('cart-item-count-text');
 
         countText.innerText = `You have ${data.count} items in your bag`;
+        
+        cartUserData = data.user_data;
+        isUserLoggedIn = data.user_data !== null;
 
         if (data.count === 0) {
             emptyState.style.display = 'block';
@@ -303,46 +254,315 @@
             container.innerHTML += `
                 <div class="cart-item-row">
                     <div class="product-info-cell">
-                        <div class="p-img">
+                        <div class="p-img-cart">
                             <img src="${item.img}" alt="${item.name}">
                         </div>
-                        <div class="p-details">
+                        <div class="p-details-cart">
                             <span>${item.category || 'Luxury'}</span>
                             <h3>${item.name}</h3>
                         </div>
                     </div>
                     <div class="price-cell">₹${item.price}</div>
                     <div class="qty-cell">
-                        <button class="qty-btn-mini" onclick="updateItem(${id}, -1)">-</button>
+                        <button class="qty-btn-mini" onclick="updateItem('${id}', -1)">-</button>
                         <div class="qty-val-mini">${item.quantity}</div>
-                        <button class="qty-btn-mini" onclick="updateItem(${id}, 1)">+</button>
+                        <button class="qty-btn-mini" onclick="updateItem('${id}', 1)">+</button>
                     </div>
                     <div class="total-cell">₹${itemTotal}</div>
-                    <div class="remove-cell" onclick="updateItem(${id}, -${item.quantity})">
+                    <div class="remove-cell" onclick="removeItem('${id}')">
                         <i class="fas fa-trash-alt"></i>
                     </div>
                 </div>
             `;
         }
 
-        document.getElementById('summary-subtotal').innerText = `₹${data.total}`;
+        // Summary calculations
+        document.getElementById('summary-subtotal').innerText = `₹${data.subtotal}`;
+        
+        // Shipping calculations
+        const shippingSpan = document.getElementById('summary-shipping');
+        const shippingAlert = document.getElementById('shipping-alert');
+        if (data.shipping_charge > 0) {
+            shippingSpan.style.color = 'var(--secondary)';
+            shippingSpan.style.fontWeight = 'normal';
+            shippingSpan.innerText = `₹${data.shipping_charge}`;
+            
+            const needed = data.shipping_threshold - data.subtotal;
+            shippingAlert.style.display = 'block';
+            shippingAlert.innerHTML = `🎉 Add <strong>₹${needed}</strong> more to qualify for <strong>FREE shipping</strong>!`;
+        } else {
+            shippingSpan.style.color = '#4CAF50';
+            shippingSpan.style.fontWeight = '700';
+            shippingSpan.innerText = 'FREE';
+            shippingAlert.style.display = 'none';
+        }
+        
+        const discountRow = document.getElementById('summary-discount-row');
+        if (data.discount > 0) {
+            discountRow.style.display = 'flex';
+            document.getElementById('coupon-code-applied').innerText = data.coupon_code;
+            document.getElementById('summary-discount').innerText = `-₹${data.discount}`;
+        } else {
+            discountRow.style.display = 'none';
+        }
+        
         document.getElementById('summary-total').innerText = `₹${data.total}`;
+        
+        // Checkout summary breakdown updates
+        document.getElementById('checkout-subtotal').innerText = `₹${data.subtotal}`;
+        const checkoutDiscountRow = document.getElementById('checkout-discount-row');
+        if (data.discount > 0) {
+            checkoutDiscountRow.style.display = 'flex';
+            document.getElementById('checkout-coupon-code').innerText = data.coupon_code;
+            document.getElementById('checkout-discount').innerText = `-₹${data.discount}`;
+        } else {
+            checkoutDiscountRow.style.display = 'none';
+        }
+        
+        const checkoutShipping = document.getElementById('checkout-shipping');
+        if (data.shipping_charge > 0) {
+            checkoutShipping.style.color = 'var(--secondary)';
+            checkoutShipping.style.fontWeight = 'normal';
+            checkoutShipping.innerText = `₹${data.shipping_charge}`;
+        } else {
+            checkoutShipping.style.color = '#4CAF50';
+            checkoutShipping.style.fontWeight = '700';
+            checkoutShipping.innerText = 'FREE';
+        }
+        
+        document.getElementById('checkout-payable-total').innerText = `₹${data.total}`;
+        document.getElementById('cod-payable-val').innerText = data.total;
+
+        // Auto pre-fill checkout fields if user is logged in
+        if (cartUserData) {
+            if (document.getElementById('checkout-email')) document.getElementById('checkout-email').value = cartUserData.email || '';
+            if (document.getElementById('checkout-phone')) document.getElementById('checkout-phone').value = cartUserData.phone || '';
+            if (document.getElementById('checkout-address')) document.getElementById('checkout-address').value = cartUserData.address || '';
+        }
+
+        // Sync coupon inputs
+        const mainCouponInput = document.getElementById('coupon-input');
+        const mainCouponMessage = document.getElementById('coupon-message');
+        const checkoutCouponInput = document.getElementById('checkout-coupon-input');
+        const checkoutCouponRemoveBtn = document.getElementById('checkout-coupon-remove-btn');
+        
+        if (data.coupon_code) {
+            mainCouponInput.value = data.coupon_code;
+            mainCouponInput.disabled = true;
+            mainCouponMessage.style.display = 'block';
+            mainCouponMessage.style.color = '#4CAF50';
+            mainCouponMessage.innerText = 'Coupon is active.';
+            
+            checkoutCouponInput.value = data.coupon_code;
+            checkoutCouponInput.disabled = true;
+            checkoutCouponRemoveBtn.style.display = 'block';
+        } else {
+            mainCouponInput.value = '';
+            mainCouponInput.disabled = false;
+            mainCouponMessage.style.display = 'none';
+            
+            checkoutCouponInput.value = '';
+            checkoutCouponInput.disabled = false;
+            checkoutCouponRemoveBtn.style.display = 'none';
+        }
     }
 
     async function updateItem(id, delta) {
-        await fetch(`/api/add-to-cart/${id}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ quantity: delta })
+        try {
+            const res = await fetch(`/api/update-cart/${id}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ delta: delta })
+            });
+            const data = await res.json();
+            if (data.success) {
+                updateBadges(data.cart_count, null);
+                loadCartPage();
+            }
+        } catch (err) {
+            console.error('Error updating item:', err);
+        }
+    }
+
+    async function removeItem(id) {
+        if (!confirm('Remove this item from your bag?')) return;
+        try {
+            const res = await fetch(`/api/remove-from-cart/${id}`, { method: 'POST' });
+            const data = await res.json();
+            if (data.success) {
+                updateBadges(data.cart_count, null);
+                loadCartPage();
+            }
+        } catch (err) {
+            console.error('Error removing item:', err);
+        }
+    }
+
+    async function applyCoupon() {
+        const input = document.getElementById('coupon-input');
+        const code = input.value.trim();
+        const msg = document.getElementById('coupon-message');
+        
+        if (!code) {
+            msg.style.display = 'block';
+            msg.style.color = '#F44336';
+            msg.innerText = 'Please enter a coupon code.';
+            return;
+        }
+        
+        try {
+            const res = await fetch('/api/apply-coupon', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: code })
+            });
+            const result = await res.json();
+            
+            msg.style.display = 'block';
+            if (result.success) {
+                msg.style.color = '#4CAF50';
+                msg.innerText = result.message;
+                loadCartPage();
+            } else {
+                msg.style.color = '#F44336';
+                msg.innerText = result.message;
+            }
+        } catch (err) {
+            console.error('Error applying coupon:', err);
+            msg.style.display = 'block';
+            msg.style.color = '#F44336';
+            msg.innerText = 'Error applying coupon code.';
+        }
+    }
+
+    async function applyCheckoutCoupon() {
+        const input = document.getElementById('checkout-coupon-input');
+        const code = input.value.trim();
+        const msg = document.getElementById('checkout-coupon-message');
+        
+        if (!code) {
+            msg.style.display = 'block';
+            msg.style.color = '#C62828';
+            msg.innerText = 'Please enter a coupon code.';
+            return;
+        }
+        
+        try {
+            const res = await fetch('/api/apply-coupon', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: code })
+            });
+            const result = await res.json();
+            
+            msg.style.display = 'block';
+            if (result.success) {
+                msg.style.color = '#2E7D32';
+                msg.innerText = result.message;
+                loadCartPage();
+            } else {
+                msg.style.color = '#C62828';
+                msg.innerText = result.message;
+            }
+        } catch (err) {
+            console.error('Error applying coupon:', err);
+            msg.style.display = 'block';
+            msg.style.color = '#C62828';
+            msg.innerText = 'Error applying coupon code.';
+        }
+    }
+
+    async function removeCheckoutCoupon() {
+        const msg = document.getElementById('checkout-coupon-message');
+        const msgMain = document.getElementById('coupon-message');
+        try {
+            const res = await fetch('/api/remove-coupon', { method: 'POST' });
+            const result = await res.json();
+            
+            if (result.success) {
+                msg.style.display = 'block';
+                msg.style.color = '#2E7D32';
+                msg.innerText = result.message;
+                if (msgMain) {
+                    msgMain.style.display = 'none';
+                }
+                loadCartPage();
+            }
+        } catch (err) {
+            console.error('Error removing coupon:', err);
+        }
+    }
+
+    function selectPaymentMethod(method) {
+        selectedPaymentMethod = method;
+        
+        // Remove active class from all buttons
+        document.querySelectorAll('.payment-method-btn').forEach(btn => {
+            btn.classList.remove('active');
         });
-        loadCartPage();
-        // Find current qty and add negative of that
-        const res = await fetch('/api/cart-data');
-        const data = await res.json();
-        const item = data.cart[id];
-        if (item) {
-            await addToCart(id, -item.quantity);
-            loadCartPage();
+        
+        // Hide all details boxes
+        document.querySelectorAll('.payment-details-box').forEach(box => {
+            box.style.display = 'none';
+        });
+        
+        // Set active class for selected button
+        const activeBtn = document.getElementById('pay-' + method.toLowerCase());
+        if (activeBtn) {
+            activeBtn.classList.add('active');
+        }
+        
+        // Show selected details box
+        const activeBox = document.getElementById('payment-inputs-' + method.toLowerCase());
+        if (activeBox) {
+            activeBox.style.display = 'block';
+        }
+    }
+
+    function proceedToCheckout() {
+        if (!isUserLoggedIn) {
+            alert('Please login to place an order.');
+            window.location.href = '/login';
+            return;
+        }
+        document.getElementById('checkout-modal').style.display = 'flex';
+        selectPaymentMethod('Razorpay');
+    }
+
+    function closeCheckout() {
+        document.getElementById('checkout-modal').style.display = 'none';
+        document.getElementById('checkout-coupon-message').style.display = 'none';
+    }
+
+    async function submitCheckout(event) {
+        event.preventDefault();
+        
+        const email = document.getElementById('checkout-email').value;
+        const phone = document.getElementById('checkout-phone').value;
+        const address = document.getElementById('checkout-address').value;
+        
+        try {
+            const res = await fetch('/api/place-order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: email,
+                    phone: phone,
+                    address: address,
+                    payment_method: selectedPaymentMethod
+                })
+            });
+            const data = await res.json();
+            
+            if (data.success) {
+                alert('Order placed successfully! Order Number: ' + data.order_number);
+                window.location.href = '/profile';
+            } else {
+                alert(data.message || 'Failed to place order.');
+            }
+        } catch (err) {
+            console.error('Error placing order:', err);
+            alert('An error occurred while placing your order.');
         }
     }
 

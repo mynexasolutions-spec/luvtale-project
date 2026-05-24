@@ -2,387 +2,23 @@
 
 {% block title %}Shop | Luvtale Boutique{% endblock %}
 
-{% block extra_css %}
-<style>
-    .shop-page-wrap {
-        padding: 60px 0;
-        background: var(--light);
-    }
-
-    .shop-container {
-        max-width: 1320px;
-        margin: 0 auto;
-        display: grid;
-        grid-template-columns: 320px 1fr;
-        gap: 40px;
-        padding: 0 24px;
-    }
-
-    /* Sidebar Styling */
-    .shop-sidebar {
-        display: flex;
-        flex-direction: column;
-        gap: 30px;
-    }
-
-    .sidebar-card {
-        background: #fff;
-        border-radius: var(--radius);
-        padding: 30px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
-    }
-
-    .sidebar-card h3 {
-        font-size: 1.4rem;
-        font-weight: 800;
-        margin-bottom: 25px;
-        color: var(--primary);
-        font-family: 'Playfair Display', serif;
-    }
-
-    .category-filter-list {
-        list-style: none;
-        padding: 0;
-    }
-
-    .category-filter-list li {
-        margin-bottom: 15px;
-    }
-
-    .custom-checkbox {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        cursor: pointer;
-        font-weight: 600;
-        color: var(--body);
-    }
-
-    .custom-checkbox input {
-        width: 20px;
-        height: 20px;
-        accent-color: var(--primary);
-    }
-
-    .price-range-wrap {
-        padding-top: 10px;
-    }
-
-    .price-slider {
-        width: 100%;
-        height: 6px;
-        background: var(--light);
-        border-radius: 10px;
-        margin: 20px 0;
-        accent-color: var(--primary);
-    }
-
-    .price-labels {
-        display: flex;
-        justify-content: space-between;
-        font-weight: 600;
-        color: #999;
-        font-size: 0.9rem;
-    }
-
-    .sort-select {
-        width: 100%;
-        padding: 15px 20px;
-        border-radius: 15px;
-        border: 1px solid var(--border);
-        font-weight: 600;
-        outline: none;
-        cursor: pointer;
-    }
-
-    /* Product Grid Styling */
-    .products-grid-3 {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 15px;
-    }
-
-    .luxe-product-card {
-        background: #fff;
-        border-radius: var(--radius);
-        overflow: hidden;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.02);
-        transition: 0.4s;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .luxe-product-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
-    }
-
-    .p-card-img-wrap {
-        height: 220px;
-        background: #FFF5F5;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        padding: 15px;
-    }
-
-    .p-card-img-wrap img {
-        max-width: 75%;
-        max-height: 75%;
-        object-fit: contain;
-        transition: 0.5s;
-    }
-
-    .luxe-product-card:hover .p-card-img-wrap img {
-        transform: scale(1.05);
-    }
-
-    .p-badge {
-        position: absolute;
-        top: 12px;
-        left: 12px;
-        padding: 4px 10px;
-        border-radius: 50px;
-        font-size: 0.65rem;
-        font-weight: 700;
-        color: #fff;
-        text-transform: uppercase;
-    }
-
-    .p-badge.new {
-        background: #388E3C;
-    }
-
-    .p-badge.hot {
-        background: #D32F2F;
-    }
-
-    .p-badge.trending {
-        background: #D29964;
-    }
-
-    .p-badge.discount {
-        background: #C06B7B;
-    }
-
-    .p-wish-btn {
-        position: absolute;
-        top: 12px;
-        right: 12px;
-        width: 35px;
-        height: 35px;
-        background: #fff;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
-        color: #bbb;
-        cursor: pointer;
-        transition: 0.3s;
-        font-size: 0.8rem;
-    }
-
-    .p-wish-btn:hover {
-        color: var(--primary);
-        transform: scale(1.1);
-    }
-
-    .p-card-content {
-        padding: 15px;
-        flex: 1;
-    }
-
-    .p-card-cat {
-        display: block;
-        font-size: 0.65rem;
-        font-weight: 600;
-        color: #bbb;
-        text-transform: uppercase;
-        margin-bottom: 5px;
-    }
-
-    .p-card-name {
-        font-size: 0.95rem;
-        font-weight: 600;
-        color: var(--secondary);
-        margin-bottom: 8px;
-        display: block;
-        line-height: 1.4;
-    }
-
-    .p-card-price {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-size: 0.9rem;
-        font-weight: 700;
-    }
-
-    .curr-p {
-        color: var(--primary);
-    }
-
-    .old-p {
-        color: #ccc;
-        text-decoration: line-through;
-        font-weight: 400;
-        font-size: 0.8rem;
-    }
-
-    .p-card-btn {
-        margin: 0 15px 15px;
-        padding: 10px;
-        border-radius: 8px;
-        border: 1.2px solid var(--primary);
-        background: #fff;
-        color: var(--primary);
-        font-weight: 700;
-        text-transform: uppercase;
-        font-size: 0.75rem;
-        cursor: pointer;
-        transition: 0.3s;
-        text-align: center;
-    }
-
-    .p-card-btn:hover {
-        background: var(--primary);
-        color: #fff;
-    }
-
-    /* Mobile Filter Bar */
-    .mobile-filter-wrap {
-        display: none;
-        background: #fff;
-        padding: 15px 0;
-        border-bottom: 1px solid #eee;
-        position: sticky;
-        top: 70px;
-        z-index: 100;
-        margin-bottom: 20px;
-    }
-
-    .mobile-chips-scroll {
-        display: flex;
-        gap: 10px;
-        overflow-x: auto;
-        padding: 0 20px;
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-    }
-
-    .mobile-chips-scroll::-webkit-scrollbar {
-        display: none;
-    }
-
-    .filter-chip {
-        white-space: nowrap;
-        padding: 8px 18px;
-        background: #f8f8f8;
-        border-radius: 50px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: #555;
-        border: 1.5px solid transparent;
-        cursor: pointer;
-        transition: 0.3s;
-    }
-
-    .filter-chip.active {
-        background: var(--primary);
-        color: #fff;
-        border-color: var(--primary);
-    }
-
-    .mobile-filter-actions {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 15px 20px 0;
-        margin-top: 10px;
-        border-top: 1px solid #f8f8f8;
-    }
-
-    .m-action-btn {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 0.85rem;
-        font-weight: 700;
-        color: var(--secondary);
-        background: none;
-        border: none;
-    }
-
-    /* Price Popover */
-    .price-popover {
-        display: none;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: #fff;
-        padding: 20px;
-        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-        z-index: 101;
-    }
-
-    @media (max-width: 1024px) {
-        .shop-sidebar {
-            display: none;
-        }
-
-        .shop-container {
-            grid-template-columns: 1fr;
-            padding: 0;
-        }
-
-        .mobile-filter-wrap {
-            display: block;
-        }
-
-        .shop-page-wrap {
-            padding: 0 0 60px;
-        }
-
-        main {
-            padding: 0 20px;
-        }
-
-        .products-grid-3 {
-            grid-template-columns: repeat(3, 1fr);
-        }
-    }
-
-    @media (max-width: 768px) {
-        .products-grid-3 {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-
-    @media (max-width: 480px) {
-        .products-grid-3 {
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-        }
-        
-        .p-card-img-wrap {
-            height: 180px;
-        }
-    }
-</style>
-{% endblock %}
-
 {% block content %}
 <div class="shop-page-wrap">
     <!-- MOBILE FILTER BAR -->
     <div class="mobile-filter-wrap">
         <div class="mobile-chips-scroll">
-            <div class="filter-chip {% if not request.args.get('category') %}active{% endif %}" onclick="clearFilters()">All</div>
+            <div class="filter-chip {% if not request.args.getlist('category') and not request.args.getlist('collection') %}active{% endif %}" onclick="clearFilters()">
+                <i class="{% if not request.args.getlist('category') and not request.args.getlist('collection') %}fas fa-check-circle{% else %}far fa-circle{% endif %}" style="margin-right: 6px;"></i> All
+            </div>
+            <div class="filter-chip {% if 'trending' in request.args.getlist('collection') %}active{% endif %}" onclick="toggleMobileCollection('trending')">
+                <i class="{% if 'trending' in request.args.getlist('collection') %}fas fa-check-square{% else %}far fa-square{% endif %}" style="margin-right: 6px;"></i> Trending Now
+            </div>
+            <div class="filter-chip {% if 'bestseller' in request.args.getlist('collection') %}active{% endif %}" onclick="toggleMobileCollection('bestseller')">
+                <i class="{% if 'bestseller' in request.args.getlist('collection') %}fas fa-check-square{% else %}far fa-square{% endif %}" style="margin-right: 6px;"></i> Best Sellers
+            </div>
             {% for cat in categories %}
             <div class="filter-chip {% if cat.id|string in request.args.getlist('category') %}active{% endif %}" onclick="toggleMobileCategory({{ cat.id }})">
-                {{ cat.name }}
+                <i class="{% if cat.id|string in request.args.getlist('category') %}fas fa-check-square{% else %}far fa-square{% endif %}" style="margin-right: 6px;"></i> {{ cat.name }}
             </div>
             {% endfor %}
         </div>
@@ -445,6 +81,24 @@
             </div>
 
             <div class="sidebar-card">
+                <h3>Collection</h3>
+                <ul class="category-filter-list">
+                    <li>
+                        <label class="custom-checkbox">
+                            <input type="checkbox" name="collection" value="trending" {% if 'trending' in request.args.getlist('collection') %}checked{% endif %} onchange="applyFilters()">
+                            <span>Trending Now</span>
+                        </label>
+                    </li>
+                    <li>
+                        <label class="custom-checkbox">
+                            <input type="checkbox" name="collection" value="bestseller" {% if 'bestseller' in request.args.getlist('collection') %}checked{% endif %} onchange="applyFilters()">
+                            <span>Best Sellers</span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="sidebar-card">
                 <h3>Price Range</h3>
                 <div class="price-range-wrap">
                     <input type="range" class="price-slider" id="price-slider" min="0" max="10000" step="100" value="{{ request.args.get('max_price', 10000) }}" onchange="applyFilters()">
@@ -475,6 +129,21 @@
                 document.getElementById('m-price-val').innerText = '₹' + (val >= 10000 ? '10,000+' : val);
             }
 
+            function toggleMobileCollection(colName) {
+                const currentParams = new URLSearchParams(window.location.search);
+                const collections = currentParams.getAll('collection');
+                
+                if (collections.includes(colName)) {
+                    const newCollections = collections.filter(c => c !== colName);
+                    currentParams.delete('collection');
+                    newCollections.forEach(c => currentParams.append('collection', c));
+                } else {
+                    currentParams.append('collection', colName);
+                }
+                
+                window.location.search = currentParams.toString();
+            }
+
             function toggleMobileCategory(catId) {
                 const currentParams = new URLSearchParams(window.location.search);
                 const categories = currentParams.getAll('category');
@@ -494,6 +163,7 @@
                 // Desktop Inputs
                 const cats = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(i => i.value);
                 const subs = Array.from(document.querySelectorAll('input[name="subcategory"]:checked')).map(i => i.value);
+                const collections = Array.from(document.querySelectorAll('input[name="collection"]:checked')).map(i => i.value);
                 let maxPrice = document.getElementById('price-slider').value;
                 let sort = document.getElementById('sort-select').value;
 
@@ -504,10 +174,20 @@
                 }
                 
                 const params = new URLSearchParams();
-                cats.forEach(c => params.append('category', c));
-                subs.forEach(s => params.append('subcategory', s));
+                
+                if (window.innerWidth > 1024) {
+                    cats.forEach(c => params.append('category', c));
+                    subs.forEach(s => params.append('subcategory', s));
+                    collections.forEach(col => params.append('collection', col));
+                } else {
+                    // Mobile view
+                    const currentParams = new URLSearchParams(window.location.search);
+                    currentParams.getAll('category').forEach(c => params.append('category', c));
+                    currentParams.getAll('collection').forEach(col => params.append('collection', col));
+                }
+
                 if (maxPrice < 10000) params.append('max_price', maxPrice);
-                if (sort !== 'new') params.append('sort', sort);
+                if (sort && sort !== 'new') params.append('sort', sort);
                 
                 window.location.href = '/shop' + (params.toString() ? '?' + params.toString() : '');
             }
@@ -517,52 +197,63 @@
             }
 
             // Sync sliders
-            document.getElementById('price-slider').oninput = function() {
-                document.getElementById('price-val').innerText = '₹' + (this.value >= 10000 ? '10,000+' : this.value);
-            };
+            document.addEventListener('DOMContentLoaded', () => {
+                const slider = document.getElementById('price-slider');
+                if (slider) {
+                    slider.oninput = function() {
+                        document.getElementById('price-val').innerText = '₹' + (this.value >= 10000 ? '10,000+' : this.value);
+                    };
+                }
+            });
         </script>
 
         <main>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-                <p style="color: #999; font-weight: 600;">Showing {{ products|length }} products</p>
+            <div class="section-header-row">
+                <p style="color: var(--text-muted); font-weight: 600;">Showing {{ products|length }} products</p>
             </div>
 
             <div class="products-grid-3">
                 {% for product in products %}
-                <div class="luxe-product-card">
-                    <div class="p-card-img-wrap">
+                <div class="product-card">
+                    <div class="trending-product-img-wrap">
                         {% if product.badge %}
-                        <span class="p-badge {{ product.badge|lower }}">{{ product.badge }}</span>
+                        <span class="trending-badge">{{ product.badge }}</span>
                         {% endif %}
 
-                        <div class="p-wish-btn" onclick="addToWishlist({{ product.id }})">
-                            <i class="far fa-heart"></i>
+                        <div class="trending-img-container">
+                            <a href="/product/{{ product.id }}"
+                                style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                                <img src="{{ product.img_primary }}" alt="{{ product.name }}" class="product-image primary trending-img" loading="lazy">
+                            </a>
                         </div>
 
-                        <a href="/product/{{ product.id }}"
-                            style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
-                            <img src="{{ product.img_primary }}" alt="{{ product.name }}">
-                        </a>
-                    </div>
-
-                    <div class="p-card-content">
-                        <span class="p-card-cat">{{ product.category.name if product.category else 'Luxury' }}</span>
-                        <a href="/product/{{ product.id }}" class="p-card-name">{{ product.name }}</a>
-                        <div class="p-card-price">
-                            <span class="curr-p">₹{{ product.price }}</span>
-                            {% if product.old_price %}
-                            <span class="old-p">₹{{ product.old_price }}</span>
-                            {% endif %}
-                        </div>
-                        <div class="p-rating" style="color: #FFD700; margin-top: 10px; font-size: 0.8rem;">
-                            {% for i in range(5) %}
-                            <i class="{% if i < product.rating %}fas{% else %}far{% endif %} fa-star"></i>
-                            {% endfor %}
+                        <div class="product-card-actions">
+                            <a href="/product/{{ product.id }}" class="quick-view-btn">Quick View</a>
+                            <div class="action-icons">
+                                <button class="circle-btn" onclick="addToWishlist({{ product.id }})"><i
+                                        class="far fa-heart"></i></button>
+                                <button class="circle-btn" onclick="addToCart({{ product.id }})"><i
+                                        class="fas fa-shopping-cart"></i></button>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="p-card-btn" onclick="addToCart({{ product.id }})">
-                        Add to Cart
+                    <div class="product-info">
+                        <span class="p-card-cat" style="display: block; font-size: 0.65rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px;">{{ product.category.name if product.category else 'Luxury' }}</span>
+                        <a href="/product/{{ product.id }}" class="product-name">{{ product.name }}</a>
+                        <div class="price-rating-wrap">
+                            <div class="product-price">
+                                <span class="curr-price">₹{{ product.price }}</span>
+                                {% if product.old_price %}
+                                <span class="old-price">₹{{ product.old_price }}</span>
+                                {% endif %}
+                            </div>
+                            <div class="rating">
+                                {% for i in range(5) %}
+                                <i class="{% if i < product.rating %}fas{% else %}far{% endif %} fa-star" style="color: var(--star-color);"></i>
+                                {% endfor %}
+                            </div>
+                        </div>
                     </div>
                 </div>
                 {% endfor %}

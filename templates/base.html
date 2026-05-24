@@ -6,125 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Luvtale - Fashion Store{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-    <link href="https://unpkg.com/tailwindcss@^3/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        .search-results-container {
-            margin-top: 20px;
-            max-height: 400px;
-            overflow-y: auto;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            display: none;
-        }
-
-        .search-result-item {
-            padding: 15px;
-            display: flex;
-            align-items: center;
-            border-bottom: 1px solid #eee;
-            cursor: pointer;
-            transition: background 0.2s;
-            color: #333;
-        }
-
-        .search-result-item:hover {
-            background: #f9f9f9;
-        }
-
-        .search-result-item:last-child {
-            border-bottom: none;
-        }
-
-        /* Trending Product Card Refinements */
-        .product-card {
-            transition: all 0.4s ease;
-            border-radius: 32px !important;
-            overflow: hidden;
-            border: none !important;
-        }
-
-        .product-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1) !important;
-        }
-
-        .product-card-actions {
-            position: absolute;
-            bottom: 40px;
-            left: 0;
-            right: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 10;
-        }
-
-        .product-card:hover .product-card-actions {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .quick-view-btn {
-            background: #000;
-            color: #fff;
-            padding: 14px 40px;
-            border-radius: 50px;
-            font-weight: 700;
-            border: none;
-            cursor: pointer;
-            font-size: 0.95rem;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-        }
-
-        .quick-view-btn:hover {
-            transform: scale(1.05);
-            background: #333;
-        }
-
-        .action-icons {
-            display: flex;
-            gap: 12px;
-        }
-
-        .circle-btn {
-            width: 50px;
-            height: 50px;
-            background: #fff;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            color: #5E626F;
-            transition: all 0.3s ease;
-        }
-
-        .circle-btn:hover {
-            background: var(--primary);
-            color: #fff;
-            transform: scale(1.1);
-        }
-
-        body {
-            padding-top: 67px !important;
-            background-color: var(--light) !important;
-        }
-    </style>
     {% block extra_css %}{% endblock %}
 </head>
 
 <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
 
     <!-- HEADER -->
     <header class="site-header" id="header">
@@ -150,7 +40,8 @@
                     </svg>
                     <span class="cart-badge" id="wishlist-count">0</span>
                 </a>
-                <a href="javascript:void(0)" class="icon-btn" onclick="openCart()" title="Cart" style="position:relative">
+                <a href="javascript:void(0)" class="icon-btn" onclick="openCart()" title="Cart"
+                    style="position:relative">
                     <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <circle cx="9" cy="21" r="1" />
                         <circle cx="20" cy="21" r="1" />
@@ -158,8 +49,8 @@
                     </svg>
                     <span class="cart-badge" id="cart-count">0</span>
                 </a>
-                {% if session.get('admin_logged_in') %}
-                <a href="{{ url_for('admin_dashboard') }}" class="icon-btn" title="Admin Dashboard" style="color: var(--primary);">
+                {% if session.get('admin_logged_in') and session.get('user_role') == 'admin' %}
+                <a href="{{ url_for('admin_dashboard') }}" class="icon-btn admin-btn" title="Admin Dashboard">
                     <i class="fas fa-shield-alt" style="font-size: 18px;"></i>
                 </a>
                 {% endif %}
@@ -184,21 +75,19 @@
         <a href="/shop" onclick="toggleMenu()">Shop</a>
         <a href="/about" onclick="toggleMenu()">About</a>
         <a href="/contact" onclick="toggleMenu()">Contact</a>
-        <div class="mobile-nav-actions">
-            <a href="#" class="btn btn-outline" onclick="openCart();toggleMenu()">🛒 Cart (<span
-                    id="mobile-cart-count">0</span>)</a>
-            {% if session.get('admin_logged_in') %}
-            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline" style="border-color: var(--primary); color: var(--primary);">🛡️ Admin Panel</a>
-            {% endif %}
-            {% if session.get('user_email') or session.get('admin_logged_in') %}
-            <a href="{{ url_for('logout') if not session.get('admin_logged_in') else url_for('admin_logout') }}" class="btn btn-outline">Logout</a>
+        <div class="mobile-nav-actions" style="margin-top: 20px; display: flex; flex-direction: column; width: 100%;">
+            {% if session.get('user_id') or session.get('admin_logged_in') %}
+            <a href="{{ url_for('logout') if not session.get('admin_logged_in') else url_for('admin_logout') }}"
+                class="btn btn-primary" style="display: block; text-align: center; font-weight: 700; width: 100%; padding: 12px 0; border-radius: 12px;">Logout</a>
             {% else %}
-            <a href="{{ url_for('login') }}" class="btn btn-primary">Sign In</a>
+            <a href="{{ url_for('login') }}" class="btn btn-primary" style="display: block; text-align: center; font-weight: 700; width: 100%; padding: 12px 0; border-radius: 12px;">Sign In</a>
             {% endif %}
         </div>
     </div>
 
-    {% block content %}{% endblock %}
+    <main id="main-content">
+        {% block content %}{% endblock %}
+    </main>
 
     <!-- FOOTER -->
     <footer>
@@ -208,20 +97,20 @@
                     <span class="logo">Luvt<span style="color:var(--primary)">ale</span></span>
                     <p>Elevate your style with our curated collection of fashion-forward clothing and accessories.</p>
                     <div class="footer-social">
-                        <div class="social-btn">f</div>
-                        <div class="social-btn">in</div>
-                        <div class="social-btn">tw</div>
-                        <div class="social-btn">ig</div>
+                        <a href="#" class="social-btn" aria-label="Facebook" style="color: inherit; text-decoration: none;"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-btn" aria-label="LinkedIn" style="color: inherit; text-decoration: none;"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="social-btn" aria-label="Twitter" style="color: inherit; text-decoration: none;"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-btn" aria-label="Instagram" style="color: inherit; text-decoration: none;"><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
                 <div class="footer-col">
                     <h5>Shop</h5>
                     <ul>
-                        <li><a href="/shop">New Arrivals</a></li>
-                        <li><a href="/shop">Dresses</a></li>
-                        <li><a href="/shop">Jackets</a></li>
-                        <li><a href="/shop">Accessories</a></li>
-                        <li><a href="/shop">Sale</a></li>
+                        <li><a href="/shop?category=1">Kurtis</a></li>
+                        <li><a href="/shop?category=2">Sarees</a></li>
+                        <li><a href="/shop?category=3">Lehengas</a></li>
+                        <li><a href="/shop?category=4">Anarkalis</a></li>
+                        <li><a href="/shop?category=5">Sherwanis</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
@@ -236,9 +125,13 @@
                 <div class="footer-col" style="min-width: 250px;">
                     <h5>Contact Us</h5>
                     <ul style="color: rgba(0,0,0,0.6); font-size: 0.9rem;">
-                        <li style="margin-bottom: 10px;"><i class="fas fa-map-marker-alt" style="margin-right: 10px; color: var(--primary);"></i> 123 Boutique Street, Fashion District, New York, NY 10001, USA</li>
-                        <li style="margin-bottom: 10px;"><i class="fas fa-envelope" style="margin-right: 10px; color: var(--primary);"></i> hello@luvtale.com</li>
-                        <li><i class="fas fa-phone-alt" style="margin-right: 10px; color: var(--primary);"></i> +1 (234) 567-890</li>
+                        <li style="margin-bottom: 10px;"><i class="fas fa-map-marker-alt"
+                                style="margin-right: 10px; color: var(--primary);"></i> 123 Boutique Street, Fashion
+                            District, New York, NY 10001, USA</li>
+                        <li style="margin-bottom: 10px;"><i class="fas fa-envelope"
+                                style="margin-right: 10px; color: var(--primary);"></i> hello@luvtale.com</li>
+                        <li><i class="fas fa-phone-alt" style="margin-right: 10px; color: var(--primary);"></i> +1 (234)
+                            567-890</li>
                     </ul>
                 </div>
             </div>
@@ -271,7 +164,7 @@
             <p style="font-size:12px;color:var(--body);text-align:center;margin-bottom:12px">🎉 You qualify for free
                 shipping!</p>
             <button class="btn btn-primary" style="width:100%;justify-content:center;display:flex;margin-bottom:8px"
-                onclick="alert('Checkout coming soon')">Checkout →</button>
+                onclick="window.location.href='/cart'">Checkout →</button>
             <button class="btn btn-secondary" style="width:100%;justify-content:center" onclick="closeCart()">Continue
                 Shopping</button>
         </div>
@@ -297,6 +190,11 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- BACK TO TOP BUTTON -->
+    <div class="scroll-top" id="scroll-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        <i class="fas fa-chevron-up"></i>
     </div>
 
     <!-- SEARCH OVERLAY -->

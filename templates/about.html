@@ -3,34 +3,86 @@
 {% block title %}About Us | Luvtale Boutique{% endblock %}
 
 {% block content %}
-<section style="padding: 60px 0; background: var(--sand);">
+<div class="about-page-wrap">
+<!-- HERO -->
+<section class="about-hero reveal">
+    <div class="about-hero-content">
+        <span class="about-subtitle">Welcome to Luvtale</span>
+        <h1 class="about-title">Crafting Modern Luxury & Elegance</h1>
+        <p class="about-lead">Born from a passion for premium fashion and a commitment to quality, Luvtale is a sanctuary for curated collections that inspire confidence and grace.</p>
+    </div>
+</section>
+
+<!-- STORY -->
+<section class="about-story-section section-padding-large reveal">
     <div class="container">
-        <div style="max-width: 600px; margin: 0 auto; text-align: center;">
-            <h1 style="font-size: 2.2rem; font-weight: 700; margin-bottom: 20px;">Our Story</h1>
-            <p style="font-size: 1.1rem; color: var(--body); line-height: 1.6;">
-                Luvtale Boutique was born from a passion for premium fashion and a commitment to quality. 
-                We believe that style is a reflection of your personality, and our mission is to provide 
-                curated collections that inspire confidence and elegance.
-            </p>
+        <div class="about-story-grid">
+            <div class="about-story-image-wrap">
+                <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800" alt="Luvtale Boutique Storefront" class="about-story-image" loading="lazy">
+            </div>
+            <div class="about-story-text">
+                <span class="about-section-tag">Since 2026</span>
+                <h2>A Vision of Pure Distinction</h2>
+                <p>At Luvtale, we believe style is a profound form of personal expression. Every garment we select represents a meticulous harmony of fine fabrics, exceptional craftsmanship, and contemporary design. We curate each seasonal collection to ensure you feel empowered, distinct, and effortlessly elegant.</p>
+                <p>Our relationships with global artisans and sustainable manufacturing partners ensure that every thread carries a promise of high quality and ethical integrity.</p>
+                <a href="/shop" class="btn btn-primary">Explore Our Collection</a>
+            </div>
         </div>
     </div>
 </section>
 
-<section style="padding: 100px 0;">
+<!-- VALUES -->
+<section class="about-values-section section-padding-large reveal">
     <div class="container">
-        <div class="about-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;">
+        <div class="centered-header-group">
             <div>
-                <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800" style="width: 100%; border-radius: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); margin: 0 auto;">
+                <h2 class="section-title">Our Core Values</h2>
+                <p class="section-sub">The principles that guide our curation and service</p>
             </div>
-            <div>
-                <h2 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 15px;">Quality & Elegance</h2>
-                <p style="color: var(--body); margin-bottom: 20px; font-size: 0.95rem;">
-                    Every piece in our boutique is hand-selected for its craftsmanship, material, and timeless design. 
-                    We partner with artisans and brands that share our values of sustainability and excellence.
-                </p>
-                <a href="/shop" class="btn btn-primary" style="padding: 8px 20px; font-size: 0.9rem;">Discover the Collection</a>
+        </div>
+        <div class="about-values-grid">
+            <div class="value-card">
+                <div class="value-icon"><i class="fas fa-crown"></i></div>
+                <h3>Curated Luxury</h3>
+                <p>We hand-select every piece, prioritizing exquisite materials and immaculate design details over passing trends.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon"><i class="fas fa-leaf"></i></div>
+                <h3>Eco-Conscious</h3>
+                <p>We are actively reducing our carbon footprint, sourcing materials ethically, and adopting sustainable packaging.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon"><i class="fas fa-heart"></i></div>
+                <h3>Tailored Experience</h3>
+                <p>Your journey is our priority. From smooth digital browsing to doorstep delivery, we strive to exceed expectations.</p>
             </div>
         </div>
     </div>
 </section>
+
+<!-- PROMISE -->
+<section class="about-promise-section section-padding-large reveal">
+    <div class="container">
+        <div class="about-promise-box">
+            <span class="promise-tag">The Luvtale Promise</span>
+            <h2>Elegance is in Every Detail</h2>
+            <p>We stand behind our curation. If any garment does not meet your expectations or make you feel extraordinary, our seamless return service is here to assist you.</p>
+            <div class="promise-icons-grid">
+                <div class="promise-icon-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>100% Authentic Curation</span>
+                </div>
+                <div class="promise-icon-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Secure Payments</span>
+                </div>
+                <div class="promise-icon-item">
+                    <i class="fas fa-shipping-fast"></i>
+                    <span>Global Tracked Delivery</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</div>
 {% endblock %}

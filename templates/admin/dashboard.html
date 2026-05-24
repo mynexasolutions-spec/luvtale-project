@@ -3,44 +3,58 @@
 {% block content %}
 <div class="dashboard-header" style="margin-bottom: 40px;">
     <div class="header-left">
-        <h1 style="font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 5px;">Welcome back, Admin</h1>
+        <h1 style="font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 5px;">Welcome back, Admin
+        </h1>
         <p style="color: var(--text-muted);">Here's what's happening with your store today.</p>
     </div>
 </div>
 
 <div class="stats-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; margin-bottom: 40px;">
-    <div class="stat-card" style="background: #fff; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); display: flex; align-items: center; gap: 20px;">
-        <div class="stat-icon" style="width: 50px; height: 50px; background: #FFF5F5; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--primary);">
+    <div class="stat-card"
+        style="background: #fff; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); display: flex; align-items: center; gap: 20px;">
+        <div class="stat-icon"
+            style="width: 50px; height: 50px; background: #FFF5F5; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--primary);">
             <i class="fas fa-shopping-bag"></i>
         </div>
         <div class="stat-info">
-            <h4 style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 5px; font-weight: 600;">Total Sales</h4>
+            <h4 style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 5px; font-weight: 600;">Total Sales
+            </h4>
             <p style="font-size: 1.5rem; font-weight: 700; margin-bottom: 5px;">{{ stats.total_sales }}</p>
-            <span style="color: #2E7D32; font-size: 0.85rem; font-weight: 700;"><i class="fas fa-arrow-up"></i> 12%</span>
+            <span style="color: #2E7D32; font-size: 0.85rem; font-weight: 700;"><i class="fas fa-arrow-up"></i>
+                12%</span>
         </div>
     </div>
-    <div class="stat-card" style="background: #fff; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); display: flex; align-items: center; gap: 20px;">
-        <div class="stat-icon" style="width: 50px; height: 50px; background: #FFF5F5; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--primary);">
+    <div class="stat-card"
+        style="background: #fff; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); display: flex; align-items: center; gap: 20px;">
+        <div class="stat-icon"
+            style="width: 50px; height: 50px; background: #FFF5F5; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--primary);">
             <i class="fas fa-truck"></i>
         </div>
         <div class="stat-info">
             <h4 style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 5px; font-weight: 600;">Orders</h4>
             <p style="font-size: 1.5rem; font-weight: 700; margin-bottom: 5px;">{{ stats.orders_count }}</p>
-            <span style="color: #2E7D32; font-size: 0.85rem; font-weight: 700;"><i class="fas fa-arrow-up"></i> 5%</span>
+            <span style="color: #2E7D32; font-size: 0.85rem; font-weight: 700;"><i class="fas fa-arrow-up"></i>
+                5%</span>
         </div>
     </div>
-    <div class="stat-card" style="background: #fff; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); display: flex; align-items: center; gap: 20px;">
-        <div class="stat-icon" style="width: 50px; height: 50px; background: #FFF5F5; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--primary);">
+    <div class="stat-card"
+        style="background: #fff; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); display: flex; align-items: center; gap: 20px;">
+        <div class="stat-icon"
+            style="width: 50px; height: 50px; background: #FFF5F5; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--primary);">
             <i class="fas fa-users"></i>
         </div>
         <div class="stat-info">
-            <h4 style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 5px; font-weight: 600;">Customers</h4>
+            <h4 style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 5px; font-weight: 600;">Customers
+            </h4>
             <p style="font-size: 1.5rem; font-weight: 700; margin-bottom: 5px;">{{ stats.customers_count }}</p>
-            <span style="color: #2E7D32; font-size: 0.85rem; font-weight: 700;"><i class="fas fa-arrow-up"></i> 8%</span>
+            <span style="color: #2E7D32; font-size: 0.85rem; font-weight: 700;"><i class="fas fa-arrow-up"></i>
+                8%</span>
         </div>
     </div>
-    <div class="stat-card" style="background: #fff; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); display: flex; align-items: center; gap: 20px;">
-        <div class="stat-icon" style="width: 50px; height: 50px; background: #FFF5F5; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--primary);">
+    <div class="stat-card"
+        style="background: #fff; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); display: flex; align-items: center; gap: 20px;">
+        <div class="stat-icon"
+            style="width: 50px; height: 50px; background: #FFF5F5; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--primary);">
             <i class="fas fa-box"></i>
         </div>
         <div class="stat-info">
@@ -52,15 +66,18 @@
 </div>
 
 <div class="dashboard-grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px;">
-    <div class="section-card" style="background: #fff; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.02);">
+    <div class="section-card"
+        style="background: #fff; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.02);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
             <h2 style="font-family: 'Playfair Display', serif; font-size: 1.8rem;">Recent Orders</h2>
-            <a href="{{ url_for('admin_orders') }}" style="color: var(--primary); text-decoration: none; font-weight: 700; font-size: 0.9rem;">View All</a>
+            <a href="{{ url_for('admin_orders') }}"
+                style="color: var(--primary); text-decoration: none; font-weight: 700; font-size: 0.9rem;">View All</a>
         </div>
         <div class="table-responsive">
             <table style="width: 100%; border-collapse: collapse;">
                 <thead>
-                    <tr style="text-align: left; color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">
+                    <tr
+                        style="text-align: left; color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">
                         <th style="padding-bottom: 15px;">Order ID</th>
                         <th style="padding-bottom: 15px;">Customer</th>
                         <th style="padding-bottom: 15px;">Date</th>
@@ -76,33 +93,43 @@
                         <td>{{ order.date.strftime('%d-%m-%Y') }}</td>
                         <td style="font-weight: 700;">₹{{ order.total_amount }}</td>
                         <td>
-                            <span style="background: #FFF9F3; color: #7D613E; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">{{ order.status }}</span>
+                            <span
+                                style="background: #FFF9F3; color: #7D613E; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">{{
+                                order.status }}</span>
                         </td>
                     </tr>
                     {% else %}
-                    <tr><td colspan="5" style="text-align:center; padding: 40px; color: var(--text-muted);">No recent orders found.</td></tr>
+                    <tr>
+                        <td colspan="5" style="text-align:center; padding: 40px; color: var(--text-muted);">No recent
+                            orders found.</td>
+                    </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
 
-    <div class="section-card" style="background: #fff; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.02);">
-        <h2 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 30px;">Low Stock Products</h2>
+    <div class="section-card"
+        style="background: #fff; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.02);">
+        <h2 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 30px;">Low Stock Products
+        </h2>
         <div class="stock-list">
             {% for prod in low_stock %}
             <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 25px;">
-                <div style="width: 50px; background: #FFFAF3; border-radius: 12px; overflow: hidden; border: 1px solid #eee; display: flex; flex-direction: column;">
+                <div
+                    style="width: 50px; background: #FFFAF3; border-radius: 12px; overflow: hidden; border: 1px solid #eee; display: flex; flex-direction: column;">
                     <img src="{{ prod.img_primary }}" style="width: 100%; height: 40px; object-fit: cover;">
                     <div style="display: flex; gap: 2px; padding: 2px; justify-content: center; flex-wrap: wrap;">
                         {% for img in prod.images %}
-                        <img src="{{ img.img_url }}" style="width: 10px; height: 10px; object-fit: cover; border-radius: 2px;">
+                        <img src="{{ img.img_url }}"
+                            style="width: 10px; height: 10px; object-fit: cover; border-radius: 2px;">
                         {% endfor %}
                     </div>
                 </div>
                 <div style="flex: 1;">
                     <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 5px;">{{ prod.name }}</h4>
-                    <span style="font-size: 0.8rem; color: var(--primary); font-weight: 700;">In Stock: {{ prod.stock_count }}</span>
+                    <span style="font-size: 0.8rem; color: var(--primary); font-weight: 700;">In Stock: {{
+                        prod.stock_count }}</span>
                 </div>
                 <div style="width: 60px; height: 8px; background: #eee; border-radius: 10px; overflow: hidden;">
                     <div style="width: {{ (prod.stock_count / 10) * 100 }}%; height: 100%; background: #2E7D32;"></div>

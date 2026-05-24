@@ -1,16 +1,19 @@
 {% extends "admin/base.html" %}
 
 {% block content %}
-<div class="page-header" style="margin-bottom: 30px;">
+<div class="page-header"
+    style="margin-bottom: 40px; border-bottom: 1.5px solid var(--border-color); padding-bottom: 20px;">
     <div class="header-left">
-        <h1 style="font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 5px;">{{ title }}</h1>
-        <p style="color: var(--text-muted);">{% if product %}Update existing product details.{% else %}Add a new product
-            to your boutique collection.{% endif %}</p>
+        <h1
+            style="font-family: 'Playfair Display', serif; font-size: 2.8rem; margin-bottom: 5px; color: var(--secondary);">
+            {{ title }}</h1>
+        <p style="color: var(--text-muted); font-size: 1.1rem;">{% if product %}Refine your masterpiece.{% else
+            %}Introduce a new treasure to your collection.{% endif %}</p>
     </div>
 </div>
 
 <div class="section-card"
-    style="background: #fff; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); padding: 40px;">
+    style="background: #fff; border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.04); padding: 50px; border: 1px solid rgba(254, 235, 157, 0.3);">
     <form
         action="{% if product %}{{ url_for('admin_edit_product', id=product.id) }}{% else %}{{ url_for('admin_add_product') }}{% endif %}"
         method="POST" enctype="multipart/form-data">
@@ -57,7 +60,8 @@
                     <option value="" selected>Select SubCategory...</option>
                     {% for cat in categories %}
                     {% for sub in cat.subcategories %}
-                    <option value="{{ sub.id }}" data-category="{{ cat.id }}" {% if product and sub in product.subcategories %}selected{% endif %}>{{
+                    <option value="{{ sub.id }}" data-category="{{ cat.id }}" {% if product and sub in
+                        product.subcategories %}selected{% endif %}>{{
                         sub.name }}</option>
                     {% endfor %}
                     {% endfor %}
@@ -131,16 +135,28 @@
 
         <div
             style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px; align-items: flex-start;">
-            <div class="form-group">
-                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                    <input type="checkbox" name="is_featured" id="isFeatured" {% if product and product.is_featured
-                        %}checked{% endif %} style="width: 20px; height: 20px; cursor: pointer;">
-                    <label for="isFeatured"
-                        style="font-weight: 700; color: var(--secondary); cursor: pointer; margin-bottom: 0;">Feature on
-                        Homepage</label>
+            <div class="form-group" style="background: #F8F9FB; padding: 25px; border-radius: 16px; border: 1.5px solid #eee; margin-bottom: 0;">
+                <h4 style="font-size: 1.1rem; font-weight: 800; color: var(--secondary); margin: 0 0 15px 0; border-bottom: 1.5px dashed #ddd; padding-bottom: 10px; font-family: 'Playfair Display', serif;">
+                    <i class="fas fa-tags" style="color: var(--primary); margin-right: 8px;"></i> Product Collections
+                </h4>
+                
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                    <input type="checkbox" name="is_featured" id="isFeatured" {% if product and product.is_featured %}checked{% endif %} style="width: 20px; height: 20px; cursor: pointer;">
+                    <label for="isFeatured" style="font-weight: 700; color: var(--secondary); cursor: pointer; margin-bottom: 0;">Feature on Homepage</label>
                 </div>
-                <p style="color: var(--text-muted); font-size: 0.85rem;">Highlight this product in the 'Featured
-                    Products' section.</p>
+                <p style="color: var(--text-muted); font-size: 0.82rem; margin-bottom: 15px;">Highlight this product in the 'Featured Products' section.</p>
+
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                    <input type="checkbox" name="is_trending" id="isTrending" {% if product and product.is_trending %}checked{% endif %} style="width: 20px; height: 20px; cursor: pointer;">
+                    <label for="isTrending" style="font-weight: 700; color: var(--secondary); cursor: pointer; margin-bottom: 0;">Trending Now</label>
+                </div>
+                <p style="color: var(--text-muted); font-size: 0.82rem; margin-bottom: 15px;">Highlight this product in the 'Trending Now' section.</p>
+
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                    <input type="checkbox" name="is_bestseller" id="isBestseller" {% if product and product.is_bestseller %}checked{% endif %} style="width: 20px; height: 20px; cursor: pointer;">
+                    <label for="isBestseller" style="font-weight: 700; color: var(--secondary); cursor: pointer; margin-bottom: 0;">Best Seller</label>
+                </div>
+                <p style="color: var(--text-muted); font-size: 0.82rem; margin-bottom: 0;">Highlight this product in the 'Best Sellers' section.</p>
             </div>
             <div class="form-group">
                 <label style="display: block; margin-bottom: 12px; font-weight: 700; color: var(--secondary);">Size
@@ -161,7 +177,8 @@
             </div>
             {% if product and product.img_primary %}
             <div style="margin-top: 10px;">
-                <img src="{{ product.img_primary }}" alt="" style="height: 60px; border-radius: 8px; border: 1px solid #eee;">
+                <img src="{{ product.img_primary }}" alt=""
+                    style="height: 60px; border-radius: 8px; border: 1px solid #eee;">
             </div>
             {% endif %}
             <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 8px;">Select the primary image for this
@@ -169,7 +186,8 @@
         </div>
 
         <div class="form-group" style="margin-bottom: 30px;">
-            <label style="display: block; margin-bottom: 12px; font-weight: 700; color: var(--secondary);">Product Gallery (Detail Page)</label>
+            <label style="display: block; margin-bottom: 12px; font-weight: 700; color: var(--secondary);">Product
+                Gallery (Detail Page)</label>
             <div style="padding: 12px; border: 1.5px solid #eee; border-radius: 12px;">
                 <input type="file" name="product_images[]" multiple>
             </div>
@@ -177,25 +195,28 @@
             <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
                 {% for img in product.images %}
                 <div style="position: relative;">
-                    <img src="{{ img.img_url }}" alt="" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #eee;">
-                    <a href="{{ url_for('admin_delete_gallery_image', id=img.id) }}" 
-                       style="position: absolute; top: -5px; right: -5px; background: #ff4d4d; color: #fff; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 8px; text-decoration: none; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"
-                       onclick="return confirm('Delete this image from Cloudinary?')">
+                    <img src="{{ img.img_url }}" alt=""
+                        style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #eee;">
+                    <a href="{{ url_for('admin_delete_gallery_image', id=img.id) }}"
+                        style="position: absolute; top: -5px; right: -5px; background: #ff4d4d; color: #fff; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 8px; text-decoration: none; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"
+                        onclick="return confirm('Delete this image from Cloudinary?')">
                         <i class="fas fa-times"></i>
                     </a>
                 </div>
                 {% endfor %}
             </div>
             {% endif %}
-            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 8px;">Upload additional images for the gallery.</p>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 8px;">Upload additional images for the
+                gallery.</p>
         </div>
 
         <!-- Variable Product Section -->
         <div id="variableSection"
-            style="display: {% if product and product.product_type == 'variable' %}block{% else %}none{% endif %}; margin-bottom: 40px; background: #FFFAF3; padding: 30px; border-radius: 20px; border: 1.5px solid #FEEB9D;">
-            <div style="margin-bottom: 30px;">
-                <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 15px;">1. Select
-                    Attributes</h3>
+            style="display: {% if product and product.product_type == 'variable' %}block{% else %}none{% endif %}; margin-bottom: 40px; background: #FFFFAF; background: var(--bg-main); padding: 40px; border-radius: 24px; border: 1.5px solid var(--border-color);">
+            <div style="margin-bottom: 30px; border-bottom: 1px dashed var(--border-color); padding-bottom: 20px;">
+                <h3
+                    style="font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 15px; color: var(--secondary);">
+                    1. Configure Attributes</h3>
                 <div style="display: flex; gap: 20px; align-items: flex-end; flex-wrap: wrap;">
                     <div class="form-group" style="flex: 1; min-width: 200px; margin-bottom: 0;">
                         <label>Attribute</label>
@@ -233,10 +254,14 @@
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem;">2. Manage Variations</h3>
                 <div style="display: flex; gap: 10px; align-items: center;">
-                    <div style="display: flex; background: #fff; border: 1.5px solid #eee; border-radius: 10px; padding: 5px 10px; align-items: center; gap: 10px;">
+                    <div
+                        style="display: flex; background: #fff; border: 1.5px solid #eee; border-radius: 10px; padding: 5px 10px; align-items: center; gap: 10px;">
                         <span style="font-size: 0.8rem; font-weight: 700; color: #888;">BULK STOCK:</span>
-                        <input type="number" id="bulkStockInput" placeholder="0" style="width: 60px; border: none; outline: none; font-weight: 700;">
-                        <button type="button" class="btn" onclick="applyBulkStock()" style="background: var(--primary); color: #fff; padding: 5px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 700;">Apply All</button>
+                        <input type="number" id="bulkStockInput" placeholder="0"
+                            style="width: 60px; border: none; outline: none; font-weight: 700;">
+                        <button type="button" class="btn" onclick="applyBulkStock()"
+                            style="background: var(--primary); color: #fff; padding: 5px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 700;">Apply
+                            All</button>
                     </div>
                     <button type="button" class="btn" onclick="addVariationRow()"
                         style="background: #fff; color: var(--primary); border: 1px solid var(--primary); padding: 8px 15px; border-radius: 10px; font-weight: 600;"><i
@@ -259,16 +284,19 @@
                         {% if product and product.variations %}
                         {% for var in product.variations %}
                         <tr class="variation-row">
-                            <td><input type="text" name="var_name[]" value="{{ var.sku.split('-', 1)[1] if '-' in var.sku else var.sku }}"
+                            <td><input type="text" name="var_name[]"
+                                    value="{{ var.sku.split('-', 1)[1] if '-' in var.sku else var.sku }}"
                                     class="form-control" style="background: #fff;"></td>
                             <td><input type="number" step="0.01" name="var_price[]" value="{{ var.price }}"
                                     class="form-control" style="background: #fff;"></td>
                             <td><input type="number" name="var_stock[]" value="{{ var.stock_count }}"
                                     class="form-control" style="background: #fff;"></td>
                             <td>
-                                <input type="file" name="var_img[]" class="form-control" style="background: #fff; padding: 5px;">
+                                <input type="file" name="var_img[]" class="form-control"
+                                    style="background: #fff; padding: 5px;">
                                 {% if var.img_primary %}
-                                <img src="{{ var.img_primary }}" alt="" style="width: 30px; height: 30px; border-radius: 5px; object-fit: cover; margin-top: 5px; display: block; border: 1px solid #eee;">
+                                <img src="{{ var.img_primary }}" alt=""
+                                    style="width: 30px; height: 30px; border-radius: 5px; object-fit: cover; margin-top: 5px; display: block; border: 1px solid #eee;">
                                 {% endif %}
                             </td>
                             <td style="text-align: right;"><button type="button" class="btn-icon delete"
@@ -288,11 +316,13 @@
                 <h3 style="font-family: 'Playfair Display', serif; margin-bottom: 20px;">Quick Add Attribute</h3>
                 <div class="form-group">
                     <label>Attribute Name</label>
-                    <input type="text" id="quickAttrName" class="form-control" placeholder="e.g. Color" onkeyup="if(event.key==='Enter') saveQuickAttr()">
+                    <input type="text" id="quickAttrName" class="form-control" placeholder="e.g. Color"
+                        onkeyup="if(event.key==='Enter') saveQuickAttr()">
                 </div>
                 <div class="form-group">
                     <label>Values (Comma separated)</label>
-                    <input type="text" id="quickAttrValues" class="form-control" placeholder="e.g. Red, Blue, Green" onkeyup="if(event.key==='Enter') saveQuickAttr()">
+                    <input type="text" id="quickAttrValues" class="form-control" placeholder="e.g. Red, Blue, Green"
+                        onkeyup="if(event.key==='Enter') saveQuickAttr()">
                 </div>
                 <div style="display: flex; gap: 15px; margin-top: 30px;">
                     <button type="button" class="btn btn-primary" onclick="saveQuickAttr()" style="flex: 1;">Save &
@@ -404,7 +434,7 @@
                 opt.style.display = 'block';
                 return;
             }
-            
+
             if (opt.getAttribute('data-category') === categoryId) {
                 opt.style.display = 'block';
             } else {
@@ -522,13 +552,13 @@
     {% set attr = pa.attribute %}
     {% set vals = [] %}
     {% for var in product.variations %}
-        {% for opt in var.options %}
-            {% if opt.attribute_value.attribute_id == attr.id %}
-                {% if opt.attribute_value.value not in vals %}
-                    {% set _ = vals.append(opt.attribute_value.value) %}
-                {% endif %}
-            {% endif %}
-        {% endfor %}
+    {% for opt in var.options %}
+    {% if opt.attribute_value.attribute_id == attr.id %}
+    {% if opt.attribute_value.value not in vals %}
+    {% set _ = vals.append(opt.attribute_value.value) %}
+    {% endif %}
+    {% endif %}
+    {% endfor %}
     {% endfor %}
     selectedAttributes.push({
         id: "{{ attr.id }}",

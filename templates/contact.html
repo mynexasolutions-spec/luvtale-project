@@ -3,38 +3,72 @@
 {% block title %}Contact Us | Luvtale Boutique{% endblock %}
 
 {% block content %}
-<section style="padding: 60px 0; background: var(--sand); min-height: 80vh; display: flex; align-items: center; justify-content: center;">
-    <div class="container" style="max-width: 900px; text-align: center;">
-        <div style="margin-bottom: 40px;">
-            <h1 style="font-size: 2.2rem; font-weight: 600; margin-bottom: 15px;">Get in Touch</h1>
-            <p style="color: var(--body); font-size: 0.95rem; max-width: 600px; margin: 0 auto;">We'd love to hear from you. Whether you have a question about our collection or need assistance, we're here to help.</p>
+<section class="contact-section-wrap reveal">
+    <div class="contact-container">
+        <div class="contact-header">
+            <span class="tag">Get in Touch</span>
+            <h1>We're Here to Help</h1>
+            <p>Whether you have a question about our collections or need personal styling advice, our team is ready to assist you.</p>
         </div>
-        
-        <div class="contact-grid" style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 30px; background: #fff; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); text-align: left;">
-            <div class="contact-info" style="padding-right: 20px; border-right: 1px solid var(--border);">
-                <div style="margin-bottom: 20px;">
-                    <h4 style="margin-bottom: 5px; font-size: 1rem; font-weight: 600;">Address</h4>
-                    <p style="color: var(--body); font-size: 0.9rem;">123 Boutique Street,<br>Fashion District, NY 10001</p>
-                </div>
-                <div style="margin-bottom: 20px;">
-                    <h4 style="margin-bottom: 5px; font-size: 1rem; font-weight: 600;">Email</h4>
-                    <p style="color: var(--body); font-size: 0.9rem;">hello@luvtale.com</p>
-                </div>
+
+        <div class="contact-card">
+            <div class="contact-info-panel">
                 <div>
-                    <h4 style="margin-bottom: 5px; font-size: 1rem; font-weight: 600;">Phone</h4>
-                    <p style="color: var(--body); font-size: 0.9rem;">+1 (234) 567-890</p>
+                    <h3>Contact Information</h3>
+                    <div class="contact-details-list">
+                        <div class="contact-detail-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div>
+                                <h4>Visit Us</h4>
+                                <p>123 Boutique Street, Fashion District<br>New York, NY 10001</p>
+                            </div>
+                        </div>
+                        <div class="contact-detail-item">
+                            <i class="fas fa-envelope"></i>
+                            <div>
+                                <h4>Email Us</h4>
+                                <p>hello@luvtaleofficial.com</p>
+                            </div>
+                        </div>
+                        <div class="contact-detail-item">
+                            <i class="fas fa-phone-alt"></i>
+                            <div>
+                                <h4>Call Us</h4>
+                                <p>+1 (234) 567-890</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-socials">
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Pinterest"><i class="fab fa-pinterest-p"></i></a>
                 </div>
             </div>
-            
-            <form action="#" style="display: grid; gap: 15px;">
-                <div class="contact-form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <input type="text" placeholder="Your Name" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); outline: none; font-size: 0.9rem;">
-                    <input type="email" placeholder="Your Email" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); outline: none; font-size: 0.9rem;">
-                </div>
-                <input type="text" placeholder="Subject" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); outline: none; font-size: 0.9rem;">
-                <textarea placeholder="Your Message" rows="4" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); outline: none; font-size: 0.9rem;"></textarea>
-                <button type="submit" class="btn btn-primary" style="width: fit-content; min-width: 200px; padding: 12px 30px; font-size: 0.9rem; margin: 0 auto;">Send Message</button>
-            </form>
+
+            <div class="contact-form-panel">
+                <form class="contact-form" onsubmit="event.preventDefault(); alert('Message sent! We will get back to you soon.');">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" placeholder="Jane Doe" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" placeholder="jane@example.com" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Subject</label>
+                        <input type="text" placeholder="Inquiry about..." required>
+                    </div>
+                    <div class="form-group">
+                        <label>Message</label>
+                        <textarea placeholder="Tell us how we can help..." rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send Message</button>
+                </form>
+            </div>
         </div>
     </div>
 </section>

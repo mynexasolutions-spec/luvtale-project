@@ -178,18 +178,11 @@ function updateBadges(cartCount, wishlistCount) {
 function showToast(title, message) {
     const toast = document.createElement('div');
     toast.className = 'toast-notification';
-    toast.style.cssText = `
-        position: fixed; bottom: 30px; right: 30px; 
-        background: #000; color: #fff; padding: 15px 30px; 
-        border-radius: 12px; z-index: 10000; font-weight: 700;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        animation: slideUp 0.5s ease forwards;
-    `;
     toast.innerHTML = `<span style="color:var(--primary); margin-right:10px;">✦</span> ${message}`;
     document.body.appendChild(toast);
 
     setTimeout(() => {
-        toast.style.animation = 'slideDown 0.5s ease forwards';
+        toast.classList.add('toast-hide');
         setTimeout(() => toast.remove(), 500);
     }, 3000);
 }
@@ -206,18 +199,6 @@ async function initBadges() {
         console.warn('Could not init badges:', err);
     }
 }
-
-// CSS for Toast Animation
-const style = document.createElement('style');
-style.innerHTML = `
-    @keyframes slideUp { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-    @keyframes slideDown { from { transform: translateY(0); opacity: 1; } to { transform: translateY(100px); opacity: 0; } }
-    .cart-sidebar.active { right: 0; }
-    .cart-overlay.active { display: block; }
-    .modal-overlay.active { display: flex; opacity: 1; pointer-events: all; }
-    .modal-box.active { transform: translateY(0); opacity: 1; }
-`;
-document.head.appendChild(style);
 
 document.addEventListener('DOMContentLoaded', () => {
     initBadges();
@@ -249,6 +230,52 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // Scroll Reveal Intersection Observer
+    const revealElements = document.querySelectorAll('.reveal');
+    if (revealElements.length > 0) {
+        const revealObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+        revealElements.forEach(el => revealObserver.observe(el));
+    }
+
+    // Scroll Listeners for Header Glassmorphism and Back-To-Top
+    const header = document.getElementById('header');
+    const scrollTopBtn = document.getElementById('scroll-top');
+    
+    function handleScroll() {
+        const scrollY = window.scrollY;
+        
+        // Header scrolled state
+        if (header) {
+            if (scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        }
+        
+        // Back to top button
+        if (scrollTopBtn) {
+            if (scrollY > 300) {
+                scrollTopBtn.classList.add('visible');
+            } else {
+                scrollTopBtn.classList.remove('visible');
+            }
+        }
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // Run once on load
 });
 
 // Hamburger Menu Toggle

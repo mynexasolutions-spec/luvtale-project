@@ -6,6 +6,9 @@
         <h1>Customers</h1>
         <p>View and manage your customer list.</p>
     </div>
+    <div class="header-right">
+        <button class="btn btn-primary" onclick="openAddCustomerModal()"><i class="fas fa-plus"></i> Add Customer</button>
+    </div>
 </div>
 
 <div class="section-card">
@@ -24,12 +27,21 @@
                 {% for customer in customers %}
                 <tr>
                     <td>#{{ customer.id }}</td>
-                    <td>{{ customer.name }}</td>
-                    <td>{{ customer.email }}</td>
-                    <td>{{ customer.orders_count }}</td>
                     <td>
-                        <button class="btn-icon"><i class="fas fa-edit"></i></button>
-                        <button class="btn-icon delete"><i class="fas fa-trash"></i></button>
+                        {{ customer.username }}
+                        {% if customer.role == 'admin' %}
+                        <span style="background: var(--primary-light, #FFE5EC); color: var(--primary, #BC1E43); font-size: 0.75rem; padding: 2px 8px; border-radius: 12px; margin-left: 6px; font-weight: 700;">Admin</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ customer.email or 'N/A' }}</td>
+                    <td>{{ customer.orders_list|length }}</td>
+                    <td>
+                        <button class="btn-icon" onclick="editCustomer({{ customer.id }})" title="Edit Customer"><i class="fas fa-edit"></i></button>
+                        {% if customer.username != 'admin' and customer.id != session.get('user_id') %}
+                        <button class="btn-icon delete" onclick="deleteCustomer({{ customer.id }})" title="Delete Customer"><i class="fas fa-trash"></i></button>
+                        {% else %}
+                        <button class="btn-icon" disabled style="opacity: 0.3; cursor: not-allowed;" title="Cannot delete admin or active account"><i class="fas fa-trash"></i></button>
+                        {% endif %}
                     </td>
                 </tr>
                 {% else %}
@@ -39,4 +51,247 @@
         </table>
     </div>
 </div>
+
+<!-- Customer Details & Editing Modal -->
+<div id="admin-customer-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+    <div style="background: #fff; border-radius: 16px; padding: 25px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.15); position: relative;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1.5px solid #eee; padding-bottom: 12px;">
+            <h3 id="admin-customer-title" style="font-family: 'Playfair Display', serif; font-weight: 800; font-size: 1.4rem; margin: 0; color: #000;">Customer Details</h3>
+            <button onclick="closeAdminCustomerModal()" style="background: none; border: none; font-size: 1.8rem; line-height: 1; cursor: pointer; color: #aaa; padding: 5px;">&times;</button>
+        </div>
+        
+        <div id="admin-customer-loading" style="text-align: center; padding: 30px 0;">
+            <i class="fas fa-spinner fa-spin" style="font-size: 2.5rem; color: var(--primary);"></i>
+            <p style="margin-top: 10px; color: var(--text-muted);">Loading customer details...</p>
+        </div>
+        
+        <div id="admin-customer-info" style="display: none;">
+            <form id="admin-customer-form" onsubmit="submitAdminCustomerUpdate(event)">
+                <input type="hidden" id="edit-customer-id">
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div>
+                        <label style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 8px; color: #444;">Username</label>
+                        <input type="text" id="edit-customer-username" required style="width: 100%; padding: 12px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.9rem; background:#fff;">
+                    </div>
+                    <div>
+                        <label style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 8px; color: #444;">Email</label>
+                        <input type="email" id="edit-customer-email" style="width: 100%; padding: 12px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.9rem; background:#fff;">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div>
+                        <label style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 8px; color: #444;">Phone</label>
+                        <input type="text" id="edit-customer-phone" style="width: 100%; padding: 12px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.9rem; background:#fff;">
+                    </div>
+                    <div>
+                        <label style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 8px; color: #444;">Total Orders</label>
+                        <input type="text" id="edit-customer-orders" readonly style="width: 100%; padding: 12px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.9rem; background:#f5f5f5; cursor: not-allowed; font-weight: 700;">
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 8px; color: #444;">Address</label>
+                    <textarea id="edit-customer-address" rows="3" style="width: 100%; padding: 12px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.9rem; background:#fff; resize: vertical;"></textarea>
+                </div>
+                
+                <div style="display: flex; gap: 12px; justify-content: flex-end; border-top: 1.5px solid #eee; padding-top: 20px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeAdminCustomerModal()" style="padding: 10px 20px; font-weight:700;">Cancel</button>
+                    <button type="submit" class="btn btn-primary" style="padding: 10px 25px; font-weight:700;">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Add Customer Modal -->
+<div id="admin-add-customer-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+    <div style="background: #fff; border-radius: 16px; padding: 25px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.15); position: relative;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1.5px solid #eee; padding-bottom: 12px;">
+            <h3 style="font-family: 'Playfair Display', serif; font-weight: 800; font-size: 1.4rem; margin: 0; color: #000;">Add New Customer</h3>
+            <button onclick="closeAddCustomerModal()" style="background: none; border: none; font-size: 1.8rem; line-height: 1; cursor: pointer; color: #aaa; padding: 5px;">&times;</button>
+        </div>
+        
+        <form id="admin-add-customer-form" onsubmit="submitAddCustomer(event)">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                <div>
+                    <label style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 8px; color: #444;">Username</label>
+                    <input type="text" id="add-customer-username" required style="width: 100%; padding: 12px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.9rem; background:#fff;">
+                </div>
+                <div>
+                    <label style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 8px; color: #444;">Password</label>
+                    <input type="password" id="add-customer-password" required style="width: 100%; padding: 12px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.9rem; background:#fff;">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                <div>
+                    <label style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 8px; color: #444;">Email</label>
+                    <input type="email" id="add-customer-email" style="width: 100%; padding: 12px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.9rem; background:#fff;">
+                </div>
+                <div>
+                    <label style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 8px; color: #444;">Phone</label>
+                    <input type="text" id="add-customer-phone" style="width: 100%; padding: 12px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.9rem; background:#fff;">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                <div>
+                    <label style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 8px; color: #444;">Role</label>
+                    <select id="add-customer-role" style="width: 100%; padding: 12px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.9rem; background:#fff;">
+                        <option value="user" selected>User (Customer)</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 8px; color: #444;">Address</label>
+                <textarea id="add-customer-address" rows="3" style="width: 100%; padding: 12px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.9rem; background:#fff; resize: vertical;"></textarea>
+            </div>
+            
+            <div style="display: flex; gap: 12px; justify-content: flex-end; border-top: 1.5px solid #eee; padding-top: 20px;">
+                <button type="button" class="btn btn-secondary" onclick="closeAddCustomerModal()" style="padding: 10px 20px; font-weight:700;">Cancel</button>
+                <button type="submit" class="btn btn-primary" style="padding: 10px 25px; font-weight:700;">Create Customer</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openAddCustomerModal() {
+        document.getElementById('admin-add-customer-modal').style.display = 'flex';
+    }
+
+    function closeAddCustomerModal() {
+        document.getElementById('admin-add-customer-modal').style.display = 'none';
+        document.getElementById('admin-add-customer-form').reset();
+    }
+
+    async function submitAddCustomer(event) {
+        event.preventDefault();
+        
+        const username = document.getElementById('add-customer-username').value;
+        const password = document.getElementById('add-customer-password').value;
+        const email = document.getElementById('add-customer-email').value;
+        const phone = document.getElementById('add-customer-phone').value;
+        const role = document.getElementById('add-customer-role').value;
+        const address = document.getElementById('add-customer-address').value;
+        
+        try {
+            const res = await fetch('/api/admin/customers/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password, email, phone, role, address })
+            });
+            const data = await res.json();
+            
+            if (data.success) {
+                alert(data.message);
+                closeAddCustomerModal();
+                window.location.reload();
+            } else {
+                alert(data.message || 'Failed to add customer.');
+            }
+        } catch (err) {
+            console.error(err);
+            alert('An error occurred while adding the customer.');
+        }
+    }
+
+    async function editCustomer(customerId) {
+        const modal = document.getElementById('admin-customer-modal');
+        const loading = document.getElementById('admin-customer-loading');
+        const info = document.getElementById('admin-customer-info');
+        const title = document.getElementById('admin-customer-title');
+        
+        modal.style.display = 'flex';
+        loading.style.display = 'block';
+        info.style.display = 'none';
+        
+        try {
+            const res = await fetch(`/api/admin/customers/${customerId}`);
+            const data = await res.json();
+            
+            if (data.success) {
+                const customer = data.customer;
+                title.innerText = `Edit Customer #${customer.id}`;
+                
+                document.getElementById('edit-customer-id').value = customer.id;
+                document.getElementById('edit-customer-username').value = customer.username;
+                document.getElementById('edit-customer-email').value = customer.email;
+                document.getElementById('edit-customer-phone').value = customer.phone;
+                document.getElementById('edit-customer-orders').value = customer.orders_count;
+                document.getElementById('edit-customer-address').value = customer.address;
+                
+                loading.style.display = 'none';
+                info.style.display = 'block';
+            } else {
+                alert(data.message || 'Failed to load customer details.');
+                closeAdminCustomerModal();
+            }
+        } catch (err) {
+            console.error(err);
+            alert('An error occurred while loading customer details.');
+            closeAdminCustomerModal();
+        }
+    }
+
+    function closeAdminCustomerModal() {
+        document.getElementById('admin-customer-modal').style.display = 'none';
+    }
+
+    async function submitAdminCustomerUpdate(event) {
+        event.preventDefault();
+        
+        const customerId = document.getElementById('edit-customer-id').value;
+        const username = document.getElementById('edit-customer-username').value;
+        const email = document.getElementById('edit-customer-email').value;
+        const phone = document.getElementById('edit-customer-phone').value;
+        const address = document.getElementById('edit-customer-address').value;
+        
+        try {
+            const res = await fetch(`/api/admin/customers/edit/${customerId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, email, phone, address })
+            });
+            const data = await res.json();
+            
+            if (data.success) {
+                alert(data.message);
+                closeAdminCustomerModal();
+                window.location.reload();
+            } else {
+                alert(data.message || 'Failed to update customer.');
+            }
+        } catch (err) {
+            console.error(err);
+            alert('An error occurred while saving the changes.');
+        }
+    }
+
+    async function deleteCustomer(customerId) {
+        if (confirm('Are you absolutely sure you want to delete this customer? This will permanently delete their account. Their orders will be preserved and disassociated.')) {
+            try {
+                const res = await fetch(`/api/admin/customers/delete/${customerId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    alert(data.message);
+                    window.location.reload();
+                } else {
+                    alert(data.message || 'Failed to delete customer.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('An error occurred while deleting the customer.');
+            }
+        }
+    }
+</script>
 {% endblock %}

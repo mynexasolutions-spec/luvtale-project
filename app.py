@@ -1,6 +1,7 @@
 from flask import Flask, render_template, session, redirect, url_for, request, jsonify, flash
 from functools import wraps
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text
 from werkzeug.utils import secure_filename
 import os
 from datetime import datetime
@@ -99,9 +100,14 @@ class Product(db.Model):
     product_type = db.Column(db.String(20), default='simple') # 'simple' or 'variable'
     stock_status = db.Column(db.String(20), default='instock')
     is_featured = db.Column(db.Boolean, default=False)
+    is_trending = db.Column(db.Boolean, default=False)
+    is_bestseller = db.Column(db.Boolean, default=False)
     rating = db.Column(db.Integer, default=5)
     stock_count = db.Column(db.Integer, default=0)
     size_chart = db.Column(db.String(512)) # New field for size chart image
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+
+    user = db.relationship('User', backref=db.backref('uploaded_products', lazy=True))
     
     subcategories = db.relationship('SubCategory', secondary=product_subcategories, backref='products_list', lazy=True)
     variations = db.relationship('ProductVariation', backref='product', lazy=True, cascade="all, delete-orphan")
@@ -160,6 +166,16 @@ class Order(db.Model):
     total_amount = db.Column(db.Float)
     status = db.Column(db.String(20), default='Pending')
     date = db.Column(db.DateTime, default=datetime.utcnow)
+    payment_method = db.Column(db.String(50), default='Card')
+    return_exchange_type = db.Column(db.String(50), nullable=True)
+    return_exchange_reason = db.Column(db.Text, nullable=True)
+    return_exchange_status = db.Column(db.String(50), nullable=True)
+
+    user = db.relationship('User', backref=db.backref('orders_list', lazy=True))
+
+    @property
+    def username(self):
+        return self.user.username if self.user else "Guest"
 
 class Subscription(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -267,16 +283,31 @@ def search_api():
 @app.route('/')
 def home():
     categories = Category.query.all()
-    products = Product.query.limit(8).all()
+    trending_products = Product.query.filter_by(is_trending=True).limit(8).all()
+    bestseller_products = Product.query.filter_by(is_bestseller=True).limit(8).all()
+    featured_products = Product.query.filter_by(is_featured=True).limit(8).all()
+    if not trending_products:
+        trending_products = Product.query.limit(8).all()
+    if not bestseller_products:
+        bestseller_products = Product.query.limit(8).all()
+    if not featured_products:
+        featured_products = Product.query.limit(8).all()
     reviews = Review.query.all()
-    return render_template('index.html', categories=categories, products=products, reviews=reviews)
+    return render_template('index.html', 
+                           categories=categories, 
+                           trending_products=trending_products, 
+                           bestseller_products=bestseller_products, 
+                           featured_products=featured_products,
+                           reviews=reviews)
 
 @app.route('/shop')
 def shop():
     category_ids = request.args.getlist('category', type=int)
     subcategory_ids = request.args.getlist('subcategory', type=int)
+    collections = request.args.getlist('collection')
     min_price = request.args.get('min_price', type=float)
     max_price = request.args.get('max_price', type=float)
+    sort = request.args.get('sort')
     
     categories = Category.query.all()
     query = Product.query
@@ -286,11 +317,30 @@ def shop():
     
     if subcategory_ids:
         query = query.join(Product.subcategories).filter(SubCategory.id.in_(subcategory_ids))
+        
+    if collections:
+        collection_filters = []
+        if 'trending' in collections:
+            collection_filters.append(Product.is_trending == True)
+        if 'bestseller' in collections:
+            collection_filters.append(Product.is_bestseller == True)
+        if 'featured' in collections:
+            collection_filters.append(Product.is_featured == True)
+        if collection_filters:
+            from sqlalchemy import or_
+            query = query.filter(or_(*collection_filters))
     
     if min_price is not None:
         query = query.filter(Product.price >= min_price)
     if max_price is not None:
         query = query.filter(Product.price <= max_price)
+        
+    if sort == 'low':
+        query = query.order_by(Product.price.asc())
+    elif sort == 'high':
+        query = query.order_by(Product.price.desc())
+    else:
+        query = query.order_by(Product.id.desc())
         
     products = query.all()
     return render_template('shop.html', 
@@ -325,13 +375,48 @@ def refund_policy():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    # If already logged in, show profile details instead of redirecting or showing login form
+    if session.get('user_id') or session.get('admin_logged_in'):
+        user = None
+        if session.get('user_id'):
+            user = User.query.get(session['user_id'])
+        
+        # If admin is logged in but doesn't have a DB record yet, resolve it
+        if not user and session.get('admin_logged_in'):
+            user = User.query.filter_by(username='admin').first()
+            if not user:
+                user = User(username='admin', password='admin123', role='admin', email='admin@luvtale.com')
+                db.session.add(user)
+                db.session.commit()
+            session['user_id'] = user.id
+            session['user_role'] = 'admin'
+            session['username'] = 'admin'
+            
+        if user:
+            orders = Order.query.filter_by(user_id=user.id).order_by(Order.date.desc()).all()
+            categories = Category.query.all()
+            return render_template('profile.html', user=user, orders=orders, categories=categories)
+
+    # Always pop authentication-related variables on any /login request to ensure a clean slate,
+    # while preserving guest cart and wishlist session data.
+    session.pop('admin_logged_in', None)
+    session.pop('user_role', None)
+    session.pop('user_id', None)
+    session.pop('username', None)
+
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
         if username == 'admin' and password == 'admin123':
+            user = User.query.filter_by(username='admin').first()
+            if not user:
+                user = User(username='admin', password='admin123', role='admin', email='admin@luvtale.com')
+                db.session.add(user)
+                db.session.commit()
             session['admin_logged_in'] = True
             session['user_role'] = 'admin'
             session['username'] = username
+            session['user_id'] = user.id
             flash('Admin login successful!', 'success')
             return redirect(url_for('admin_dashboard'))
         user = User.query.filter_by(username=username).first()
@@ -343,6 +428,8 @@ def login():
             if user.role == 'admin':
                 session['admin_logged_in'] = True
                 return redirect(url_for('admin_dashboard'))
+            else:
+                session['admin_logged_in'] = False
             return redirect(url_for('home'))
         else:
             flash('Invalid username or password.', 'error')
@@ -373,7 +460,8 @@ def profile():
     user = User.query.get(session['user_id'])
     # In a real app, we'd have a relationship for orders
     orders = Order.query.filter_by(user_id=user.id).order_by(Order.date.desc()).all()
-    return render_template('profile.html', user=user, orders=orders)
+    categories = Category.query.all()
+    return render_template('profile.html', user=user, orders=orders, categories=categories)
 
 @app.route('/update-profile', methods=['POST'])
 def update_profile():
@@ -402,7 +490,7 @@ def admin_dashboard():
     stats = {
         'total_sales': '₹1,24,500',
         'orders_count': Order.query.count(),
-        'customers_count': User.query.filter_by(role='user').count(),
+        'customers_count': User.query.count(),
         'active_products': Product.query.count()
     }
     recent_orders = Order.query.order_by(Order.date.desc()).limit(5).all()
@@ -413,19 +501,19 @@ def admin_dashboard():
 @app.route('/admin/products')
 @admin_required
 def admin_products():
-    category_id = request.args.get('category', type=int)
-    subcategory_id = request.args.get('subcategory', type=int)
+    category_ids = request.args.getlist('category', type=int)
+    subcategory_ids = request.args.getlist('subcategory', type=int)
     
     query = Product.query
-    if category_id:
-        query = query.filter_by(category_id=category_id)
-    if subcategory_id:
-        query = query.join(Product.subcategories).filter(SubCategory.id == subcategory_id)
+    if category_ids:
+        query = query.filter(Product.category_id.in_(category_ids))
+    if subcategory_ids:
+        query = query.join(Product.subcategories).filter(SubCategory.id.in_(subcategory_ids))
         
     products = query.all()
     categories = Category.query.all()
     subcategories = SubCategory.query.all()
-    return render_template('admin/products.html', products=products, categories=categories, subcategories=subcategories)
+    return render_template('admin/products.html', products=products, categories=categories, subcategories=subcategories, category_ids=category_ids, subcategory_ids=subcategory_ids)
 
 @app.route('/admin/categories')
 @admin_required
@@ -470,7 +558,7 @@ def admin_orders():
 @app.route('/admin/customers')
 @admin_required
 def admin_customers():
-    customers = User.query.filter_by(role='user').all()
+    customers = User.query.all()
     return render_template('admin/customers.html', customers=customers)
 
 @app.route('/admin/reviews')
@@ -564,6 +652,8 @@ def admin_add_product():
             product_type=product_type,
             stock_count=stock_count,
             is_featured='is_featured' in request.form,
+            is_trending='is_trending' in request.form,
+            is_bestseller='is_bestseller' in request.form,
             size_chart=save_file(request.files.get('size_chart')),
             rating=int(request.form.get('rating') or 5)
         )
@@ -649,6 +739,8 @@ def admin_edit_product(id):
         product.product_type = request.form.get('product_type')
         product.stock_count = int(request.form.get('stock_count') or 0)
         product.is_featured = 'is_featured' in request.form
+        product.is_trending = 'is_trending' in request.form
+        product.is_bestseller = 'is_bestseller' in request.form
         product.rating = int(request.form.get('rating') or 5)
         
         new_primary = save_file(request.files.get('img_primary'))
@@ -1050,98 +1142,159 @@ def admin_add_subcategory(cat_id):
 # --- DATABASE SEEDING ---
 def seed_db():
     with app.app_context():
-        db.drop_all() # Fresh start to ensure schema matches
+        db.session.execute(text("SET statement_timeout = 0"))
         db.create_all()
         
+        # Seed default admin user if not exists
+        admin_user = User.query.filter_by(username='admin').first()
+        if not admin_user:
+            admin_user = User(
+                username='admin',
+                password='admin123',
+                role='admin',
+                email='admin@luvtale.com',
+                phone='9999999999',
+                address='Luvtale Head Office, Bangalore, India'
+            )
+            db.session.add(admin_user)
+            db.session.commit()
+
         if not Category.query.first():
             # Seed Categories precisely as in image
             cats_data = [
-                {"name": "Jackets", "img": "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400", "bg": "linear-gradient(180deg, #E5D0B1 0%, #7D613E 100%)", "is_new": True},
-                {"name": "Jeans", "img": "https://images.unsplash.com/photo-1542272604-787c3835535d?w=400", "bg": "linear-gradient(180deg, #B5CCE1 0%, #4B6B8A 100%)"},
-                {"name": "Dresses", "img": "https://images.unsplash.com/photo-1539008835270-303180775210?w=400", "bg": "linear-gradient(180deg, #D1B3E2 0%, #6B4B8A 100%)", "is_hot": True},
-                {"name": "T-Shirts", "img": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400", "bg": "linear-gradient(180deg, #B5E1B5 0%, #4B8A4B 100%)"},
-                {"name": "Accessories", "img": "https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?w=400", "bg": "linear-gradient(180deg, #E1D1B5 0%, #8A6B4B 100%)"},
+                {"name": "Kurtis", "img": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=400", "bg": "linear-gradient(180deg, #E5D0B1 0%, #7D613E 100%)", "is_new": True},
+                {"name": "Sarees", "img": "https://images.unsplash.com/photo-1610030469668-93535c17b6b3?w=400", "bg": "linear-gradient(180deg, #B5CCE1 0%, #4B6B8A 100%)"},
+                {"name": "Lehengas", "img": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=400", "bg": "linear-gradient(180deg, #D1B3E2 0%, #6B4B8A 100%)", "is_hot": True},
+                {"name": "Anarkalis", "img": "https://images.unsplash.com/photo-1631857455684-a54a2f03665f?w=400", "bg": "linear-gradient(180deg, #B5E1B5 0%, #4B8A4B 100%)"},
+                {"name": "Sherwanis", "img": "https://images.unsplash.com/photo-1605001011156-cbf0b0f67a51?w=400", "bg": "linear-gradient(180deg, #E1D1B5 0%, #8A6B4B 100%)"},
+                {"name": "Dupattas", "img": "https://images.unsplash.com/photo-1608748010899-18f300247112?w=400", "bg": "linear-gradient(180deg, #FAD0C4 0%, #D8A5A5 100%)"},
             ]
-            
-            # Seed Reviews/Testimonials
-            reviews_data = [
-                {"name": "Sarah M.", "rating": 5, "comment": "Absolutely love the quality! The Cozy Knit Cardigan is so soft and the fit is perfect. Will definitely be ordering more."},
-                {"name": "James K.", "rating": 5, "comment": "Fast shipping and beautiful packaging. The Athletic Mesh Leggings are exactly as described — super comfortable!"},
-                {"name": "Emily R.", "rating": 4, "comment": "Great selection and the customer service was incredibly helpful when I needed to exchange sizes. 10/10 would recommend."},
-            ]
-            
-            for r in reviews_data:
-                db.session.add(Review(customer_name=r['name'], rating=r['rating'], comment=r['comment']))
             
             for c in cats_data:
                 cat = Category(name=c['name'], img=c['img'], bg=c['bg'], is_new=c.get('is_new', False), is_hot=c.get('is_hot', False))
                 db.session.add(cat)
             db.session.commit()
-
+ 
             # Get category objects for linking
-            jackets_cat = Category.query.filter_by(name="Jackets").first()
-            jeans_cat = Category.query.filter_by(name="Jeans").first()
-            dresses_cat = Category.query.filter_by(name="Dresses").first()
-            tshirts_cat = Category.query.filter_by(name="T-Shirts").first()
-            acc_cat = Category.query.filter_by(name="Accessories").first()
-
-            # Seed Products from Image 2
+            kurtis_cat = Category.query.filter_by(name="Kurtis").first()
+            sarees_cat = Category.query.filter_by(name="Sarees").first()
+            lehengas_cat = Category.query.filter_by(name="Lehengas").first()
+            anarkalis_cat = Category.query.filter_by(name="Anarkalis").first()
+            sherwanis_cat = Category.query.filter_by(name="Sherwanis").first()
+            dupattas_cat = Category.query.filter_by(name="Dupattas").first()
+ 
+            # Seed Products from Image 2 (Indian Ethnic Wear)
             products_data = [
                 {
-                    "name": "Cozy Knit Cardigan Sweater", "price": 89.0, "old_price": 110.0, 
-                    "category": jackets_cat, "badge": "20% Off", 
-                    "img": "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=600",
-                    "img2": "https://images.unsplash.com/photo-1620799139507-2a76f79a2f4d?w=600"
+                    "name": "Handcrafted Silk Kurti", "price": 89.0, "old_price": 110.0, 
+                    "category": kurtis_cat, "badge": "20% Off", 
+                    "img": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=600",
+                    "img2": "https://images.unsplash.com/photo-1608748010899-18f300247112?w=600",
+                    "is_trending": True, "is_bestseller": False
                 },
                 {
-                    "name": "Sophisticated Swagger Suit", "price": 299.0, 
-                    "category": dresses_cat, "badge": "Hot", 
-                    "img": "https://images.unsplash.com/photo-1594932224456-73a726af3bc9?w=600",
-                    "img2": "https://images.unsplash.com/photo-1598808503746-f34c53b9323e?w=600"
+                    "name": "Royal Bridal Lehenga", "price": 299.0, 
+                    "category": lehengas_cat, "badge": "Hot", 
+                    "img": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=600",
+                    "img2": "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=600",
+                    "is_trending": True, "is_bestseller": False
                 },
                 {
-                    "name": "Classic Denim Skinny Jeans", "price": 75.0, "old_price": 95.0, 
-                    "category": jeans_cat, "badge": "Sale", 
-                    "img": "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=600",
-                    "img2": "https://images.unsplash.com/photo-1475178626620-a4d074967452?w=600"
+                    "name": "Banarasi Silk Saree", "price": 75.0, "old_price": 95.0, 
+                    "category": sarees_cat, "badge": "Sale", 
+                    "img": "https://images.unsplash.com/photo-1610030469668-93535c17b6b3?w=600",
+                    "img2": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=600",
+                    "is_trending": False, "is_bestseller": True
                 },
                 {
-                    "name": "Athletic Mesh Sports Leggings", "price": 55.0, 
-                    "category": tshirts_cat, "badge": "New", 
-                    "img": "https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=600",
-                    "img2": "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600"
+                    "name": "Embroidered Anarkali Suit", "price": 145.0, 
+                    "category": anarkalis_cat, "badge": "New", 
+                    "img": "https://images.unsplash.com/photo-1631857455684-a54a2f03665f?w=600",
+                    "img2": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=600",
+                    "is_trending": True, "is_bestseller": False
                 },
                 {
-                    "name": "Floral Summer Maxi Dress", "price": 145.0, 
-                    "category": dresses_cat, "badge": "New", 
-                    "img": "https://images.unsplash.com/photo-1572804013307-a9a11d98450d?w=600",
-                    "img2": "https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=600"
+                    "name": "Ethnic Designer Gown", "price": 185.0, 
+                    "category": lehengas_cat, "badge": "New", 
+                    "img": "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=600",
+                    "img2": "https://images.unsplash.com/photo-1631857455684-a54a2f03665f?w=600",
+                    "is_trending": False, "is_bestseller": True
                 },
                 {
-                    "name": "Vintage Leather Scarf", "price": 45.0, 
-                    "category": acc_cat, "badge": "Sale", 
-                    "img": "https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?w=600",
-                    "img2": "https://images.unsplash.com/photo-1601924994987-69e26d50dc26?w=600"
+                    "name": "Embellished Royal Sherwani", "price": 249.0, 
+                    "category": sherwanis_cat, "badge": "Sale", 
+                    "img": "https://images.unsplash.com/photo-1605001011156-cbf0b0f67a51?w=600",
+                    "img2": "https://images.unsplash.com/photo-1597983073492-7b4610145cf6?w=600",
+                    "is_trending": False, "is_bestseller": True
                 },
                 {
-                    "name": "test", "price": 2000.0, 
-                    "category": dresses_cat, "badge": "Premium", 
-                    "img": "/static/uploads/20260430012828_1.png",
-                    "img2": "/static/uploads/20260430012828_3.png"
+                    "name": "Premium Zari Dupatta", "price": 45.0, 
+                    "category": dupattas_cat, "badge": "Premium", 
+                    "img": "https://images.unsplash.com/photo-1608748010899-18f300247112?w=600",
+                    "img2": "https://images.unsplash.com/photo-1610030469668-93535c17b6b3?w=600",
+                    "is_trending": True, "is_bestseller": True
                 }
             ]
-
+ 
             for p in products_data:
                 prod = Product(
                     name=p['name'], price=p['price'], old_price=p.get('old_price'),
                     category_id=p['category'].id, badge=p['badge'],
                     img_primary=p['img'], img_secondary=p['img2'],
                     description=f"Premium {p['name']} designed for style and comfort.",
-                    stock_count=50, is_featured=True
+                    stock_count=50, is_featured=True,
+                    is_trending=p.get('is_trending', False),
+                    is_bestseller=p.get('is_bestseller', False)
                 )
                 db.session.add(prod)
             db.session.commit()
-            
+
+            # Seed Coupons
+            coupons_data = [
+                {"code": "LUVTALE10", "discount_type": "Percentage", "discount_value": 10.0, "threshold": 0.0},
+                {"code": "FESTIVE25", "discount_type": "Percentage", "discount_value": 25.0, "threshold": 150.0},
+                {"code": "WELCOME100", "discount_type": "Flat", "discount_value": 100.0, "threshold": 500.0}
+            ]
+            for c in coupons_data:
+                db.session.add(Coupon(
+                    code=c['code'],
+                    discount_type=c['discount_type'],
+                    discount_value=c['discount_value'],
+                    threshold=c['threshold'],
+                    is_active=True
+                ))
+            db.session.commit()
+
+            # Get products for reviews
+            kurti_prod = Product.query.filter_by(name="Handcrafted Silk Kurti").first()
+            lehenga_prod = Product.query.filter_by(name="Royal Bridal Lehenga").first()
+            saree_prod = Product.query.filter_by(name="Banarasi Silk Saree").first()
+            anarkali_prod = Product.query.filter_by(name="Embroidered Anarkali Suit").first()
+            gown_prod = Product.query.filter_by(name="Ethnic Designer Gown").first()
+            sherwani_prod = Product.query.filter_by(name="Embellished Royal Sherwani").first()
+            dupatta_prod = Product.query.filter_by(name="Premium Zari Dupatta").first()
+
+            # Seed specific product reviews
+            product_reviews = [
+                {"name": "Anjali S.", "rating": 5, "comment": "Absolutely love the fabric quality! The Banarasi Saree is incredibly elegant and drape is beautiful. Highly recommend Luvtale!", "product": saree_prod},
+                {"name": "Meera J.", "rating": 5, "comment": "Beautiful saree, the color is exactly as shown. Perfect for family occasions.", "product": saree_prod},
+                {"name": "Rohan M.", "rating": 5, "comment": "The Sherwani fits perfectly for my wedding event. The gold embellishments are detailed and look super luxurious.", "product": sherwani_prod},
+                {"name": "Aman V.", "rating": 4, "comment": "Fabric is heavy and feels very premium. Fit was good, minor sleeve alteration needed.", "product": sherwani_prod},
+                {"name": "Pooja K.", "rating": 4, "comment": "Great selection of ethnic wear. The Lehenga was custom-fit perfectly and the support team helped me finalize sizes.", "product": lehenga_prod},
+                {"name": "Sneha P.", "rating": 5, "comment": "The royal red is stunning. Felt like a queen wearing it!", "product": lehenga_prod},
+                {"name": "Deepa R.", "rating": 5, "comment": "Stunning silk work. Feels soft and is lightweight. Exceeded my expectations.", "product": kurti_prod},
+                {"name": "Shweta K.", "rating": 5, "comment": "Incredible designer gown! The details are gorgeous and the fabric drape is superb.", "product": gown_prod},
+            ]
+            for r in product_reviews:
+                if r['product']:
+                    db.session.add(Review(
+                        customer_name=r['name'],
+                        rating=r['rating'],
+                        comment=r['comment'],
+                        product_id=r['product'].id
+                    ))
+            db.session.commit()
+             
             print("Database seeded with visual demo items!")
 
 @app.route('/product/<int:id>')
@@ -1156,7 +1309,8 @@ def product_detail(id):
         current_variation = None
         
     categories = Category.query.all()
-    return render_template('product_detail.html', product=product, categories=categories, current_variation=current_variation)
+    reviews = Review.query.filter_by(product_id=product.id).all()
+    return render_template('product_detail.html', product=product, categories=categories, current_variation=current_variation, reviews=reviews)
 
 @app.route('/cart')
 def cart_page():
@@ -1265,8 +1419,186 @@ def api_remove_wishlist(id):
 @app.route('/api/cart-data')
 def api_cart_data():
     cart = session.get('cart', {})
-    total = sum(item['price'] * item['quantity'] for item in cart.values())
-    return jsonify({'cart': cart, 'total': total, 'count': sum(item['quantity'] for item in cart.values())})
+    subtotal = sum(item['price'] * item['quantity'] for item in cart.values())
+    
+    # Recalculate applied coupon if it exists
+    applied_coupon = session.get('applied_coupon')
+    discount_amount = 0.0
+    coupon_code = None
+    
+    if applied_coupon and subtotal > 0:
+        # Re-check from database to ensure it is still valid
+        coupon = Coupon.query.filter_by(code=applied_coupon['code'], is_active=True).first()
+        if coupon and (not coupon.expiry_date or coupon.expiry_date >= datetime.utcnow()) and subtotal >= coupon.threshold:
+            coupon_code = coupon.code
+            if coupon.discount_type == 'Percentage':
+                discount_amount = round(subtotal * (coupon.discount_value / 100.0), 2)
+            else:
+                discount_amount = min(coupon.discount_value, subtotal)
+            session['applied_coupon']['discount_amount'] = discount_amount
+        else:
+            # Coupon no longer valid (e.g. cart subtotal fell below threshold)
+            session.pop('applied_coupon', None)
+        session.modified = True
+        
+    shipping_charge = 0.0
+    if subtotal > 0 and subtotal < 500.0:
+        shipping_charge = 50.0
+
+    total = max(0.0, subtotal - discount_amount + shipping_charge)
+    
+    user_data = None
+    if session.get('user_id'):
+        user = User.query.get(session['user_id'])
+        if user:
+            user_data = {
+                'email': user.email or '',
+                'phone': user.phone or '',
+                'address': user.address or ''
+            }
+            
+    return jsonify({
+        'cart': cart, 
+        'subtotal': subtotal,
+        'discount': discount_amount,
+        'coupon_code': coupon_code,
+        'shipping_charge': shipping_charge,
+        'shipping_threshold': 500.0,
+        'total': total, 
+        'count': sum(item['quantity'] for item in cart.values()),
+        'user_data': user_data
+    })
+
+@app.route('/api/apply-coupon', methods=['POST'])
+def api_apply_coupon():
+    data = request.get_json() or {}
+    code = data.get('code', '').strip().upper()
+    
+    if 'cart' not in session or not session['cart']:
+        return jsonify({'success': False, 'message': 'Your shopping bag is empty.'}), 400
+        
+    coupon = Coupon.query.filter_by(code=code, is_active=True).first()
+    if not coupon:
+        return jsonify({'success': False, 'message': 'Invalid or inactive coupon code.'}), 404
+        
+    # Check expiry
+    if coupon.expiry_date and coupon.expiry_date < datetime.utcnow():
+        return jsonify({'success': False, 'message': 'This coupon has expired.'}), 400
+        
+    # Calculate cart total
+    cart = session['cart']
+    subtotal = sum(item['price'] * item['quantity'] for item in cart.values())
+    
+    # Check threshold
+    if subtotal < coupon.threshold:
+        return jsonify({'success': False, 'message': f'Minimum purchase of ₹{coupon.threshold} required for this coupon.'}), 400
+        
+    # Calculate discount
+    if coupon.discount_type == 'Percentage':
+        discount_amount = round(subtotal * (coupon.discount_value / 100.0), 2)
+    else:
+        discount_amount = min(coupon.discount_value, subtotal)
+        
+    session['applied_coupon'] = {
+        'code': coupon.code,
+        'discount_type': coupon.discount_type,
+        'discount_value': coupon.discount_value,
+        'discount_amount': discount_amount
+    }
+    session.modified = True
+    
+    return jsonify({
+        'success': True,
+        'message': f'Coupon "{coupon.code}" applied successfully!',
+        'discount_amount': discount_amount,
+        'new_total': subtotal - discount_amount
+    })
+
+@app.route('/api/remove-coupon', methods=['POST'])
+def api_remove_coupon():
+    session.pop('applied_coupon', None)
+    session.modified = True
+    return jsonify({'success': True, 'message': 'Coupon removed successfully.'})
+
+@app.route('/api/place-order', methods=['POST'])
+def api_place_order():
+    if 'cart' not in session or not session['cart']:
+        return jsonify({'success': False, 'message': 'Your shopping bag is empty.'}), 400
+        
+    data = request.get_json() or {}
+    email = data.get('email')
+    phone = data.get('phone')
+    address = data.get('address')
+    payment_method = data.get('payment_method', 'Card')
+    
+    if not email or not phone or not address:
+        return jsonify({'success': False, 'message': 'Please provide email, phone number, and delivery address.'}), 400
+        
+    # Get total amount with discount
+    cart = session.get('cart', {})
+    subtotal = sum(item['price'] * item['quantity'] for item in cart.values())
+    
+    # Recalculate applied coupon
+    applied_coupon = session.get('applied_coupon')
+    discount_amount = 0.0
+    if applied_coupon:
+        coupon = Coupon.query.filter_by(code=applied_coupon['code'], is_active=True).first()
+        if coupon and (not coupon.expiry_date or coupon.expiry_date >= datetime.utcnow()) and subtotal >= coupon.threshold:
+            if coupon.discount_type == 'Percentage':
+                discount_amount = round(subtotal * (coupon.discount_value / 100.0), 2)
+            else:
+                discount_amount = min(coupon.discount_value, subtotal)
+                
+    shipping_charge = 0.0
+    if subtotal > 0 and subtotal < 500.0:
+        shipping_charge = 50.0
+
+    total_amount = max(0.0, subtotal - discount_amount + shipping_charge)
+    
+    # Generate unique order number (e.g. LUV-TIMESTAMP)
+    import time
+    order_number = f"LUV-{int(time.time())}"
+    
+    status = 'Pending' if payment_method == 'COD' else 'Paid'
+    
+    user_id = session.get('user_id')
+    new_order = Order(
+        order_number=order_number,
+        user_id=user_id,
+        total_amount=total_amount,
+        status=status,
+        payment_method=payment_method,
+        date=datetime.utcnow()
+    )
+    
+    db.session.add(new_order)
+    
+    # Decrement stock count for products
+    for item_key, item in cart.items():
+        prod_id = item['id']
+        var_id = item.get('variation_id')
+        qty = item['quantity']
+        
+        product = Product.query.get(prod_id)
+        if product:
+            product.stock_count = max(0, product.stock_count - qty)
+            if var_id:
+                variation = ProductVariation.query.get(var_id)
+                if variation:
+                    variation.stock_count = max(0, variation.stock_count - qty)
+                    
+    db.session.commit()
+    
+    # Clear cart and coupon from session
+    session.pop('cart', None)
+    session.pop('applied_coupon', None)
+    session.modified = True
+    
+    return jsonify({
+        'success': True,
+        'message': 'Order placed successfully!',
+        'order_number': order_number
+    })
 
 @app.route('/api/wishlist-data')
 def api_wishlist_data():
@@ -1282,6 +1614,342 @@ def api_wishlist_data():
         })
     return jsonify({'wishlist': wishlist_data, 'count': len(wishlist_ids)})
 
+@app.route('/api/user/products')
+def api_user_products():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({'success': False, 'message': 'Authentication required.'}), 401
+    
+    products = Product.query.filter_by(user_id=user_id).order_by(Product.id.desc()).all()
+    products_data = []
+    for p in products:
+        products_data.append({
+            'id': p.id,
+            'name': p.name,
+            'price': p.price,
+            'old_price': p.old_price,
+            'img_primary': p.img_primary,
+            'description': p.description,
+            'category_id': p.category_id,
+            'category_name': p.category.name if p.category else 'Uncategorized',
+            'stock_count': p.stock_count,
+            'is_featured': p.is_featured,
+            'is_trending': p.is_trending,
+            'is_bestseller': p.is_bestseller,
+            'badge': p.badge
+        })
+    return jsonify({'success': True, 'products': products_data})
+
+@app.route('/api/user/products/add', methods=['POST'])
+def api_user_add_product():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({'success': False, 'message': 'Authentication required.'}), 401
+    
+    name = request.form.get('name')
+    price_val = request.form.get('price')
+    if not name or not price_val:
+        return jsonify({'success': False, 'message': 'Name and price are required.'}), 400
+        
+    try:
+        price = float(price_val)
+    except ValueError:
+        return jsonify({'success': False, 'message': 'Price must be a number.'}), 400
+        
+    old_price_val = request.form.get('old_price')
+    old_price = None
+    if old_price_val:
+        try:
+            old_price = float(old_price_val)
+        except ValueError:
+            pass
+            
+    description = request.form.get('description')
+    category_id = request.form.get('category_id', type=int)
+    stock_count = request.form.get('stock_count', default=10, type=int)
+    badge = request.form.get('badge')
+    
+    is_featured = request.form.get('is_featured') == 'true' or request.form.get('is_featured') == 'on'
+    is_trending = request.form.get('is_trending') == 'true' or request.form.get('is_trending') == 'on'
+    is_bestseller = request.form.get('is_bestseller') == 'true' or request.form.get('is_bestseller') == 'on'
+    
+    img_primary = None
+    file = request.files.get('img_primary')
+    if file and file.filename:
+        img_primary = save_file(file)
+    if not img_primary:
+        img_primary = request.form.get('img_url')
+    if not img_primary:
+        img_primary = 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=500'
+        
+    new_product = Product(
+        name=name,
+        price=price,
+        old_price=old_price,
+        description=description,
+        category_id=category_id,
+        stock_count=stock_count,
+        badge=badge,
+        img_primary=img_primary,
+        is_featured=is_featured,
+        is_trending=is_trending,
+        is_bestseller=is_bestseller,
+        user_id=user_id,
+        product_type='simple',
+        rating=5
+    )
+    
+    db.session.add(new_product)
+    db.session.commit()
+    return jsonify({'success': True, 'message': 'Product added successfully!', 'product_id': new_product.id})
+
+@app.route('/api/user/products/edit/<int:id>', methods=['POST'])
+def api_user_edit_product(id):
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({'success': False, 'message': 'Authentication required.'}), 401
+        
+    product = Product.query.get_or_404(id)
+    if product.user_id != user_id:
+        return jsonify({'success': False, 'message': 'Unauthorized to edit this product.'}), 403
+        
+    name = request.form.get('name')
+    price_val = request.form.get('price')
+    if not name or not price_val:
+        return jsonify({'success': False, 'message': 'Name and price are required.'}), 400
+        
+    try:
+        product.price = float(price_val)
+    except ValueError:
+        return jsonify({'success': False, 'message': 'Price must be a number.'}), 400
+        
+    product.name = name
+    
+    old_price_val = request.form.get('old_price')
+    if old_price_val:
+        try:
+            product.old_price = float(old_price_val)
+        except ValueError:
+            product.old_price = None
+    else:
+        product.old_price = None
+        
+    product.description = request.form.get('description')
+    product.category_id = request.form.get('category_id', type=int)
+    product.stock_count = request.form.get('stock_count', default=10, type=int)
+    product.badge = request.form.get('badge')
+    
+    product.is_featured = request.form.get('is_featured') == 'true' or request.form.get('is_featured') == 'on'
+    product.is_trending = request.form.get('is_trending') == 'true' or request.form.get('is_trending') == 'on'
+    product.is_bestseller = request.form.get('is_bestseller') == 'true' or request.form.get('is_bestseller') == 'on'
+    
+    file = request.files.get('img_primary')
+    if file and file.filename:
+        new_img = save_file(file)
+        if new_img:
+            product.img_primary = new_img
+    else:
+        img_url = request.form.get('img_url')
+        if img_url:
+            product.img_primary = img_url
+            
+    db.session.commit()
+    return jsonify({'success': True, 'message': 'Product updated successfully!'})
+
+@app.route('/api/user/products/delete/<int:id>', methods=['POST'])
+def api_user_delete_product(id):
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({'success': False, 'message': 'Authentication required.'}), 401
+        
+    product = Product.query.get_or_404(id)
+    if product.user_id != user_id:
+        return jsonify({'success': False, 'message': 'Unauthorized to delete this product.'}), 403
+        
+    db.session.delete(product)
+    db.session.commit()
+    return jsonify({'success': True, 'message': 'Product deleted successfully!'})
+
+@app.route('/api/order/<int:order_id>/return-exchange', methods=['POST'])
+def api_user_return_exchange(order_id):
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({'success': False, 'message': 'Authentication required.'}), 401
+    
+    order = Order.query.get_or_404(order_id)
+    if order.user_id != user_id:
+        return jsonify({'success': False, 'message': 'Unauthorized to modify this order.'}), 403
+        
+    data = request.get_json() or {}
+    request_type = data.get('request_type') # 'Return' or 'Exchange'
+    reason = data.get('reason')
+    
+    if request_type not in ['Return', 'Exchange']:
+        return jsonify({'success': False, 'message': 'Invalid request type.'}), 400
+        
+    if not reason:
+        return jsonify({'success': False, 'message': 'Reason is required.'}), 400
+        
+    order.return_exchange_type = request_type
+    order.return_exchange_reason = reason
+    order.return_exchange_status = 'Pending'
+    order.status = f'{request_type} Requested'
+    
+    db.session.commit()
+    return jsonify({'success': True, 'message': f'{request_type} request submitted successfully.'})
+
+@app.route('/api/admin/orders/<int:order_id>', methods=['GET'])
+def api_admin_order_details(order_id):
+    if not session.get('admin_logged_in') and session.get('user_role') != 'admin':
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 401
+        
+    order = Order.query.get_or_404(order_id)
+    return jsonify({
+        'success': True,
+        'order': {
+            'id': order.id,
+            'order_number': order.order_number,
+            'total_amount': order.total_amount,
+            'status': order.status,
+            'payment_method': order.payment_method,
+            'date': order.date.strftime('%Y-%m-%d %H:%M:%S'),
+            'username': order.user.username if order.user else 'Guest',
+            'email': order.user.email if order.user else 'N/A',
+            'phone': order.user.phone if order.user else 'N/A',
+            'address': order.user.address if order.user else 'N/A',
+            'return_exchange_type': order.return_exchange_type,
+            'return_exchange_reason': order.return_exchange_reason,
+            'return_exchange_status': order.return_exchange_status
+        }
+    })
+
+@app.route('/api/admin/orders/edit/<int:order_id>', methods=['POST'])
+def api_admin_edit_order(order_id):
+    if not session.get('admin_logged_in') and session.get('user_role') != 'admin':
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 401
+        
+    order = Order.query.get_or_404(order_id)
+    data = request.get_json() or {}
+    status = data.get('status')
+    return_exchange_status = data.get('return_exchange_status')
+    
+    if status:
+        order.status = status
+    if return_exchange_status:
+        order.return_exchange_status = return_exchange_status
+        if return_exchange_status == 'Approved' and order.return_exchange_type:
+            order.status = f'{order.return_exchange_type} Approved'
+        elif return_exchange_status == 'Rejected' and order.return_exchange_type:
+            order.status = f'{order.return_exchange_type} Rejected'
+            
+    db.session.commit()
+    return jsonify({'success': True, 'message': 'Order updated successfully!'})
+
+@app.route('/api/admin/customers/<int:customer_id>', methods=['GET'])
+def api_admin_customer_details(customer_id):
+    if not session.get('admin_logged_in') and session.get('user_role') != 'admin':
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 401
+        
+    customer = User.query.get_or_404(customer_id)
+    
+    return jsonify({
+        'success': True,
+        'customer': {
+            'id': customer.id,
+            'username': customer.username,
+            'email': customer.email or '',
+            'phone': customer.phone or '',
+            'address': customer.address or '',
+            'orders_count': len(customer.orders_list)
+        }
+    })
+
+@app.route('/api/admin/customers/edit/<int:customer_id>', methods=['POST'])
+def api_admin_edit_customer(customer_id):
+    if not session.get('admin_logged_in') and session.get('user_role') != 'admin':
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 401
+        
+    customer = User.query.get_or_404(customer_id)
+    
+    data = request.get_json() or {}
+    username = data.get('username')
+    email = data.get('email')
+    phone = data.get('phone')
+    address = data.get('address')
+    
+    if not username:
+        return jsonify({'success': False, 'message': 'Username is required.'}), 400
+        
+    if username != customer.username:
+        existing_user = User.query.filter_by(username=username).first()
+        if existing_user:
+            return jsonify({'success': False, 'message': 'Username is already taken.'}), 400
+            
+    customer.username = username
+    customer.email = email
+    customer.phone = phone
+    customer.address = address
+    
+    db.session.commit()
+    return jsonify({'success': True, 'message': 'Customer updated successfully!'})
+
+@app.route('/api/admin/customers/delete/<int:customer_id>', methods=['POST'])
+def api_admin_delete_customer(customer_id):
+    if not session.get('admin_logged_in') and session.get('user_role') != 'admin':
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 401
+        
+    customer = User.query.get_or_404(customer_id)
+    
+    # Protect main admin account or self-deletion
+    if customer.username == 'admin' or customer.id == session.get('user_id'):
+        return jsonify({'success': False, 'message': 'Cannot delete the primary admin account or your own active account.'}), 400
+        
+    # Disassociate uploaded products
+    for product in customer.uploaded_products:
+        product.user_id = None
+    # Disassociate orders
+    for order in customer.orders_list:
+        order.user_id = None
+        
+    db.session.delete(customer)
+    db.session.commit()
+    return jsonify({'success': True, 'message': 'Customer deleted successfully!'})
+
+@app.route('/api/admin/customers/add', methods=['POST'])
+def api_admin_add_customer():
+    if not session.get('admin_logged_in') and session.get('user_role') != 'admin':
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 401
+        
+    data = request.get_json() or {}
+    username = data.get('username')
+    password = data.get('password')
+    email = data.get('email')
+    phone = data.get('phone')
+    address = data.get('address')
+    role = data.get('role', 'user')
+    
+    if not username:
+        return jsonify({'success': False, 'message': 'Username is required.'}), 400
+    if not password:
+        return jsonify({'success': False, 'message': 'Password is required.'}), 400
+        
+    existing_user = User.query.filter_by(username=username).first()
+    if existing_user:
+        return jsonify({'success': False, 'message': 'Username is already taken.'}), 400
+        
+    new_customer = User(
+        username=username,
+        password=password,
+        role=role,
+        email=email,
+        phone=phone,
+        address=address
+    )
+    db.session.add(new_customer)
+    db.session.commit()
+    return jsonify({'success': True, 'message': 'Customer added successfully!'})
+
 if __name__ == '__main__':
     seed_db()
     app.run(debug=True, port=5000)
+

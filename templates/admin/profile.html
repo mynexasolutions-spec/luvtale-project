@@ -1,7 +1,8 @@
 {% extends "admin/base.html" %}
 
 {% block content %}
-<div class="admin-card" style="max-width: 800px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+<div class="admin-card"
+    style="max-width: 800px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
     <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 30px;">
         <div style="background: var(--primary); color: #fff; padding: 12px; border-radius: 12px;">
             <i class="fas fa-store-alt" style="font-size: 1.5rem;"></i>
@@ -12,62 +13,96 @@
     <form action="{{ url_for('admin_settings') }}" method="POST">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
             <div class="form-group">
-                <label style="display: block; font-weight: 700; color: #444; margin-bottom: 10px; font-size: 0.9rem;">Store Name</label>
-                <input type="text" name="store_name" value="Luvtale Boutique" style="width: 100%; padding: 14px; border-radius: 12px; border: 1.5px solid #eee; font-family: inherit; font-size: 0.95rem; outline: none; transition: 0.3s;" placeholder="Enter store name">
+                <label
+                    style="display: block; font-weight: 700; color: #444; margin-bottom: 10px; font-size: 0.9rem;">Store
+                    Name</label>
+                <input type="text" name="store_name" value="Luvtale Boutique"
+                    style="width: 100%; padding: 14px; border-radius: 12px; border: 1.5px solid #eee; font-family: inherit; font-size: 0.95rem; outline: none; transition: 0.3s;"
+                    placeholder="Enter store name">
             </div>
             <div class="form-group">
-                <label style="display: block; font-weight: 700; color: #444; margin-bottom: 10px; font-size: 0.9rem;">Contact Email</label>
-                <input type="email" name="contact_email" value="support@luvtale.com" style="width: 100%; padding: 14px; border-radius: 12px; border: 1.5px solid #eee; font-family: inherit; font-size: 0.95rem; outline: none; transition: 0.3s;" placeholder="Enter support email">
+                <label
+                    style="display: block; font-weight: 700; color: #444; margin-bottom: 10px; font-size: 0.9rem;">Contact
+                    Email</label>
+                <input type="email" name="contact_email" value="support@luvtale.com"
+                    style="width: 100%; padding: 14px; border-radius: 12px; border: 1.5px solid #eee; font-family: inherit; font-size: 0.95rem; outline: none; transition: 0.3s;"
+                    placeholder="Enter support email">
             </div>
         </div>
 
         <div style="background: #F8F9FB; padding: 25px; border-radius: 15px; margin-bottom: 30px;">
-            <h4 style="margin: 0 0 15px; font-size: 1rem; font-weight: 700; color: var(--title);">Contact & Social Details</h4>
+            <h4 style="margin: 0 0 15px; font-size: 1rem; font-weight: 700; color: var(--title);">Contact & Social
+                Details</h4>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
                 <div class="form-group">
-                    <label style="display: block; font-weight: 600; color: #666; margin-bottom: 8px; font-size: 0.85rem;">Phone Number</label>
-                    <input type="text" name="phone" value="+1 (234) 567-890" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.9rem;">
+                    <label
+                        style="display: block; font-weight: 600; color: #666; margin-bottom: 8px; font-size: 0.85rem;">Phone
+                        Number</label>
+                    <input type="text" name="phone" value="+1 (234) 567-890"
+                        style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.9rem;">
                 </div>
                 <div class="form-group">
-                    <label style="display: block; font-weight: 600; color: #666; margin-bottom: 8px; font-size: 0.85rem;">WhatsApp Number</label>
-                    <input type="text" name="whatsapp" value="+1 (234) 567-890" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.9rem;">
+                    <label
+                        style="display: block; font-weight: 600; color: #666; margin-bottom: 8px; font-size: 0.85rem;">WhatsApp
+                        Number</label>
+                    <input type="text" name="whatsapp" value="+1 (234) 567-890"
+                        style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.9rem;">
                 </div>
             </div>
             <div class="form-group" style="margin-bottom: 20px;">
-                <label style="display: block; font-weight: 600; color: #666; margin-bottom: 8px; font-size: 0.85rem;">Business Address</label>
-                <textarea name="address" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.9rem; height: 80px; resize: none;">123 Boutique Street, Fashion District, New York, NY 10001, USA</textarea>
+                <label
+                    style="display: block; font-weight: 600; color: #666; margin-bottom: 8px; font-size: 0.85rem;">Business
+                    Address</label>
+                <textarea name="address"
+                    style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.9rem; height: 80px; resize: none;">123 Boutique Street, Fashion District, New York, NY 10001, USA</textarea>
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
                 <div class="form-group">
-                    <label style="display: block; font-weight: 600; color: #666; margin-bottom: 8px; font-size: 0.85rem;">Instagram</label>
-                    <input type="text" name="instagram" value="@luvtale" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.9rem;">
+                    <label
+                        style="display: block; font-weight: 600; color: #666; margin-bottom: 8px; font-size: 0.85rem;">Instagram</label>
+                    <input type="text" name="instagram" value="@luvtale"
+                        style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.9rem;">
                 </div>
                 <div class="form-group">
-                    <label style="display: block; font-weight: 600; color: #666; margin-bottom: 8px; font-size: 0.85rem;">Facebook</label>
-                    <input type="text" name="facebook" value="luvtale.boutique" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.9rem;">
+                    <label
+                        style="display: block; font-weight: 600; color: #666; margin-bottom: 8px; font-size: 0.85rem;">Facebook</label>
+                    <input type="text" name="facebook" value="luvtale.boutique"
+                        style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.9rem;">
                 </div>
                 <div class="form-group">
-                    <label style="display: block; font-weight: 600; color: #666; margin-bottom: 8px; font-size: 0.85rem;">Twitter/X</label>
-                    <input type="text" name="twitter" value="@luvtale" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.9rem;">
+                    <label
+                        style="display: block; font-weight: 600; color: #666; margin-bottom: 8px; font-size: 0.85rem;">Twitter/X</label>
+                    <input type="text" name="twitter" value="@luvtale"
+                        style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.9rem;">
                 </div>
             </div>
         </div>
 
-        <div style="background: #FFF5F5; padding: 25px; border-radius: 15px; margin-bottom: 30px; border: 1px dashed var(--primary);">
-            <h4 style="margin: 0 0 15px; font-size: 1rem; font-weight: 700; color: var(--primary);">Tax & Registration</h4>
+        <div
+            style="background: #FFF5F5; padding: 25px; border-radius: 15px; margin-bottom: 30px; border: 1px dashed var(--primary);">
+            <h4 style="margin: 0 0 15px; font-size: 1rem; font-weight: 700; color: var(--primary);">Tax & Registration
+            </h4>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                 <div class="form-group">
-                    <label style="display: block; font-weight: 600; color: #666; margin-bottom: 8px; font-size: 0.85rem;">GST Number</label>
-                    <input type="text" name="gst" placeholder="e.g. 27AAAAA0000A1Z5" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.9rem;">
+                    <label
+                        style="display: block; font-weight: 600; color: #666; margin-bottom: 8px; font-size: 0.85rem;">GST
+                        Number</label>
+                    <input type="text" name="gst" placeholder="e.g. 27AAAAA0000A1Z5"
+                        style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.9rem;">
                 </div>
                 <div class="form-group">
-                    <label style="display: block; font-weight: 600; color: #666; margin-bottom: 8px; font-size: 0.85rem;">PAN Number</label>
-                    <input type="text" name="pan" placeholder="e.g. ABCDE1234F" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.9rem;">
+                    <label
+                        style="display: block; font-weight: 600; color: #666; margin-bottom: 8px; font-size: 0.85rem;">PAN
+                        Number</label>
+                    <input type="text" name="pan" placeholder="e.g. ABCDE1234F"
+                        style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.9rem;">
                 </div>
             </div>
         </div>
 
-        <button type="submit" class="btn btn-primary" style="padding: 14px 40px; border-radius: 50px; font-weight: 700; box-shadow: 0 10px 20px rgba(188, 30, 67, 0.2);">Save Changes</button>
+        <button type="submit" class="btn btn-primary"
+            style="padding: 14px 40px; border-radius: 50px; font-weight: 700; box-shadow: 0 10px 20px rgba(188, 30, 67, 0.2);">Save
+            Changes</button>
     </form>
 </div>
 {% endblock %}
