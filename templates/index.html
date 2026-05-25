@@ -5,6 +5,8 @@
 {% block content %}
 <!-- HERO -->
 <section class="hero reveal">
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
     <div class="hero-container">
         <div class="hero-content">
             <div class="hero-tag">
@@ -14,16 +16,16 @@
                 New Collection 2026
             </div>
             <h1>
-                Your Ultimate
+                Timeless Heritage
                 <span class="icons-heros">
                     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 68 68" fill="none">
                         <path
                             d="M34 0L43.6167 24.3833L68 34L43.6167 43.6167L34 68L24.3833 43.6167L0 34L24.3833 24.3833L34 0Z"
                             fill="var(--primary)" />
                     </svg>
-                    Online Store
+                    Traditional Couture
                 </span>
-                for All Your Needs
+                Crafted For You
             </h1>
             <p>Discover fashion that speaks to you. Free shipping on orders over ₹500 with no code needed.</p>
             <div class="hero-btns">
@@ -46,13 +48,6 @@
                 </div>
                 <div class="hero-badge">Get 20% Off</div>
             </div>
-            <div class="hero-float-card">
-                <div class="float-icon">👜</div>
-                <div>
-                    <h6>Cozy Cardigan</h6>
-                    <p>₹80.00</p>
-                </div>
-            </div>
         </div>
     </div>
 </section>
@@ -74,29 +69,33 @@
 <!-- CATEGORIES -->
 <section id="categories" class="reveal">
     <div class="category-section">
-        <div class="container">
-            <div class="section-header-row" style="margin-bottom: 30px; text-align: center; display: flex; justify-content: center; width: 100%;">
-                <div style="text-align: center;">
-                    <h2 class="section-title" style="color: #000; margin-bottom: 6px; font-family: var(--font-family-display); font-size: 2.2rem; font-weight: 800;">Shop by Category</h2>
-                    <p class="section-sub" style="color: #1a1a1a; font-weight: 600; font-size: 0.95rem;">Exquisite traditional couture curated for every celebration</p>
-                </div>
+        <div class="section-header-row" style="margin-bottom: 30px; text-align: center; display: flex; justify-content: center; width: 100%;">
+            <div style="text-align: center;">
+                <h2 class="section-title" style="color: #000; margin-bottom: 6px; font-family: var(--font-family-display); font-size: 2.2rem; font-weight: 800;">Shop by Category</h2>
+                <p class="section-sub" style="color: #1a1a1a; font-weight: 600; font-size: 0.95rem;">Exquisite traditional couture curated for every celebration</p>
             </div>
-            <div class="category-grid">
-                {% for cat in categories %}
-                <div class="category-item">
-                    <a href="/shop?category={{ cat.id }}">
-                        <img src="{{ cat.img }}" class="img left-radius" alt="{{ cat.name }} Category" loading="lazy">
-                        <span class="label">{{ cat.name }}</span>
-                    </a>
-                </div>
-                {% endfor %}
+        </div>
+        <div class="category-grid">
+            {% for cat in categories %}
+            <div class="category-item" style="background: {{ cat.bg or 'linear-gradient(135deg, #FFFDF9, #FFF5E6)' }};">
+                <a href="/shop?category={{ cat.id }}">
+                    <div class="category-image-wrapper">
+                        <img src="{{ cat.img }}" class="category-img" alt="{{ cat.name }} Category" loading="lazy">
+                        <div class="category-overlay"></div>
+                    </div>
+                    <div class="category-content">
+                        <h3 class="category-name">{{ cat.name }}</h3>
+                        <span class="category-cta">Explore Couture</span>
+                    </div>
+                </a>
             </div>
+            {% endfor %}
         </div>
     </div>
 </section>
 
 <!-- FEATURED PRODUCTS -->
-<section class="products-section reveal" id="featured" style="background: var(--sand); padding: 100px 0;">
+<section class="products-section reveal" id="featured" style="background: linear-gradient(180deg, #FFF0F2 0%, #FFFDF5 50%, #FFE5E9 100%); padding: 100px 0; position: relative; overflow: hidden;">
     <div class="products-inner">
         <div class="section-header-row">
             <div>
@@ -148,8 +147,98 @@
     </div>
 </section>
 
+<!-- HERITAGE STORYTELLING -->
+<section class="heritage-section reveal">
+    <!-- Decorative background elements -->
+    <div class="heritage-bg-motif motif-1"></div>
+    <div class="heritage-bg-motif motif-2"></div>
+    <div class="heritage-container">
+        <!-- LEFT: Image collage -->
+        <div class="heritage-image-wrap">
+            <div class="heritage-img-collage">
+                <div class="heritage-img-main">
+                    <img src="https://images.unsplash.com/photo-1606744824163-985d376605aa?w=800" alt="Weaving and Artisan Craftsmanship" class="heritage-img" loading="lazy">
+                    <div class="heritage-img-badge">
+                        <span class="heritage-badge-year">Est.</span>
+                        <span class="heritage-badge-num">2018</span>
+                    </div>
+                </div>
+                <div class="heritage-img-secondary">
+                    <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=400" alt="Traditional Indian Silk Saree" loading="lazy">
+                </div>
+                <div class="heritage-img-accent">
+                    <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M40 5L48 28H73L53 42L60 65L40 51L20 65L27 42L7 28H32L40 5Z" fill="var(--primary)" opacity="0.15"/>
+                        <path d="M40 12L46 30H65L50 40L56 58L40 48L24 58L30 40L15 30H34L40 12Z" stroke="var(--primary)" stroke-width="1" fill="none"/>
+                    </svg>
+                </div>
+            </div>
+            <!-- Artisan trust badges -->
+            <div class="heritage-trust-row">
+                <div class="heritage-trust-item">
+                    <i class="fas fa-award"></i>
+                    <span>Master Artisans</span>
+                </div>
+                <div class="heritage-trust-item">
+                    <i class="fas fa-leaf"></i>
+                    <span>Ethical Sourcing</span>
+                </div>
+                <div class="heritage-trust-item">
+                    <i class="fas fa-hands"></i>
+                    <span>Handcrafted</span>
+                </div>
+            </div>
+        </div>
+        <!-- RIGHT: Story content -->
+        <div class="heritage-text">
+            <div class="heritage-eyebrow">
+                <span class="heritage-line"></span>
+                <span class="heritage-subtitle">Our Story</span>
+                <span class="heritage-line"></span>
+            </div>
+            <h2 class="heritage-title">The Artistry<br>of <em>Luvtale</em></h2>
+            <p class="heritage-description first">
+                For generations, Indian handloom weaving and traditional couture have carried stories of craftsmanship, heritage, and timeless grace. At Luvtale, we collaborate directly with master artisans across Varanasi, Jaipur, and Kanchipuram to preserve these ancient techniques.
+            </p>
+            <p class="heritage-description">
+                Every thread is spun with dedication, and every design is curated to bring out the royal elegance in your celebrations. Experience traditional couture redesigned for the modern muse.
+            </p>
+            <!-- Heritage stats -->
+            <div class="heritage-stats-grid">
+                <div class="heritage-stat">
+                    <span class="heritage-stat-num">200+</span>
+                    <span class="heritage-stat-label">Artisan Families</span>
+                </div>
+                <div class="heritage-stat">
+                    <span class="heritage-stat-num">8</span>
+                    <span class="heritage-stat-label">Craft Cities</span>
+                </div>
+                <div class="heritage-stat">
+                    <span class="heritage-stat-num">6.3k+</span>
+                    <span class="heritage-stat-label">Happy Customers</span>
+                </div>
+                <div class="heritage-stat">
+                    <span class="heritage-stat-num">100%</span>
+                    <span class="heritage-stat-label">Authentic Craft</span>
+                </div>
+            </div>
+            <!-- Craft locations -->
+            <div class="heritage-locations">
+                <span class="heritage-loc-label">Crafted from:</span>
+                <div class="heritage-location-tags">
+                    <span class="heritage-loc-tag"><i class="fas fa-map-pin"></i> Varanasi</span>
+                    <span class="heritage-loc-tag"><i class="fas fa-map-pin"></i> Jaipur</span>
+                    <span class="heritage-loc-tag"><i class="fas fa-map-pin"></i> Kanchipuram</span>
+                    <span class="heritage-loc-tag"><i class="fas fa-map-pin"></i> Lucknow</span>
+                </div>
+            </div>
+            <a href="/about" class="btn btn-primary heritage-cta">Discover Our Story <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+</section>
+
 <!-- TRENDING PRODUCTS -->
-<section class="products-section reveal" id="trending">
+<section class="products-section reveal" id="trending" style="background: linear-gradient(180deg, #FFFDF5 0%, #FFECA9 50%, #FFFDF5 100%); padding: 100px 0; position: relative; overflow: hidden;">
     <div class="products-inner">
         <div class="section-header-row">
             <div>
@@ -208,8 +297,88 @@
     </div>
 </section>
 
+<!-- CURATED LOOKBOOKS -->
+<section class="lookbook-section reveal">
+    <div class="lookbook-section-inner">
+        <!-- Section Header -->
+        <div class="lookbook-header">
+            <div class="lookbook-header-text">
+                <div class="lookbook-eyebrow">
+                    <span class="lookbook-eyebrow-line"></span>
+                    <span>Curated Lookbooks</span>
+                    <span class="lookbook-eyebrow-line"></span>
+                </div>
+                <h2 class="section-title">Style Narratives</h2>
+                <p class="section-sub">Visual stories of elegance, tradition, and celebration for every season</p>
+            </div>
+            <a href="/shop" class="btn btn-outline lookbook-view-all">Browse All Collections <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <!-- Lookbook Grid: 1 large + 2 tall cards -->
+        <div class="lookbook-grid">
+            <!-- LARGE FEATURE CARD -->
+            <div class="lookbook-card lookbook-card-featured">
+                <div class="lookbook-img-wrap">
+                    <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=400" alt="Heritage Silk Saree Lookbook" loading="lazy">
+                    <div class="lookbook-overlay"></div>
+                </div>
+                <div class="lookbook-content">
+                    <div class="lookbook-meta">
+                        <span class="lookbook-tag">✦ Signature Series</span>
+                        <span class="lookbook-edition">Vol. 01</span>
+                    </div>
+                    <h3>Heritage Silk<br>Collection</h3>
+                    <p>Timeless Banarasi and Kanchipuram silks woven for weddings, celebrations and life's grandest moments.</p>
+                    <div class="lookbook-footer-row">
+                        <a href="/shop?category=2" class="lookbook-link">Explore Collection <i class="fas fa-arrow-right"></i></a>
+                        <span class="lookbook-count">42 Pieces</span>
+                    </div>
+                </div>
+            </div>
+            <!-- RIGHT COLUMN: 2 stacked cards -->
+            <div class="lookbook-col">
+                <div class="lookbook-card lookbook-card-tall">
+                    <div class="lookbook-img-wrap">
+                        <img src="https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=600" alt="Royal Velvet & Festive Lookbook" loading="lazy">
+                        <div class="lookbook-overlay"></div>
+                    </div>
+                    <div class="lookbook-content">
+                        <div class="lookbook-meta">
+                            <span class="lookbook-tag">✦ Festive Couture</span>
+                            <span class="lookbook-edition">Vol. 02</span>
+                        </div>
+                        <h3>Grand Palace<br>Wedding</h3>
+                        <p>Hand-embroidered Lehengas and Sherwanis for the royal wedding you deserve.</p>
+                        <div class="lookbook-footer-row">
+                            <a href="/shop?category=3" class="lookbook-link">Explore <i class="fas fa-arrow-right"></i></a>
+                            <span class="lookbook-count">38 Pieces</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="lookbook-card lookbook-card-tall">
+                    <div class="lookbook-img-wrap">
+                        <img src="https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=600" alt="Summer Pastels Lookbook" loading="lazy">
+                        <div class="lookbook-overlay"></div>
+                    </div>
+                    <div class="lookbook-content">
+                        <div class="lookbook-meta">
+                            <span class="lookbook-tag">✦ Pret-A-Porter</span>
+                            <span class="lookbook-edition">Vol. 03</span>
+                        </div>
+                        <h3>Summer Pastel<br>Romance</h3>
+                        <p>Lightweight organzas, georgettes, and breezy designer kurtis for warm days.</p>
+                        <div class="lookbook-footer-row">
+                            <a href="/shop?category=1" class="lookbook-link">Explore <i class="fas fa-arrow-right"></i></a>
+                            <span class="lookbook-count">55 Pieces</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- BEST SELLERS -->
-<section class="products-section reveal" id="bestsellers" style="background: #FFFDF0; padding: 100px 0;">
+<section class="products-section reveal" id="bestsellers" style="background: linear-gradient(180deg, #FFE5E9 0%, #FFFDF5 50%, #FFEBEF 100%); padding: 100px 0; position: relative; overflow: hidden;">
     <div class="products-inner">
         <div class="section-header-row">
             <div>
@@ -257,6 +426,27 @@
                 </div>
             </div>
             {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- FLASH SALE COUNTDOWN -->
+<section class="flash-sale-section reveal">
+    <div class="flash-sale-container">
+        <div class="flash-sale-content">
+            <span class="sale-badge">Limited Time Offer</span>
+            <h2>Grand Festive Sale</h2>
+            <p>Save big on our premium traditional couture. Discount applied automatically or use coupon code at checkout.</p>
+            <div class="countdown-timer" id="countdown-timer">
+                <div class="time-block"><span class="time-num" id="days">02</span><span class="time-lbl">Days</span></div>
+                <div class="time-block"><span class="time-num" id="hours">14</span><span class="time-lbl">Hrs</span></div>
+                <div class="time-block"><span class="time-num" id="minutes">45</span><span class="time-lbl">Mins</span></div>
+                <div class="time-block"><span class="time-num" id="seconds">12</span><span class="time-lbl">Secs</span></div>
+            </div>
+            <div class="coupon-copy-wrapper">
+                <span class="coupon-text">Use Code: <strong>FESTIVE25</strong></span>
+                <button class="btn btn-copy" onclick="copyCouponCode('FESTIVE25')">Copy Code</button>
+            </div>
         </div>
     </div>
 </section>
@@ -324,7 +514,7 @@
 </section>
 
 <!-- TESTIMONIALS -->
-<section class="section-padding-large reveal" style="background: #fff;">
+<section class="section-padding-large reveal" style="background: linear-gradient(180deg, #FFF0F2 0%, #FFFDF5 50%, #FFE5E9 100%); position: relative; overflow: hidden;">
     <div class="container">
         <div class="centered-header-group">
             <div>
@@ -354,6 +544,80 @@
                 <p>No reviews yet. Be the first to share your experience!</p>
             </div>
             {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- LUVTALE MUSES GALLERY -->
+<section class="muses-section reveal">
+    <div class="container">
+        <div class="centered-header-group">
+            <div>
+                <h2 class="section-title">Luvtale Muses</h2>
+                <p class="section-sub">Style inspirations and features from our community. Tag #LuvtaleMuse to get featured.</p>
+            </div>
+        </div>
+        <div class="muses-grid">
+            <div class="muse-item">
+                <div class="muse-card">
+                    <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=600" alt="Luvtale Muse Style 1" loading="lazy">
+                    <div class="muse-overlay">
+                        <div class="muse-info">
+                            <i class="fab fa-instagram"></i>
+                            <a href="/shop?category=1" class="muse-shop-btn"><i class="fas fa-shopping-bag"></i> Shop Look</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="muse-caption">
+                    <span class="muse-handle">@ananya_sharma</span>
+                    <span class="muse-desc">Ananya in Silk Kurti</span>
+                </div>
+            </div>
+            <div class="muse-item">
+                <div class="muse-card">
+                    <img src="https://images.unsplash.com/photo-1631857455684-a54a2f03665f?w=600" alt="Luvtale Muse Style 2" loading="lazy">
+                    <div class="muse-overlay">
+                        <div class="muse-info">
+                            <i class="fab fa-instagram"></i>
+                            <a href="/shop?category=4" class="muse-shop-btn"><i class="fas fa-shopping-bag"></i> Shop Look</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="muse-caption">
+                    <span class="muse-handle">@meera.johri</span>
+                    <span class="muse-desc">Meera in Anarkali Suit</span>
+                </div>
+            </div>
+            <div class="muse-item">
+                <div class="muse-card">
+                    <img src="https://images.unsplash.com/photo-1605001011156-cbf0b0f67a51?w=600" alt="Luvtale Muse Style 3" loading="lazy">
+                    <div class="muse-overlay">
+                        <div class="muse-info">
+                            <i class="fab fa-instagram"></i>
+                            <a href="/shop?category=5" class="muse-shop-btn"><i class="fas fa-shopping-bag"></i> Shop Look</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="muse-caption">
+                    <span class="muse-handle">@rahul_kapur</span>
+                    <span class="muse-desc">Rahul in Royal Sherwani</span>
+                </div>
+            </div>
+            <div class="muse-item">
+                <div class="muse-card">
+                    <img src="https://images.unsplash.com/photo-1608748010899-18f300247112?w=600" alt="Luvtale Muse Style 4" loading="lazy">
+                    <div class="muse-overlay">
+                        <div class="muse-info">
+                            <i class="fab fa-instagram"></i>
+                            <a href="/shop?category=2" class="muse-shop-btn"><i class="fas fa-shopping-bag"></i> Shop Look</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="muse-caption">
+                    <span class="muse-handle">@ria_sen_official</span>
+                    <span class="muse-desc">Ria in Banarasi Silk Saree</span>
+                </div>
+            </div>
         </div>
     </div>
 </section>
@@ -452,6 +716,61 @@
                 });
             });
         });
+    });
+
+    // Copy Coupon Code Logic
+    function copyCouponCode(code) {
+        navigator.clipboard.writeText(code).then(() => {
+            const btn = document.querySelector('.btn-copy');
+            const originalText = btn.textContent;
+            btn.textContent = 'Copied!';
+            btn.style.background = '#2E7D32';
+            btn.style.color = '#fff';
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.background = '';
+                btn.style.color = '';
+            }, 2000);
+        }).catch(err => {
+            console.error('Failed to copy: ', err);
+            alert('Coupon code: ' + code);
+        });
+    }
+
+    // Countdown Timer Logic
+    document.addEventListener('DOMContentLoaded', function () {
+        // Set the countdown date (e.g., 2 days, 14 hours, 45 minutes from now)
+        let countdownDate = new Date();
+        countdownDate.setDate(countdownDate.getDate() + 2);
+        countdownDate.setHours(countdownDate.getHours() + 14);
+        countdownDate.setMinutes(countdownDate.getMinutes() + 45);
+
+        function updateTimer() {
+            const now = new Date().getTime();
+            const distance = countdownDate - now;
+
+            if (distance < 0) {
+                clearInterval(timerInterval);
+                document.getElementById('days').textContent = '00';
+                document.getElementById('hours').textContent = '00';
+                document.getElementById('minutes').textContent = '00';
+                document.getElementById('seconds').textContent = '00';
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById('days').textContent = String(days).padStart(2, '0');
+            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+        }
+
+        updateTimer();
+        const timerInterval = setInterval(updateTimer, 1000);
     });
 </script>
 {% endblock %}

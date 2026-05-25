@@ -1555,9 +1555,10 @@ def api_place_order():
 
     total_amount = max(0.0, subtotal - discount_amount + shipping_charge)
     
-    # Generate unique order number (e.g. LUV-TIMESTAMP)
+    # Generate unique order number (e.g. LUV-TIMESTAMP-RANDOM)
     import time
-    order_number = f"LUV-{int(time.time())}"
+    import random
+    order_number = f"LUV-{int(time.time())}-{random.randint(1000, 9999)}"
     
     status = 'Pending' if payment_method == 'COD' else 'Paid'
     
