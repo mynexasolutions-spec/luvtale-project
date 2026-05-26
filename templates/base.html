@@ -7,7 +7,7 @@
     <title>{% block title %}Luvtale - Fashion Store{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=1.5">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     {% block extra_css %}{% endblock %}
@@ -97,10 +97,10 @@
                     <span class="logo">Luvt<span style="color:var(--primary)">ale</span></span>
                     <p>Elevate your style with our curated collection of fashion-forward clothing and accessories.</p>
                     <div class="footer-social">
-                        <a href="#" class="social-btn" aria-label="Facebook" style="color: inherit; text-decoration: none;"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="social-btn" aria-label="LinkedIn" style="color: inherit; text-decoration: none;"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#" class="social-btn" aria-label="Twitter" style="color: inherit; text-decoration: none;"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="social-btn" aria-label="Instagram" style="color: inherit; text-decoration: none;"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.facebook.com/share/1GaEAcm2Gg/" target="_blank" rel="noopener" class="social-btn" aria-label="Facebook" style="color: inherit; text-decoration: none;"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://www.instagram.com/luvtaleofficial/#" target="_blank" rel="noopener" class="social-btn" aria-label="Instagram" style="color: inherit; text-decoration: none;"><i class="fab fa-instagram"></i></a>
+                        <a href="https://youtube.com/@luvtaleofficial?si=Uo0jB14a2zaA0jrW" target="_blank" rel="noopener" class="social-btn" aria-label="Youtube" style="color: inherit; text-decoration: none;"><i class="fab fa-youtube"></i></a>
+                        <a href="https://pin.it/1VIvgJxyw" target="_blank" rel="noopener" class="social-btn" aria-label="Pinterest" style="color: inherit; text-decoration: none;"><i class="fab fa-pinterest"></i></a>
                     </div>
                 </div>
                 <div class="footer-col">
@@ -125,9 +125,10 @@
                 <div class="footer-col" style="min-width: 250px;">
                     <h5>Contact Us</h5>
                     <ul class="footer-contact">
-                        <li><i class="fas fa-map-marker-alt"></i> <span>123 Boutique Street, Fashion District, New York, NY 10001, USA</span></li>
-                        <li><i class="fas fa-envelope"></i> <span>hello@luvtale.com</span></li>
-                        <li><i class="fas fa-phone-alt"></i> <span>+1 (234) 567-890</span></li>
+                        <li><i class="fas fa-envelope"></i> <span>luvtaleofficial@gmail.com</span></li>
+                        <li><i class="fab fa-whatsapp"></i> <span>WhatsApp: 9140300085</span></li>
+                        <li><i class="fab fa-whatsapp"></i> <span>WhatsApp: 8766280955</span></li>
+                        <li><i class="fas fa-phone-alt"></i> <span>Call: 9696231554</span></li>
                     </ul>
                 </div>
             </div>
@@ -188,9 +189,15 @@
         </div>
     </div>
 
-    <!-- BACK TO TOP BUTTON -->
-    <div class="scroll-top" id="scroll-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-        <i class="fas fa-chevron-up"></i>
+
+    <!-- FLOATING CONTACT ACTIONS -->
+    <div class="floating-contact-wrap">
+        <a href="https://wa.me/9140300085" target="_blank" rel="noopener" class="floating-btn floating-whatsapp" title="Chat on WhatsApp">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.713-1.458L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.42 9.864-9.864.002-2.637-1.03-5.114-2.905-6.99C16.457 1.874 13.976 1.83 12.01 1.83c-5.437 0-9.864 4.42-9.868 9.865-.001 1.764.462 3.486 1.343 5.011l-.988 3.606 3.7-.968zM17.15 15.3c-.28-.14-1.65-.81-1.91-.91-.26-.09-.45-.14-.64.14-.19.28-.73.91-.89 1.1-.16.18-.32.2-.6.06-2.72-1.36-4.43-3.23-5.11-4.4-.18-.3-.02-.46.12-.6.13-.13.3-.35.45-.53.15-.17.2-.28.3-.47.1-.19.05-.36-.02-.5-.08-.14-.64-1.55-.88-2.12-.23-.56-.47-.48-.64-.49-.17-.01-.36-.01-.56-.01-.2 0-.52.07-.79.37-.27.3-1.03 1.01-1.03 2.47 0 1.46 1.06 2.87 1.21 3.07.15.2 2.09 3.19 5.07 4.48.71.3 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.08 1.65-.67 1.88-1.32.23-.65.23-1.2.16-1.32-.07-.12-.26-.19-.54-.33z"/></svg>
+        </a>
+        <a href="tel:9696231554" class="floating-btn floating-call" title="Call Us">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+        </a>
     </div>
 
     <!-- SEARCH OVERLAY -->
