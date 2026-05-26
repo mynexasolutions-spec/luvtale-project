@@ -7,46 +7,72 @@
 <section class="hero reveal">
     <div class="ambient-glow glow-1"></div>
     <div class="ambient-glow glow-2"></div>
+    <!-- Decorative background shapes -->
+    <div class="hero-shape hero-shape-1"></div>
+    <div class="hero-shape hero-shape-2"></div>
+    <div class="hero-shape hero-shape-3"></div>
     <div class="hero-container">
+        <!-- LEFT: Text content -->
         <div class="hero-content">
             <div class="hero-tag">
-                <svg viewBox="0 0 12 12">
-                    <path d="M6 0l1.5 4.5H12L8.25 7.5l1.5 4.5L6 9.75 2.25 12l1.5-4.5L0 4.5h4.5L6 0z" />
-                </svg>
+                <svg viewBox="0 0 12 12"><path d="M6 0l1.5 4.5H12L8.25 7.5l1.5 4.5L6 9.75 2.25 12l1.5-4.5L0 4.5h4.5L6 0z"/></svg>
                 New Collection 2026
             </div>
             <h1>
-                Timeless Heritage
+                Timeless
+                <span class="hero-highlight">Heritage</span>
                 <span class="icons-heros">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 68 68" fill="none">
-                        <path
-                            d="M34 0L43.6167 24.3833L68 34L43.6167 43.6167L34 68L24.3833 43.6167L0 34L24.3833 24.3833L34 0Z"
-                            fill="var(--primary)" />
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 68 68" fill="none">
+                        <path d="M34 0L43.6167 24.3833L68 34L43.6167 43.6167L34 68L24.3833 43.6167L0 34L24.3833 24.3833L34 0Z" fill="var(--primary)" />
                     </svg>
                     Traditional Couture
                 </span>
-                Crafted For You
+                <em class="hero-em">Crafted For You</em>
             </h1>
             <p>Discover fashion that speaks to you. Free shipping on orders over ₹500 with no code needed.</p>
             <div class="hero-btns">
-                <a href="/shop" class="btn btn-primary">Shop Now →</a>
-                <a href="/shop" class="btn btn-outline">VIEW DETAILS</a>
+                <a href="/shop" class="btn btn-primary">Shop Now <i class="fas fa-arrow-right"></i></a>
+                <a href="/shop" class="btn btn-outline">Explore All →</a>
+            </div>
+            <!-- Trust badges -->
+            <div class="hero-trust-row">
+                <div class="hero-trust-badge">
+                    <i class="fas fa-shipping-fast"></i>
+                    <span>Free Shipping ₹500+</span>
+                </div>
+                <div class="hero-trust-badge">
+                    <i class="fas fa-undo"></i>
+                    <span>Easy Returns</span>
+                </div>
+                <div class="hero-trust-badge">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Secure Payment</span>
+                </div>
             </div>
             <div class="hero-stats">
-                <div class="stat"><span class="stat-num">6.3k+</span><span class="stat-label">Happy Customers</span>
-                </div>
+                <div class="stat"><span class="stat-num">6.3k+</span><span class="stat-label">Happy Customers</span></div>
                 <div class="stat"><span class="stat-num">500+</span><span class="stat-label">Products</span></div>
                 <div class="stat"><span class="stat-num">50+</span><span class="stat-label">Brands</span></div>
             </div>
         </div>
+        <!-- RIGHT: Visual composition -->
         <div class="hero-image-wrap">
+            <!-- Main banner card -->
             <div class="hero-banner">
                 <div class="hero-content t1">
-                    <img src="{{ url_for('static', filename='images/blue_1/product_1.png') }}" alt="Summer Collection" loading="lazy">
-                    <div class="hero-title">Summer Collection</div>
+                    <img src="{{ url_for('static', filename='images/blue_1/product_1.png') }}" alt="New Collection" loading="lazy">
+                    <div class="hero-title">New Arrivals</div>
                     <div class="hero-subtitle">Explore 200+ styles</div>
                 </div>
                 <div class="hero-badge">Get 20% Off</div>
+            </div>
+            <!-- Floating craft badge (bottom-left) -->
+            <div class="hero-pill hero-pill-bottom">
+                <span class="hero-pill-emoji">🎨</span>
+                <div>
+                    <strong>Handcrafted</strong>
+                    <span>By master artisans</span>
+                </div>
             </div>
         </div>
     </div>
@@ -138,6 +164,13 @@
                             {% for i in range(5) %}
                             <i class="{% if i < product.rating %}fas{% else %}far{% endif %} fa-star" style="color: var(--star-color);"></i>
                             {% endfor %}
+                        </div>
+                    </div>
+                    <div class="product-mobile-actions">
+                        <a href="/product/{{ product.id }}" class="btn-mobile-quickview">Quick View</a>
+                        <div class="mobile-action-icons">
+                            <button class="mobile-circle-btn" onclick="addToWishlist({{ product.id }})" aria-label="Add to wishlist"><i class="far fa-heart"></i></button>
+                            <button class="mobile-circle-btn" onclick="addToCart({{ product.id }})" aria-label="Add to cart"><i class="fas fa-shopping-cart"></i></button>
                         </div>
                     </div>
                 </div>
@@ -290,6 +323,13 @@
                             {% endfor %}
                         </div>
                     </div>
+                    <div class="product-mobile-actions">
+                        <a href="/product/{{ product.id }}" class="btn-mobile-quickview">Quick View</a>
+                        <div class="mobile-action-icons">
+                            <button class="mobile-circle-btn" onclick="addToWishlist({{ product.id }})" aria-label="Add to wishlist"><i class="far fa-heart"></i></button>
+                            <button class="mobile-circle-btn" onclick="addToCart({{ product.id }})" aria-label="Add to cart"><i class="fas fa-shopping-cart"></i></button>
+                        </div>
+                    </div>
                 </div>
             </div>
             {% endfor %}
@@ -311,65 +351,43 @@
                 <h2 class="section-title">Style Narratives</h2>
                 <p class="section-sub">Visual stories of elegance, tradition, and celebration for every season</p>
             </div>
-            <a href="/shop" class="btn btn-outline lookbook-view-all">Browse All Collections <i class="fas fa-arrow-right"></i></a>
+            <a href="/shop" class="btn btn-primary lookbook-view-all">Browse All Collections <i class="fas fa-arrow-right"></i></a>
         </div>
-        <!-- Lookbook Grid: 1 large + 2 tall cards -->
+        <!-- Lookbook Grid: 2 equal cards -->
         <div class="lookbook-grid">
-            <!-- LARGE FEATURE CARD -->
-            <div class="lookbook-card lookbook-card-featured">
+            <div class="lookbook-card lookbook-card-half">
                 <div class="lookbook-img-wrap">
-                    <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=400" alt="Heritage Silk Saree Lookbook" loading="lazy">
+                    <img src="https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=800" alt="Royal Velvet & Festive Lookbook" loading="lazy">
                     <div class="lookbook-overlay"></div>
                 </div>
                 <div class="lookbook-content">
                     <div class="lookbook-meta">
-                        <span class="lookbook-tag">✦ Signature Series</span>
+                        <span class="lookbook-tag">✦ Festive Couture</span>
                         <span class="lookbook-edition">Vol. 01</span>
                     </div>
-                    <h3>Heritage Silk<br>Collection</h3>
-                    <p>Timeless Banarasi and Kanchipuram silks woven for weddings, celebrations and life's grandest moments.</p>
+                    <h3>Grand Palace<br>Wedding</h3>
+                    <p>Hand-embroidered Lehengas and Sherwanis crafted for the royal celebration you deserve.</p>
                     <div class="lookbook-footer-row">
-                        <a href="/shop?category=2" class="lookbook-link">Explore Collection <i class="fas fa-arrow-right"></i></a>
-                        <span class="lookbook-count">42 Pieces</span>
+                        <a href="/shop?category=3" class="lookbook-link">Explore Collection <i class="fas fa-arrow-right"></i></a>
+                        <span class="lookbook-count">38 Pieces</span>
                     </div>
                 </div>
             </div>
-            <!-- RIGHT COLUMN: 2 stacked cards -->
-            <div class="lookbook-col">
-                <div class="lookbook-card lookbook-card-tall">
-                    <div class="lookbook-img-wrap">
-                        <img src="https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=600" alt="Royal Velvet & Festive Lookbook" loading="lazy">
-                        <div class="lookbook-overlay"></div>
-                    </div>
-                    <div class="lookbook-content">
-                        <div class="lookbook-meta">
-                            <span class="lookbook-tag">✦ Festive Couture</span>
-                            <span class="lookbook-edition">Vol. 02</span>
-                        </div>
-                        <h3>Grand Palace<br>Wedding</h3>
-                        <p>Hand-embroidered Lehengas and Sherwanis for the royal wedding you deserve.</p>
-                        <div class="lookbook-footer-row">
-                            <a href="/shop?category=3" class="lookbook-link">Explore <i class="fas fa-arrow-right"></i></a>
-                            <span class="lookbook-count">38 Pieces</span>
-                        </div>
-                    </div>
+            <div class="lookbook-card lookbook-card-half">
+                <div class="lookbook-img-wrap">
+                    <img src="https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=800" alt="Summer Pastels Lookbook" loading="lazy">
+                    <div class="lookbook-overlay"></div>
                 </div>
-                <div class="lookbook-card lookbook-card-tall">
-                    <div class="lookbook-img-wrap">
-                        <img src="https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=600" alt="Summer Pastels Lookbook" loading="lazy">
-                        <div class="lookbook-overlay"></div>
+                <div class="lookbook-content">
+                    <div class="lookbook-meta">
+                        <span class="lookbook-tag">✦ Pret-A-Porter</span>
+                        <span class="lookbook-edition">Vol. 02</span>
                     </div>
-                    <div class="lookbook-content">
-                        <div class="lookbook-meta">
-                            <span class="lookbook-tag">✦ Pret-A-Porter</span>
-                            <span class="lookbook-edition">Vol. 03</span>
-                        </div>
-                        <h3>Summer Pastel<br>Romance</h3>
-                        <p>Lightweight organzas, georgettes, and breezy designer kurtis for warm days.</p>
-                        <div class="lookbook-footer-row">
-                            <a href="/shop?category=1" class="lookbook-link">Explore <i class="fas fa-arrow-right"></i></a>
-                            <span class="lookbook-count">55 Pieces</span>
-                        </div>
+                    <h3>Summer Pastel<br>Romance</h3>
+                    <p>Lightweight organzas, georgettes, and breezy designer kurtis for warm, effortless days.</p>
+                    <div class="lookbook-footer-row">
+                        <a href="/shop?category=1" class="lookbook-link">Explore Collection <i class="fas fa-arrow-right"></i></a>
+                        <span class="lookbook-count">55 Pieces</span>
                     </div>
                 </div>
             </div>
@@ -423,6 +441,13 @@
                             {% endfor %}
                         </div>
                     </div>
+                    <div class="product-mobile-actions">
+                        <a href="/product/{{ product.id }}" class="btn-mobile-quickview">Quick View</a>
+                        <div class="mobile-action-icons">
+                            <button class="mobile-circle-btn" onclick="addToWishlist({{ product.id }})" aria-label="Add to wishlist"><i class="far fa-heart"></i></button>
+                            <button class="mobile-circle-btn" onclick="addToCart({{ product.id }})" aria-label="Add to cart"><i class="fas fa-shopping-cart"></i></button>
+                        </div>
+                    </div>
                 </div>
             </div>
             {% endfor %}
@@ -430,46 +455,50 @@
     </div>
 </section>
 
-<!-- FLASH SALE COUNTDOWN -->
-<section class="flash-sale-section reveal">
-    <div class="flash-sale-container">
-        <div class="flash-sale-content">
-            <span class="sale-badge">Limited Time Offer</span>
-            <h2>Grand Festive Sale</h2>
-            <p>Save big on our premium traditional couture. Discount applied automatically or use coupon code at checkout.</p>
-            <div class="countdown-timer" id="countdown-timer">
-                <div class="time-block"><span class="time-num" id="days">02</span><span class="time-lbl">Days</span></div>
-                <div class="time-block"><span class="time-num" id="hours">14</span><span class="time-lbl">Hrs</span></div>
-                <div class="time-block"><span class="time-num" id="minutes">45</span><span class="time-lbl">Mins</span></div>
-                <div class="time-block"><span class="time-num" id="seconds">12</span><span class="time-lbl">Secs</span></div>
+<!-- NEW ARRIVALS SPOTLIGHT -->
+<section class="new-arrivals-section reveal">
+    <div class="new-arrivals-container">
+        <div class="new-arrivals-card">
+            <!-- Left image panel -->
+            <div class="na-image-panel">
+                <img src="https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800" alt="New Arrivals Couture" loading="lazy">
+                <span class="na-collection-tag">Season 2026</span>
             </div>
-            <div class="coupon-copy-wrapper">
-                <span class="coupon-text">Use Code: <strong>FESTIVE25</strong></span>
-                <button class="btn btn-copy" onclick="copyCouponCode('FESTIVE25')">Copy Code</button>
+            <!-- Right text panel -->
+            <div class="na-text-panel">
+                <div class="na-eyebrow">
+                    <span class="na-eyebrow-dot"></span>
+                    Just Arrived
+                </div>
+                <h3 class="na-section-title">New Arrivals</h3>
+                <h2>The Banarasi Luxe<br>Heritage Collection</h2>
+                <p>Experience the finest weaves from the handlooms of Varanasi. Exquisite silk sarees, rich lehengas, and hand-embroidered kurtis reimagined with modern pastel shades for the modern Indian woman.</p>
+                <div class="na-bullet-points">
+                    <div class="na-bullet">
+                        <i class="fas fa-feather-alt"></i>
+                        <div>
+                            <strong>100% Pure Silks</strong>
+                            <span>Premium georgette and organza bases</span>
+                        </div>
+                    </div>
+                    <div class="na-bullet">
+                        <i class="fas fa-magic"></i>
+                        <div>
+                            <strong>Master Weaver Craftsmanship</strong>
+                            <span>Genuine metallic zari threads</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="na-action-row">
+                    <a href="/shop?collection=new" class="btn btn-primary">Shop Collection <i class="fas fa-arrow-right"></i></a>
+                    <a href="/shop" class="btn btn-outline">Explore All</a>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- PROMO BANNERS -->
-<div class="promo-section section-padding-medium reveal">
-    <div class="promo-inner">
-        <div class="promo-grid">
-            <div class="promo-card promo-card-1">
-                <div class="promo-discount">30%<span>OFF</span></div>
-                <h3>Summer Sale</h3>
-                <p>Limited time offer on selected items from our new collection</p>
-                <a href="/shop" class="btn btn-primary" style="width:fit-content">Shop Sale →</a>
-            </div>
-            <div class="promo-card promo-card-2">
-                <h3 style="color:#fff">New Arrivals</h3>
-                <p style="color:rgba(255,255,255,.7)">Fresh styles dropping every week. Be the first to shop the latest trends.</p>
-                <a href="/shop" class="btn"
-                    style="background:#fff;color:#000;border-color:#fff;width:fit-content">Explore Now →</a>
-            </div>
-        </div>
-    </div>
-</div>
+
 
 <!-- WHY SHOP WITH US -->
 <section class="features-section reveal">
@@ -514,7 +543,7 @@
 </section>
 
 <!-- TESTIMONIALS -->
-<section class="section-padding-large reveal" style="background: linear-gradient(180deg, #FFF0F2 0%, #FFFDF5 50%, #FFE5E9 100%); position: relative; overflow: hidden;">
+<section class="testimonials-section section-padding-large reveal">
     <div class="container">
         <div class="centered-header-group">
             <div>
@@ -522,102 +551,88 @@
                 <p class="section-sub">Real feedback from our boutique community</p>
             </div>
         </div>
-        <div class="testimonials-grid">
-            {% for review in reviews %}
-            <div class="testimonial-card">
-                <div class="testimonial-stars">
-                    {% for i in range(review.rating) %}<i class="fas fa-star"></i>{% endfor %}
-                </div>
-                <p class="testimonial-comment">"{{ review.comment }}"</p>
-                <div class="testimonial-author">
-                    <div class="author-avatar">
-                        {{ review.customer_name[0]|upper }}
+        <!-- Swipeable slider -->
+        <div class="reviews-slider-wrap">
+            <button class="reviews-nav reviews-nav-prev" id="reviews-prev" aria-label="Previous reviews">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <div class="reviews-slider" id="reviews-slider">
+                {% for review in reviews %}
+                <div class="testimonial-card">
+                    <div class="testimonial-quote-icon"><i class="fas fa-quote-left"></i></div>
+                    <div class="testimonial-stars">
+                        {% for i in range(review.rating) %}<i class="fas fa-star"></i>{% endfor %}
+                        {% for i in range(5 - review.rating) %}<i class="far fa-star"></i>{% endfor %}
                     </div>
-                    <div class="author-info">
-                        <h4>{{ review.customer_name }}</h4>
-                        <span>Verified Customer</span>
+                    <p class="testimonial-comment">"{{ review.comment }}"</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">{{ review.customer_name[0]|upper }}</div>
+                        <div class="author-info">
+                            <h4>{{ review.customer_name }}</h4>
+                            <span>Verified Customer</span>
+                        </div>
                     </div>
                 </div>
+                {% else %}
+                <div class="testimonial-card" style="text-align:center; color:#888;">
+                    <p>No reviews yet. Be the first to share your experience!</p>
+                </div>
+                {% endfor %}
             </div>
-            {% else %}
-            <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #888;">
-                <p>No reviews yet. Be the first to share your experience!</p>
-            </div>
-            {% endfor %}
+            <button class="reviews-nav reviews-nav-next" id="reviews-next" aria-label="Next reviews">
+                <i class="fas fa-chevron-right"></i>
+            </button>
         </div>
+        <!-- Dots -->
+        <div class="reviews-dots" id="reviews-dots"></div>
     </div>
 </section>
 
-<!-- LUVTALE MUSES GALLERY -->
-<section class="muses-section reveal">
+<!-- CONNECT WITH US (SOCIAL MEDIA) -->
+<section class="social-connect-section reveal">
     <div class="container">
         <div class="centered-header-group">
             <div>
-                <h2 class="section-title">Luvtale Muses</h2>
-                <p class="section-sub">Style inspirations and features from our community. Tag #LuvtaleMuse to get featured.</p>
+                <h2 class="section-title">Join Our Community</h2>
+                <p class="section-sub">Stay inspired and connect with us on social media</p>
             </div>
         </div>
-        <div class="muses-grid">
-            <div class="muse-item">
-                <div class="muse-card">
-                    <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=600" alt="Luvtale Muse Style 1" loading="lazy">
-                    <div class="muse-overlay">
-                        <div class="muse-info">
-                            <i class="fab fa-instagram"></i>
-                            <a href="/shop?category=1" class="muse-shop-btn"><i class="fas fa-shopping-bag"></i> Shop Look</a>
-                        </div>
-                    </div>
+        <div class="social-grid">
+            <a href="https://instagram.com" target="_blank" rel="noopener" class="social-card instagram-card">
+                <div class="social-icon-box">
+                    <i class="fab fa-instagram"></i>
                 </div>
-                <div class="muse-caption">
-                    <span class="muse-handle">@ananya_sharma</span>
-                    <span class="muse-desc">Ananya in Silk Kurti</span>
+                <h3>Instagram</h3>
+                <p>Daily fashion inspiration, behind-the-scenes stories & new arrival alerts.</p>
+                <span class="social-link-btn">Follow Us <i class="fas fa-chevron-right"></i></span>
+            </a>
+            
+            <a href="https://pinterest.com" target="_blank" rel="noopener" class="social-card pinterest-card">
+                <div class="social-icon-box">
+                    <i class="fab fa-pinterest"></i>
                 </div>
-            </div>
-            <div class="muse-item">
-                <div class="muse-card">
-                    <img src="https://images.unsplash.com/photo-1631857455684-a54a2f03665f?w=600" alt="Luvtale Muse Style 2" loading="lazy">
-                    <div class="muse-overlay">
-                        <div class="muse-info">
-                            <i class="fab fa-instagram"></i>
-                            <a href="/shop?category=4" class="muse-shop-btn"><i class="fas fa-shopping-bag"></i> Shop Look</a>
-                        </div>
-                    </div>
+                <h3>Pinterest</h3>
+                <p>Curated style moodboards, bridal collection ideas, and luxury aesthetics.</p>
+                <span class="social-link-btn">Pin With Us <i class="fas fa-chevron-right"></i></span>
+            </a>
+            
+            <a href="https://facebook.com" target="_blank" rel="noopener" class="social-card facebook-card">
+                <div class="social-icon-box">
+                    <i class="fab fa-facebook-f"></i>
                 </div>
-                <div class="muse-caption">
-                    <span class="muse-handle">@meera.johri</span>
-                    <span class="muse-desc">Meera in Anarkali Suit</span>
+                <h3>Facebook</h3>
+                <p>Join our styling group, share reviews, and participate in exclusive giveaways.</p>
+                <span class="social-link-btn">Join Group <i class="fas fa-chevron-right"></i></span>
+            </a>
+            
+            <a href="https://wa.me/1234567890" target="_blank" rel="noopener" class="social-card whatsapp-card">
+                <div class="social-icon-box">
+                    <i class="fab fa-whatsapp"></i>
                 </div>
-            </div>
-            <div class="muse-item">
-                <div class="muse-card">
-                    <img src="https://images.unsplash.com/photo-1605001011156-cbf0b0f67a51?w=600" alt="Luvtale Muse Style 3" loading="lazy">
-                    <div class="muse-overlay">
-                        <div class="muse-info">
-                            <i class="fab fa-instagram"></i>
-                            <a href="/shop?category=5" class="muse-shop-btn"><i class="fas fa-shopping-bag"></i> Shop Look</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="muse-caption">
-                    <span class="muse-handle">@rahul_kapur</span>
-                    <span class="muse-desc">Rahul in Royal Sherwani</span>
-                </div>
-            </div>
-            <div class="muse-item">
-                <div class="muse-card">
-                    <img src="https://images.unsplash.com/photo-1608748010899-18f300247112?w=600" alt="Luvtale Muse Style 4" loading="lazy">
-                    <div class="muse-overlay">
-                        <div class="muse-info">
-                            <i class="fab fa-instagram"></i>
-                            <a href="/shop?category=2" class="muse-shop-btn"><i class="fas fa-shopping-bag"></i> Shop Look</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="muse-caption">
-                    <span class="muse-handle">@ria_sen_official</span>
-                    <span class="muse-desc">Ria in Banarasi Silk Saree</span>
-                </div>
-            </div>
+                <h3>Personal Stylist</h3>
+                <p>Get direct styling advice, sizing help, and customized orders on WhatsApp.</p>
+                <span class="social-link-btn">Chat Now <i class="fas fa-chevron-right"></i></span>
+            </a>
         </div>
     </div>
 </section>
@@ -771,6 +786,123 @@
 
         updateTimer();
         const timerInterval = setInterval(updateTimer, 1000);
+    });
+
+    // Reviews Slider (Carousel & Swipe) Logic
+    document.addEventListener('DOMContentLoaded', function () {
+        const slider = document.getElementById('reviews-slider');
+        const prevBtn = document.getElementById('reviews-prev');
+        const nextBtn = document.getElementById('reviews-next');
+        const dotsContainer = document.getElementById('reviews-dots');
+
+        if (!slider) return;
+
+        const cards = Array.from(slider.querySelectorAll('.testimonial-card'));
+        if (cards.length === 0) return;
+
+        // Calculate visible cards per viewport
+        function getVisible() {
+            if (window.innerWidth <= 640) return 1;
+            if (window.innerWidth <= 992) return 2;
+            return Math.min(3, cards.length);
+        }
+
+        let currentIndex = 0;
+
+        // Build indicators (dots)
+        function buildDots() {
+            dotsContainer.innerHTML = '';
+            const visible = getVisible();
+            const totalPages = Math.ceil(cards.length / visible);
+            if (totalPages <= 1) {
+                dotsContainer.style.display = 'none';
+                return;
+            } else {
+                dotsContainer.style.display = 'flex';
+            }
+            for (let i = 0; i < totalPages; i++) {
+                const dot = document.createElement('button');
+                dot.className = 'reviews-dot' + (i === 0 ? ' active' : '');
+                dot.setAttribute('aria-label', `Go to review page ${i + 1}`);
+                dot.addEventListener('click', () => {
+                    goTo(i * visible);
+                });
+                dotsContainer.appendChild(dot);
+            }
+        }
+
+        // Update dot selection state
+        function updateDots() {
+            const visible = getVisible();
+            const totalPages = Math.ceil(cards.length / visible);
+            const dots = dotsContainer.querySelectorAll('.reviews-dot');
+            const activePage = Math.min(totalPages - 1, Math.round(currentIndex / visible));
+            dots.forEach((dot, idx) => {
+                dot.classList.toggle('active', idx === activePage);
+            });
+        }
+
+        // Update disabled states of prev/next buttons
+        function updateButtons() {
+            const visible = getVisible();
+            const maxIndex = Math.max(0, cards.length - visible);
+            prevBtn.disabled = currentIndex <= 0;
+            nextBtn.disabled = currentIndex >= maxIndex;
+        }
+
+        // Smooth scroll to card index
+        function goTo(index) {
+            const visible = getVisible();
+            const maxIndex = Math.max(0, cards.length - visible);
+            currentIndex = Math.max(0, Math.min(index, maxIndex));
+
+            const cardWidth = cards.length > 1 ? (cards[1].offsetLeft - cards[0].offsetLeft) : cards[0].offsetWidth;
+            if (!cardWidth) return;
+
+            slider.scrollTo({ left: currentIndex * cardWidth, behavior: 'smooth' });
+            updateButtons();
+            updateDots();
+        }
+
+        // Handle native scroll/swipe syncing
+        let scrollTimeout;
+        slider.addEventListener('scroll', function () {
+            // Debounce updating indices to avoid layout thrashing during smooth scrolls
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                const cardWidth = cards.length > 1 ? (cards[1].offsetLeft - cards[0].offsetLeft) : cards[0].offsetWidth;
+                if (!cardWidth) return;
+                const index = Math.round(slider.scrollLeft / cardWidth);
+                currentIndex = index;
+                updateDots();
+                updateButtons();
+            }, 50);
+        }, { passive: true });
+
+        // Event listeners for prev/next
+        prevBtn.addEventListener('click', () => {
+            const visible = getVisible();
+            goTo(currentIndex - visible);
+        });
+
+        nextBtn.addEventListener('click', () => {
+            const visible = getVisible();
+            goTo(currentIndex + visible);
+        });
+
+        // Initialize
+        buildDots();
+        goTo(0);
+
+        // Recalculate layout on window resize
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                buildDots();
+                goTo(currentIndex);
+            }, 100);
+        });
     });
 </script>
 {% endblock %}

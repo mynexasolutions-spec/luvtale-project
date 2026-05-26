@@ -214,7 +214,7 @@
 
             <div class="products-grid-3">
                 {% for product in products %}
-                <div class="product-card">
+                <div class="product-card" onclick="if (!event.target.closest('button') && !event.target.closest('a')) window.location.href='/product/{{ product.id }}';">
                     <div class="trending-product-img-wrap">
                         {% if product.badge %}
                         <span class="trending-badge">{{ product.badge }}</span>
@@ -248,10 +248,13 @@
                                 <span class="old-price">₹{{ product.old_price }}</span>
                                 {% endif %}
                             </div>
-                            <div class="rating">
-                                {% for i in range(5) %}
-                                <i class="{% if i < product.rating %}fas{% else %}far{% endif %} fa-star" style="color: var(--star-color);"></i>
-                                {% endfor %}
+                            <div class="shop-action-buttons">
+                                <button class="action-btn-mini" onclick="addToWishlist({{ product.id }})" aria-label="Add to wishlist">
+                                    <i class="far fa-heart"></i>
+                                </button>
+                                <button class="action-btn-mini" onclick="addToCart({{ product.id }})" aria-label="Add to cart">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
                             </div>
                         </div>
                     </div>

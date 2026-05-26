@@ -130,12 +130,12 @@
     </div>
 
     <!-- REVIEWS SECTION -->
+    {% if reviews %}
     <div class="product-reviews-section reveal" style="margin-top: 60px; padding: 40px; background: #fff; border-radius: 20px; border: 1px solid var(--border);">
         <h2 style="font-family: var(--font-family-display); font-size: 1.8rem; font-weight: 800; margin-bottom: 30px; display: flex; align-items: center; gap: 10px;">
             <i class="fas fa-star" style="color: #FFD700;"></i> Customer Reviews ({{ reviews|length }})
         </h2>
         
-        {% if reviews %}
         <div class="reviews-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
             {% for review in reviews %}
             <div class="review-card" style="padding: 25px; border-radius: 15px; background: #FAF9F6; border: 1.5px solid #F0EDE8; transition: all 0.3s ease;">
@@ -161,13 +161,8 @@
             </div>
             {% endfor %}
         </div>
-        {% else %}
-        <div style="text-align: center; padding: 40px; color: #777;">
-            <i class="far fa-comments" style="font-size: 3rem; margin-bottom: 15px; color: #ddd;"></i>
-            <p>No reviews yet for this product. Be the first to purchase and review!</p>
-        </div>
-        {% endif %}
     </div>
+    {% endif %}
 </div>
 
 <script>
