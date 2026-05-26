@@ -7659,14 +7659,19 @@
         }
 
         @media (max-width: 768px) {
-            /* Hide wishlist, cart, and hamburger lines on mobile navbar and remove floating navbar */
+            /* Fixed mobile navbar that stays visible while scrolling */
             .site-header {
-                position: relative !important;
-                box-shadow: none !important;
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                box-shadow: 0 4px 15px rgba(120, 95, 30, 0.1) !important;
+                z-index: 1001 !important;
             }
             html, body {
                 max-width: 100% !important;
                 overflow-x: hidden !important;
+                padding-top: 70px !important;
             }
             main, #main-content, .hero, .hero-container, .container {
                 padding-left: 0 !important;

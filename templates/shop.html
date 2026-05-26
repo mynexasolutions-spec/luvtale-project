@@ -141,7 +141,7 @@
                     currentParams.append('collection', colName);
                 }
                 
-                window.location.search = currentParams.toString();
+                updateFiltersAjax(currentParams);
             }
 
             function toggleMobileCategory(catId) {
@@ -156,21 +156,105 @@
                     currentParams.append('category', catId);
                 }
                 
-                window.location.search = currentParams.toString();
+                updateFiltersAjax(currentParams);
             }
 
+            function updateFiltersAjax(params) {
+                const queryStr = params.toString();
+                const newUrl = '/shop' + (queryStr ? '?' + queryStr : '');
+                
+                window.history.pushState({}, '', newUrl);
+
+                const mainSection = document.querySelector('.shop-container main');
+                if (mainSection) {
+                    mainSection.style.opacity = '0.4';
+                    mainSection.style.transition = 'opacity 0.2s ease';
+                }
+
+                fetch(newUrl)
+                    .then(response => response.text())
+                    .then(html => {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        
+                        const oldHeader = document.querySelector('.section-header-row');
+                        const newHeader = doc.querySelector('.section-header-row');
+                        if (oldHeader && newHeader) {
+                            oldHeader.innerHTML = newHeader.innerHTML;
+                        }
+
+                        const oldGrid = document.querySelector('.products-grid-3');
+                        const newGrid = doc.querySelector('.products-grid-3');
+                        if (oldGrid && newGrid) {
+                            oldGrid.innerHTML = newGrid.innerHTML;
+                        }
+
+                        const oldMobileScroll = document.querySelector('.mobile-chips-scroll');
+                        const newMobileScroll = doc.querySelector('.mobile-chips-scroll');
+                        if (oldMobileScroll && newMobileScroll) {
+                            oldMobileScroll.innerHTML = newMobileScroll.innerHTML;
+                        }
+
+                        doc.querySelectorAll('.shop-sidebar input[type="checkbox"]').forEach(newInput => {
+                            const oldInput = document.getElementById(newInput.id) || document.querySelector(`.shop-sidebar input[value="${newInput.value}"][name="${newInput.name}"]`);
+                            if (oldInput) {
+                                oldInput.checked = newInput.checked;
+                            }
+                        });
+
+                        if (mainSection) {
+                            mainSection.style.opacity = '1';
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Filtering error:', err);
+                        if (mainSection) mainSection.style.opacity = '1';
+                    });
+            }
+
+            window.addEventListener('popstate', () => {
+                const mainSection = document.querySelector('.shop-container main');
+                if (mainSection) mainSection.style.opacity = '0.4';
+                
+                fetch(window.location.href)
+                    .then(response => response.text())
+                    .then(html => {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        
+                        const oldHeader = document.querySelector('.section-header-row');
+                        const newHeader = doc.querySelector('.section-header-row');
+                        if (oldHeader && newHeader) oldHeader.innerHTML = newHeader.innerHTML;
+
+                        const oldGrid = document.querySelector('.products-grid-3');
+                        const newGrid = doc.querySelector('.products-grid-3');
+                        if (oldGrid && newGrid) oldGrid.innerHTML = newGrid.innerHTML;
+
+                        const oldMobileScroll = document.querySelector('.mobile-chips-scroll');
+                        const newMobileScroll = doc.querySelector('.mobile-chips-scroll');
+                        if (oldMobileScroll && newMobileScroll) oldMobileScroll.innerHTML = newMobileScroll.innerHTML;
+
+                        doc.querySelectorAll('.shop-sidebar input[type="checkbox"]').forEach(newInput => {
+                            const oldInput = document.getElementById(newInput.id) || document.querySelector(`.shop-sidebar input[value="${newInput.value}"][name="${newInput.name}"]`);
+                            if (oldInput) oldInput.checked = newInput.checked;
+                        });
+
+                        if (mainSection) mainSection.style.opacity = '1';
+                    });
+            });
+
             function applyFilters() {
-                // Desktop Inputs
                 const cats = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(i => i.value);
                 const subs = Array.from(document.querySelectorAll('input[name="subcategory"]:checked')).map(i => i.value);
                 const collections = Array.from(document.querySelectorAll('input[name="collection"]:checked')).map(i => i.value);
                 let maxPrice = document.getElementById('price-slider').value;
                 let sort = document.getElementById('sort-select').value;
 
-                // Check Mobile Inputs if active
                 if (window.innerWidth <= 1024) {
-                    maxPrice = document.getElementById('m-price-slider').value;
-                    sort = document.querySelector('.m-sort-select').value;
+                    const mSlider = document.getElementById('m-price-slider');
+                    if (mSlider) maxPrice = mSlider.value;
+                    const mSort = document.querySelector('.m-sort-select');
+                    if (mSort) sort = mSort.value;
                 }
                 
                 const params = new URLSearchParams();
@@ -180,7 +264,6 @@
                     subs.forEach(s => params.append('subcategory', s));
                     collections.forEach(col => params.append('collection', col));
                 } else {
-                    // Mobile view
                     const currentParams = new URLSearchParams(window.location.search);
                     currentParams.getAll('category').forEach(c => params.append('category', c));
                     currentParams.getAll('collection').forEach(col => params.append('collection', col));
@@ -189,14 +272,13 @@
                 if (maxPrice < 10000) params.append('max_price', maxPrice);
                 if (sort && sort !== 'new') params.append('sort', sort);
                 
-                window.location.href = '/shop' + (params.toString() ? '?' + params.toString() : '');
+                updateFiltersAjax(params);
             }
 
             function clearFilters() {
-                window.location.href = '/shop';
+                updateFiltersAjax(new URLSearchParams());
             }
 
-            // Sync sliders
             document.addEventListener('DOMContentLoaded', () => {
                 const slider = document.getElementById('price-slider');
                 if (slider) {
@@ -205,7 +287,6 @@
                     };
                 }
             });
-        </script>
 
         <main>
             <div class="section-header-row">
