@@ -600,7 +600,7 @@
 
         .hero-container {
             max-width: 1320px;
-            margin: 0 auto !important;
+            
             padding: 10px 24px;
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -609,6 +609,7 @@
             width: 100%;
             position: relative;
             z-index: 3;
+            margin-left: 50px;
         }
 
         .hero-tag {
@@ -783,6 +784,7 @@
             width: 100%;
             max-width: 600px;
             margin: 0 auto;
+            margin-right: 40px;
         }
 
         /* Banner box */
