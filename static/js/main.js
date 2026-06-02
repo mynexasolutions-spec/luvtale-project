@@ -112,11 +112,11 @@ async function updateCartUI() {
     for (const [id, item] of Object.entries(data.cart)) {
         container.innerHTML += `
             <div class="cart-item" style="display:flex; gap:15px; margin-bottom:20px; align-items:center; position:relative; background:#fff; padding:10px; border-radius:15px; box-shadow:0 5px 15px rgba(0,0,0,0.02);">
-                <a href="/product/${id}" style="width:70px; height:70px; background:#f8f8f8; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                <a href="/product/${item.slug || item.id}" style="width:70px; height:70px; background:#f8f8f8; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
                     <img src="${item.img}" style="max-width:80%; max-height:80%; object-fit:contain;">
                 </a>
                 <div style="flex:1;">
-                    <a href="/product/${id}" style="text-decoration:none; color:inherit;">
+                    <a href="/product/${item.slug || item.id}" style="text-decoration:none; color:inherit;">
                         <h5 style="font-size:14px; margin-bottom:4px; font-weight:600;">${item.name}</h5>
                     </a>
                     <div style="display:flex; align-items:center; gap:10px; margin-top:5px;">

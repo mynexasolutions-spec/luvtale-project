@@ -1,9 +1,10 @@
-from flask import Flask, render_template, session, redirect, url_for, request, jsonify, flash
+from flask import Flask, render_template, session, redirect, url_for, request, jsonify, flash, abort
 from functools import wraps
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 from werkzeug.utils import secure_filename
 import os
+import re
 from datetime import datetime
 import cloudinary
 import cloudinary.uploader
@@ -89,6 +90,7 @@ product_subcategories = db.Table('product_subcategories',
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), nullable=False)
+    slug = db.Column(db.String(250), unique=True, nullable=True)
     price = db.Column(db.Float, nullable=False)
     old_price = db.Column(db.Float)
     badge = db.Column(db.String(50))
@@ -113,6 +115,30 @@ class Product(db.Model):
     variations = db.relationship('ProductVariation', backref='product', lazy=True, cascade="all, delete-orphan")
     product_attributes = db.relationship('ProductAttribute', backref='product', lazy=True, cascade="all, delete-orphan")
     images = db.relationship('ProductImage', backref='product', lazy=True, cascade="all, delete-orphan")
+
+def slugify(text):
+    if not text:
+        return ""
+    text = text.lower()
+    text = re.sub(r'[^\w\s-]', '', text)
+    text = re.sub(r'[-\s]+', '-', text)
+    return text.strip('-')
+
+def generate_unique_slug(name, product_id=None):
+    base_slug = slugify(name)
+    if not base_slug:
+        base_slug = "product"
+    slug = base_slug
+    counter = 1
+    while True:
+        query = Product.query.filter(Product.slug == slug)
+        if product_id:
+            query = query.filter(Product.id != product_id)
+        if not query.first():
+            break
+        slug = f"{base_slug}-{counter}"
+        counter += 1
+    return slug
 
 class ProductVariation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -259,6 +285,7 @@ def get_product_api(id):
     return jsonify({
         'id': product.id,
         'name': product.name,
+        'slug': product.slug,
         'price': product.price,
         'description': product.description,
         'img_primary': product.img_primary,
@@ -274,6 +301,7 @@ def search_api():
     return jsonify([{
         'id': p.id,
         'name': p.name,
+        'slug': p.slug,
         'price': p.price,
         'img': p.img_primary
     } for p in products])
@@ -643,6 +671,7 @@ def admin_add_product():
 
         new_product = Product(
             name=name,
+            slug=generate_unique_slug(request.form.get('slug') or name),
             price=price,
             img_primary=img_primary,
             description=description,
@@ -731,6 +760,7 @@ def admin_edit_product(id):
     product = Product.query.get_or_404(id)
     if request.method == 'POST':
         product.name = request.form.get('name')
+        product.slug = generate_unique_slug(request.form.get('slug') or product.name, product.id)
         product.price = float(request.form.get('price') or 0)
         product.description = request.form.get('description')
         product.category_id = request.form.get('category_id')
@@ -1239,6 +1269,7 @@ def seed_db():
             for p in products_data:
                 prod = Product(
                     name=p['name'], price=p['price'], old_price=p.get('old_price'),
+                    slug=slugify(p['name']),
                     category_id=p['category'].id, badge=p['badge'],
                     img_primary=p['img'], img_secondary=p['img2'],
                     description=f"Premium {p['name']} designed for style and comfort.",
@@ -1297,9 +1328,19 @@ def seed_db():
              
             print("Database seeded with visual demo items!")
 
-@app.route('/product/<int:id>')
-def product_detail(id):
-    product = Product.query.get_or_404(id)
+@app.route('/product/<slug>')
+def product_detail(slug):
+    product = Product.query.filter_by(slug=slug).first()
+    if not product:
+        try:
+            prod_id = int(slug)
+            product = Product.query.get(prod_id)
+            if product:
+                return redirect(url_for('product_detail', slug=product.slug or slugify(product.name)), code=301)
+        except ValueError:
+            pass
+    if not product:
+        abort(404)
     variation_id = request.args.get('v', type=int)
     current_variation = None
     
@@ -1355,7 +1396,8 @@ def api_add_to_cart(id):
             'name': name,
             'price': current_variation.price if current_variation and current_variation.price else product.price,
             'img': current_variation.img_primary if current_variation and current_variation.img_primary else product.img_primary,
-            'quantity': 1
+            'quantity': 1,
+            'slug': product.slug
         }
     
     session['cart'] = cart
@@ -1610,6 +1652,7 @@ def api_wishlist_data():
         wishlist_data.append({
             'id': p.id,
             'name': p.name,
+            'slug': p.slug,
             'price': p.price,
             'img': p.img_primary
         })
@@ -1627,6 +1670,7 @@ def api_user_products():
         products_data.append({
             'id': p.id,
             'name': p.name,
+            'slug': p.slug,
             'price': p.price,
             'old_price': p.old_price,
             'img_primary': p.img_primary,
@@ -1685,6 +1729,7 @@ def api_user_add_product():
         
     new_product = Product(
         name=name,
+        slug=generate_unique_slug(name),
         price=price,
         old_price=old_price,
         description=description,
@@ -1725,6 +1770,7 @@ def api_user_edit_product(id):
         return jsonify({'success': False, 'message': 'Price must be a number.'}), 400
         
     product.name = name
+    product.slug = generate_unique_slug(name, product.id)
     
     old_price_val = request.form.get('old_price')
     if old_price_val:

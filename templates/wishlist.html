@@ -48,7 +48,7 @@
                         <div class="del-wish-btn" onclick="removeWish(${item.id})">
                             <i class="fas fa-times"></i>
                         </div>
-                        <a href="/product/${item.id}">
+                        <a href="/product/${item.slug || item.id}">
                             <img src="${item.img}" alt="${item.name}">
                         </a>
                     </div>

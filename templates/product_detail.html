@@ -2,6 +2,18 @@
 
 {% block title %}Buy {{ product.name }} | Luvtale Boutique{% endblock %}
 
+{% block extra_css %}
+<style>
+    @media (min-width: 1024px) {
+        .product-gallery .thumbs-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr) !important;
+            gap: 12px !important;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="product-page-wrap">
     <!-- BREADCRUMBS -->

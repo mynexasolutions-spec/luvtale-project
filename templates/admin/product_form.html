@@ -18,12 +18,17 @@
         action="{% if product %}{{ url_for('admin_edit_product', id=product.id) }}{% else %}{{ url_for('admin_add_product') }}{% endif %}"
         method="POST" enctype="multipart/form-data">
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 30px; margin-bottom: 30px;">
             <div class="form-group">
-                <label style="display: block; margin-bottom: 12px; font-weight: 700; color: var(--secondary);">Product
-                    Name</label>
-                <input type="text" name="name" value="{{ product.name if product else '' }}"
+                <label style="display: block; margin-bottom: 12px; font-weight: 700; color: var(--secondary);">Product Name</label>
+                <input type="text" name="name" id="productNameInput" value="{{ product.name if product else '' }}"
                     placeholder="e.g. Floral Silk Saree" required
+                    style="width: 100%; padding: 15px; border: 1.5px solid #eee; border-radius: 12px; font-family: inherit;">
+            </div>
+            <div class="form-group">
+                <label style="display: block; margin-bottom: 12px; font-weight: 700; color: var(--secondary);">Slug</label>
+                <input type="text" name="slug" id="productSlugInput" value="{{ product.slug if product else '' }}"
+                    placeholder="e.g. floral-silk-saree" required
                     style="width: 100%; padding: 15px; border: 1.5px solid #eee; border-radius: 12px; font-family: inherit;">
             </div>
             <div class="form-group">
@@ -683,6 +688,34 @@
         } catch (e) {
             console.error(e);
         }
+    }
+
+    // Auto-generate slug from name
+    const nameInput = document.getElementById('productNameInput');
+    const slugInput = document.getElementById('productSlugInput');
+    let isSlugManuallyEdited = false;
+
+    if (slugInput && slugInput.value) {
+        isSlugManuallyEdited = true;
+    }
+
+    if (slugInput) {
+        slugInput.addEventListener('input', () => {
+            isSlugManuallyEdited = true;
+        });
+    }
+
+    if (nameInput && slugInput) {
+        nameInput.addEventListener('input', () => {
+            if (!isSlugManuallyEdited) {
+                slugInput.value = nameInput.value
+                    .toLowerCase()
+                    .replace(/[^a-z0-9\s-]/g, '')
+                    .replace(/\s+/g, '-')
+                    .replace(/-+/g, '-')
+                    .trim();
+            }
+        });
     }
 </script>
 {% endblock %}
