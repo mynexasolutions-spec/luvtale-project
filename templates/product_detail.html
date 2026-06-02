@@ -79,7 +79,7 @@
             </div>
 
             <div class="p-desc-text" style="margin-bottom: 30px;">
-                {{ product.description or "Elevate your wardrobe with this exquisite piece. Crafted with the finest materials and an eye for timeless detail, this selection from Luvtale Boutique defines modern luxury and sophistication." }}
+                {{ (product.description or "Elevate your wardrobe with this exquisite piece. Crafted with the finest materials and an eye for timeless detail, this selection from Luvtale Boutique defines modern luxury and sophistication.")|safe }}
             </div>
 
             {% if product.product_type == 'variable' %}

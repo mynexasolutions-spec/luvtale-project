@@ -72,13 +72,10 @@
 <!-- MARQUEE -->
 <div class="marquee-wrap">
     <div class="marquee-track" id="marquee">
-        {% for i in range(2) %}
-        <span class="marquee-item">Kurtis</span><span class="marquee-sep">✦</span>
-        <span class="marquee-item">Sarees</span><span class="marquee-sep">✦</span>
-        <span class="marquee-item">Lehengas</span><span class="marquee-sep">✦</span>
-        <span class="marquee-item">Anarkalis</span><span class="marquee-sep">✦</span>
-        <span class="marquee-item">Sherwanis</span><span class="marquee-sep">✦</span>
-        <span class="marquee-item">Dupattas</span><span class="marquee-sep">✦</span>
+        {% for i in range(6) %}
+            {% for cat in categories %}
+            <span class="marquee-item">{{ cat.name }}</span><span class="marquee-sep">✦</span>
+            {% endfor %}
         {% endfor %}
     </div>
 </div>
@@ -359,7 +356,7 @@
                     <h3>Grand Palace<br>Wedding</h3>
                     <p>Hand-embroidered Lehengas and Sherwanis crafted for the royal celebration you deserve.</p>
                     <div class="lookbook-footer-row">
-                        <a href="/shop?category=3" class="lookbook-link">Explore Collection <i class="fas fa-arrow-right"></i></a>
+                        <a href="/shop?category={{ categories[0].id if categories else '' }}" class="lookbook-link">Explore Collection <i class="fas fa-arrow-right"></i></a>
                         <span class="lookbook-count">38 Pieces</span>
                     </div>
                 </div>
@@ -377,7 +374,7 @@
                     <h3>Summer Pastel<br>Romance</h3>
                     <p>Lightweight organzas, georgettes, and breezy designer kurtis for warm, effortless days.</p>
                     <div class="lookbook-footer-row">
-                        <a href="/shop?category=1" class="lookbook-link">Explore Collection <i class="fas fa-arrow-right"></i></a>
+                        <a href="/shop?category={{ categories[0].id if categories else '' }}" class="lookbook-link">Explore Collection <i class="fas fa-arrow-right"></i></a>
                         <span class="lookbook-count">55 Pieces</span>
                     </div>
                 </div>

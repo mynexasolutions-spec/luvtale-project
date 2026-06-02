@@ -106,11 +106,9 @@
                 <div class="footer-col">
                     <h5>Shop</h5>
                     <ul>
-                        <li><a href="/shop?category=1">Kurtis</a></li>
-                        <li><a href="/shop?category=2">Sarees</a></li>
-                        <li><a href="/shop?category=3">Lehengas</a></li>
-                        <li><a href="/shop?category=4">Anarkalis</a></li>
-                        <li><a href="/shop?category=5">Sherwanis</a></li>
+                        {% for cat in categories %}
+                        <li><a href="/shop?category={{ cat.id }}">{{ cat.name }}</a></li>
+                        {% endfor %}
                     </ul>
                 </div>
                 <div class="footer-col">

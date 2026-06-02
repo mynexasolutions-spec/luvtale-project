@@ -283,15 +283,15 @@ def search_api():
 @app.route('/')
 def home():
     categories = Category.query.all()
-    trending_products = Product.query.filter_by(is_trending=True).limit(8).all()
-    bestseller_products = Product.query.filter_by(is_bestseller=True).limit(8).all()
-    featured_products = Product.query.filter_by(is_featured=True).limit(8).all()
+    trending_products = Product.query.filter_by(is_trending=True).order_by(Product.id.desc()).limit(8).all()
+    bestseller_products = Product.query.filter_by(is_bestseller=True).order_by(Product.id.desc()).limit(8).all()
+    featured_products = Product.query.filter_by(is_featured=True).order_by(Product.id.desc()).limit(8).all()
     if not trending_products:
-        trending_products = Product.query.limit(8).all()
+        trending_products = Product.query.order_by(Product.id.desc()).limit(8).all()
     if not bestseller_products:
-        bestseller_products = Product.query.limit(8).all()
+        bestseller_products = Product.query.order_by(Product.id.desc()).limit(8).all()
     if not featured_products:
-        featured_products = Product.query.limit(8).all()
+        featured_products = Product.query.order_by(Product.id.desc()).limit(8).all()
     reviews = Review.query.all()
     return render_template('index.html', 
                            categories=categories, 
