@@ -4,12 +4,10 @@
 
 {% block extra_css %}
 <style>
-    @media (min-width: 1024px) {
-        .product-gallery .thumbs-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr) !important;
-            gap: 12px !important;
-        }
+    .product-gallery .thumbs-grid {
+        display: grid !important;
+        grid-template-columns: repeat(5, 1fr) !important;
+        gap: 8px !important; /* Slightly smaller gap on mobile/global for fit */
     }
 </style>
 {% endblock %}

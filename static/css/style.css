@@ -4988,7 +4988,7 @@
             padding: 15px 0;
             border-bottom: 1px solid #eee;
             position: sticky;
-            top: 70px;
+            top: 10px;
             z-index: 100;
             margin-bottom: 20px;
         }
@@ -7673,7 +7673,7 @@
             html, body {
                 max-width: 100% !important;
                 overflow-x: hidden !important;
-                padding-top: 70px !important;
+                padding-top: 30px !important;
             }
             main, #main-content, .hero, .hero-container, .container {
                 padding-left: 0 !important;
@@ -7834,6 +7834,7 @@
                 padding-left: 8px !important;
                 padding-right: 8px !important;
                 padding-bottom: 30px !important;
+                
             }
             .shop-container {
                 padding-left: 8px !important;
