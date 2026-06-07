@@ -166,6 +166,7 @@ class ProductAttribute(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
     attribute_id = db.Column(db.Integer, db.ForeignKey('attribute.id'), nullable=False)
+    attribute = db.relationship('Attribute', lazy=True)
 
 class VariationOption(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -514,15 +515,17 @@ def logout():
 @app.route('/admin')
 @admin_required
 def admin_dashboard():
-    # Calculate some fake sales data for the demo as seen in screenshot
+    from sqlalchemy import func
+    counts = db.session.execute(
+        text('SELECT (SELECT COUNT(*) FROM "order") AS orders, (SELECT COUNT(*) FROM "user") AS customers, (SELECT COUNT(*) FROM product) AS products')
+    ).fetchone()
     stats = {
         'total_sales': '₹1,24,500',
-        'orders_count': Order.query.count(),
-        'customers_count': User.query.count(),
-        'active_products': Product.query.count()
+        'orders_count': counts[0],
+        'customers_count': counts[1],
+        'active_products': counts[2]
     }
     recent_orders = Order.query.order_by(Order.date.desc()).limit(5).all()
-    # Simplified low stock query
     low_stock_products = Product.query.filter(Product.stock_count < 10).limit(5).all()
     return render_template('admin/dashboard.html', stats=stats, recent_orders=recent_orders, low_stock=low_stock_products)
 
@@ -531,17 +534,20 @@ def admin_dashboard():
 def admin_products():
     category_ids = request.args.getlist('category', type=int)
     subcategory_ids = request.args.getlist('subcategory', type=int)
-    
-    query = Product.query
+    page = request.args.get('page', 1, type=int)
+    per_page = 20
+
+    query = Product.query.order_by(Product.id.desc())
     if category_ids:
         query = query.filter(Product.category_id.in_(category_ids))
     if subcategory_ids:
         query = query.join(Product.subcategories).filter(SubCategory.id.in_(subcategory_ids))
-        
-    products = query.all()
+
+    pagination = query.paginate(page=page, per_page=per_page, error_out=False)
+    products = pagination.items
     categories = Category.query.all()
     subcategories = SubCategory.query.all()
-    return render_template('admin/products.html', products=products, categories=categories, subcategories=subcategories, category_ids=category_ids, subcategory_ids=subcategory_ids)
+    return render_template('admin/products.html', products=products, categories=categories, subcategories=subcategories, category_ids=category_ids, subcategory_ids=subcategory_ids, pagination=pagination)
 
 @app.route('/admin/categories')
 @admin_required
@@ -680,13 +686,14 @@ def admin_add_product():
             badge=request.form.get('badge'),
             product_type=product_type,
             stock_count=stock_count,
+            stock_status=request.form.get('stock_status', 'instock'),
             is_featured='is_featured' in request.form,
             is_trending='is_trending' in request.form,
             is_bestseller='is_bestseller' in request.form,
             size_chart=save_file(request.files.get('size_chart')),
             rating=int(request.form.get('rating') or 5)
         )
-        sub_ids = request.form.getlist('subcategory_ids')
+        sub_ids = [s for s in request.form.getlist('subcategory_ids') if s]
         if sub_ids:
             new_product.subcategories = SubCategory.query.filter(SubCategory.id.in_(sub_ids)).all()
 
@@ -714,17 +721,22 @@ def admin_add_product():
             var_prices = request.form.getlist('var_price[]')
             var_stocks = request.form.getlist('var_stock[]')
             var_imgs = request.files.getlist('var_img[]')
-            
+
+            # Pre-load all attribute values once — avoids N*M DB round-trips
+            attr_value_map = {av.value.lower(): av.id for av in AttributeValue.query.all()}
+
             total_stock = 0
+            pending_opts = []  # (variation_obj, [parts]) — resolved after single flush
             for i in range(len(var_names)):
                 if var_names[i]:
-                    v_stock = int(var_stocks[i]) if var_stocks[i] else 0
+                    raw_stock = var_stocks[i] if i < len(var_stocks) else ''
+                    v_stock = int(raw_stock) if raw_stock else 0
                     total_stock += v_stock
-                    
+
                     v_img_path = None
                     if i < len(var_imgs) and var_imgs[i] and var_imgs[i].filename:
                         v_img_path = save_file(var_imgs[i])
-                    
+
                     variation = ProductVariation(
                         product_id=new_product.id,
                         price=float(var_prices[i]) if var_prices[i] else price,
@@ -733,16 +745,17 @@ def admin_add_product():
                         img_primary=v_img_path
                     )
                     db.session.add(variation)
-                    db.session.flush()
-
-                    # SYNC: Link variation to AttributeValues
-                    # Split name like "S - Red" or "XL"
                     parts = [p.strip() for p in var_names[i].replace('-', ',').split(',')]
-                    for p in parts:
-                        val = AttributeValue.query.filter(AttributeValue.value.ilike(p)).first()
-                        if val:
-                            v_opt = VariationOption(variation_id=variation.id, attribute_value_id=val.id)
-                            db.session.add(v_opt)
+                    pending_opts.append((variation, parts))
+
+            # Single flush assigns IDs to all variations at once
+            db.session.flush()
+            for variation, parts in pending_opts:
+                for p in parts:
+                    av_id = attr_value_map.get(p.lower())
+                    if av_id:
+                        db.session.add(VariationOption(variation_id=variation.id, attribute_value_id=av_id))
+
             new_product.stock_count = total_stock
             db.session.commit()
 
@@ -768,6 +781,7 @@ def admin_edit_product(id):
         product.badge = request.form.get('badge')
         product.product_type = request.form.get('product_type')
         product.stock_count = int(request.form.get('stock_count') or 0)
+        product.stock_status = request.form.get('stock_status', 'instock')
         product.is_featured = 'is_featured' in request.form
         product.is_trending = 'is_trending' in request.form
         product.is_bestseller = 'is_bestseller' in request.form
@@ -800,27 +814,32 @@ def admin_edit_product(id):
                 db.session.add(ProductAttribute(product_id=product.id, attribute_id=a_id))
 
         if product.product_type == 'variable':
-            # Clean up old variation images from Cloudinary
+            # Clean up old variations — delete via ORM so cascade removes VariationOptions
             old_vars = ProductVariation.query.filter_by(product_id=product.id).all()
             for ov in old_vars:
                 if ov.img_primary: delete_file(ov.img_primary)
-                
-            ProductVariation.query.filter_by(product_id=product.id).delete()
+                db.session.delete(ov)
+            db.session.flush()
             var_names = request.form.getlist('var_name[]')
             var_prices = request.form.getlist('var_price[]')
             var_stocks = request.form.getlist('var_stock[]')
             var_imgs = request.files.getlist('var_img[]')
-            
+
+            # Pre-load all attribute values once — avoids N*M DB round-trips
+            attr_value_map = {av.value.lower(): av.id for av in AttributeValue.query.all()}
+
             total_stock = 0
+            pending_opts = []  # (variation_obj, [parts]) — resolved after single flush
             for i in range(len(var_names)):
                 if var_names[i]:
-                    v_stock = int(var_stocks[i]) if var_stocks[i] else 0
+                    raw_stock = var_stocks[i] if i < len(var_stocks) else ''
+                    v_stock = int(raw_stock) if raw_stock else 0
                     total_stock += v_stock
-                    
+
                     v_img_path = None
                     if i < len(var_imgs) and var_imgs[i] and var_imgs[i].filename:
                         v_img_path = save_file(var_imgs[i])
-                    
+
                     variation = ProductVariation(
                         product_id=product.id,
                         price=float(var_prices[i]) if var_prices[i] else product.price,
@@ -829,19 +848,21 @@ def admin_edit_product(id):
                         img_primary=v_img_path
                     )
                     db.session.add(variation)
-                    db.session.flush()
-
-                    # SYNC: Link variation to AttributeValues
                     parts = [p.strip() for p in var_names[i].replace('-', ',').split(',')]
-                    for p in parts:
-                        val = AttributeValue.query.filter(AttributeValue.value.ilike(p)).first()
-                        if val:
-                            v_opt = VariationOption(variation_id=variation.id, attribute_value_id=val.id)
-                            db.session.add(v_opt)
+                    pending_opts.append((variation, parts))
+
+            # Single flush assigns IDs to all variations at once
+            db.session.flush()
+            for variation, parts in pending_opts:
+                for p in parts:
+                    av_id = attr_value_map.get(p.lower())
+                    if av_id:
+                        db.session.add(VariationOption(variation_id=variation.id, attribute_value_id=av_id))
+
             product.stock_count = total_stock
             db.session.commit()
         
-        sub_ids = request.form.getlist('subcategory_ids')
+        sub_ids = [s for s in request.form.getlist('subcategory_ids') if s]
         if sub_ids:
             product.subcategories = SubCategory.query.filter(SubCategory.id.in_(sub_ids)).all()
         else:
@@ -1351,7 +1372,13 @@ def product_detail(slug):
         
     categories = Category.query.all()
     reviews = Review.query.filter_by(product_id=product.id).all()
-    return render_template('product_detail.html', product=product, categories=categories, current_variation=current_variation, reviews=reviews)
+    related_products = []
+    if product.category_id:
+        related_products = Product.query.filter(
+            Product.category_id == product.category_id,
+            Product.id != product.id
+        ).order_by(Product.id.desc()).limit(4).all()
+    return render_template('product_detail.html', product=product, categories=categories, current_variation=current_variation, reviews=reviews, related_products=related_products)
 
 @app.route('/cart')
 def cart_page():

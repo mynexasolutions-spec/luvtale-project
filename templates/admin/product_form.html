@@ -294,7 +294,7 @@
                                     class="form-control" style="background: #fff;"></td>
                             <td><input type="number" step="0.01" name="var_price[]" value="{{ var.price }}"
                                     class="form-control" style="background: #fff;"></td>
-                            <td><input type="number" name="var_stock[]" value="{{ var.stock_count }}"
+                            <td><input type="number" name="var_stock[]" value="{{ var.stock_count if var.stock_count > 0 else 10 }}"
                                     class="form-control" style="background: #fff;"></td>
                             <td>
                                 <input type="file" name="var_img[]" class="form-control"
@@ -339,10 +339,50 @@
         </div>
 
         <div class="form-group" style="margin-bottom: 40px;">
-            <label
-                style="display: block; margin-bottom: 12px; font-weight: 700; color: var(--secondary);">Description</label>
-            <textarea name="description" rows="4" placeholder="Describe your product..."
-                style="width: 100%; padding: 15px; border: 1.5px solid #eee; border-radius: 12px; font-family: inherit; resize: vertical;">{{ product.description if product else '' }}</textarea>
+            <label style="display: block; margin-bottom: 8px; font-weight: 700; color: var(--secondary);">Description</label>
+
+            <!-- Formatting hint box -->
+            <div style="background: #F8F9FB; border: 1.5px solid #eee; border-radius: 12px; padding: 16px 18px; margin-bottom: 12px; font-size: 0.82rem; color: #555; line-height: 1.7;">
+                <strong style="color: var(--secondary); font-size: 0.85rem;">📝 Formatting Guide (Markdown supported)</strong>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px 24px; margin-top: 10px;">
+                    <span><code style="background:#eee;padding:1px 6px;border-radius:4px;">### Heading</code> → Section heading</span>
+                    <span><code style="background:#eee;padding:1px 6px;border-radius:4px;">**bold text**</code> → <strong>Bold text</strong></span>
+                    <span><code style="background:#eee;padding:1px 6px;border-radius:4px;">* item</code> → Bullet point</span>
+                    <span><code style="background:#eee;padding:1px 6px;border-radius:4px;">*italic*</code> → <em>Italic text</em></span>
+                    <span style="grid-column: 1 / -1;"><code style="background:#eee;padding:1px 6px;border-radius:4px;">| Column 1 | Column 2 |</code> then <code style="background:#eee;padding:1px 6px;border-radius:4px;">|---|---|</code> then <code style="background:#eee;padding:1px 6px;border-radius:4px;">| Value 1 | Value 2 |</code> → Specification table</span>
+                </div>
+            </div>
+
+            <textarea name="description" rows="16"
+                style="width: 100%; padding: 15px; border: 1.5px solid #eee; border-radius: 12px; font-family: 'Courier New', monospace; font-size: 0.88rem; line-height: 1.7; resize: vertical; background: #FAFAFA;"
+                placeholder="Write your product description here using Markdown format. Example:
+
+Elevate your ethnic wardrobe with this stunning **Designer Pink Anarkali Set**, a masterpiece of craftsmanship and traditional elegance.
+
+### Product Highlights
+
+* **Premium Fabric:** Exquisitely crafted from high-quality Tissue Silk, offering a sophisticated sheen and graceful flow.
+* **Intricate Detailing:** Features meticulous Gota Patti embroidery, showcasing artisanal excellence.
+* **Elegant Dupatta:** Comes paired with a lightweight, soft organza dupatta with matching embroidery borders.
+* **Timeless Silhouette:** The classic Anarkali cut offers a flattering fit with comfort and style.
+
+### Why Choose This Ensemble?
+
+This set is more than just clothing — it is a statement piece. The delicate balance of heavy Gota Patti work on luxurious tissue silk creates a radiant aesthetic that stands out in any crowd.
+
+### Style Tip
+
+Pair with **traditional statement earrings (jhumkas)** and metallic heels to enhance the embroidery. Keep makeup minimal to let the rich color take center stage.
+
+### Product Specifications
+
+| Specification | Detail |
+|---|---|
+| Color | Radiant Pink |
+| Material | Tissue Silk (Kurta), Organza (Dupatta) |
+| Work | Authentic Gota Patti Embroidery |
+| Occasion | Wedding, Festive, Ethnic Wear |
+| Care | Dry clean only |">{{ product.description if product else '' }}</textarea>
         </div>
 
         <div style="display: flex; gap: 15px;">
@@ -588,13 +628,16 @@
         const tbody = document.getElementById('variationBody');
         const price = document.querySelector('input[name="price"]').value;
 
-        // Save existing data
+        // Save existing data — preserve stock only if admin has explicitly set it > 0
         const existingData = {};
         document.querySelectorAll('.variation-row').forEach(row => {
             const name = row.querySelector('input[name="var_name[]"]').value;
             const price = row.querySelector('input[name="var_price[]"]').value;
             const stock = row.querySelector('input[name="var_stock[]"]').value;
-            if (name) existingData[name] = { price, stock };
+            if (name) existingData[name] = {
+                price,
+                stock: (stock && parseInt(stock) > 0) ? stock : '10'
+            };
         });
 
         // We only clear if there are selected attributes to regenerate
@@ -618,7 +661,7 @@
             const combinations = cartesian(selectedAttributes);
             combinations.forEach(combo => {
                 const name = combo.join(' - ');
-                const saved = existingData[name] || { price, stock: '' };
+                const saved = existingData[name] || { price, stock: '10' };
                 addVariationRow(name, saved.price, saved.stock);
             });
         }

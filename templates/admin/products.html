@@ -98,6 +98,32 @@
                 {% endfor %}
             </tbody>
         </table>
+
+        {% if pagination and pagination.pages > 1 %}
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px 0; flex-wrap: wrap; gap: 10px;">
+            <span style="font-size: 0.85rem; color: #888;">
+                Showing {{ (pagination.page - 1) * pagination.per_page + 1 }}–{{ [pagination.page * pagination.per_page, pagination.total] | min }} of {{ pagination.total }} products
+            </span>
+            <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                {% if pagination.has_prev %}
+                <a href="?page={{ pagination.prev_num }}{% for cid in category_ids %}&category={{ cid }}{% endfor %}{% for sid in subcategory_ids %}&subcategory={{ sid }}{% endfor %}"
+                   style="padding: 7px 14px; border: 1.5px solid #eee; border-radius: 8px; font-size: 0.85rem; font-weight: 600; color: var(--secondary); text-decoration: none; background: #fff;">← Prev</a>
+                {% endif %}
+                {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                    {% if p %}
+                    <a href="?page={{ p }}{% for cid in category_ids %}&category={{ cid }}{% endfor %}{% for sid in subcategory_ids %}&subcategory={{ sid }}{% endfor %}"
+                       style="padding: 7px 12px; border: 1.5px solid {% if p == pagination.page %}var(--primary){% else %}#eee{% endif %}; border-radius: 8px; font-size: 0.85rem; font-weight: 700; color: {% if p == pagination.page %}#fff{% else %}var(--secondary){% endif %}; background: {% if p == pagination.page %}var(--primary){% else %}#fff{% endif %}; text-decoration: none;">{{ p }}</a>
+                    {% else %}
+                    <span style="padding: 7px 4px; color: #aaa;">…</span>
+                    {% endif %}
+                {% endfor %}
+                {% if pagination.has_next %}
+                <a href="?page={{ pagination.next_num }}{% for cid in category_ids %}&category={{ cid }}{% endfor %}{% for sid in subcategory_ids %}&subcategory={{ sid }}{% endfor %}"
+                   style="padding: 7px 14px; border: 1.5px solid #eee; border-radius: 8px; font-size: 0.85rem; font-weight: 600; color: var(--secondary); text-decoration: none; background: #fff;">Next →</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
