@@ -50,12 +50,48 @@ function closeModal(e) {
 
 // Search Logic
 function openSearch() {
-    document.getElementById('search-overlay').style.display = 'flex';
+    const overlay = document.getElementById('search-overlay');
+    overlay.classList.add('open');
+    setTimeout(() => document.getElementById('search-input').focus(), 50);
 }
 
 function closeSearch() {
-    document.getElementById('search-overlay').style.display = 'none';
+    document.getElementById('search-overlay').classList.remove('open');
+    document.getElementById('search-input').value = '';
+    document.getElementById('search-results').innerHTML = '';
 }
+
+let searchTimer = null;
+function handleSearch(val) {
+    clearTimeout(searchTimer);
+    const container = document.getElementById('search-results');
+    if (!val.trim()) { container.innerHTML = ''; return; }
+    container.innerHTML = '<p style="color:#aaa;font-size:0.9rem;">Searching...</p>';
+    searchTimer = setTimeout(async () => {
+        try {
+            const res = await fetch(`/api/search?q=${encodeURIComponent(val.trim())}`);
+            const data = await res.json();
+            if (!data.length) {
+                container.innerHTML = '<p style="color:#aaa;font-size:0.9rem;">No products found.</p>';
+                return;
+            }
+            container.innerHTML = data.map(p => `
+                <a href="/product/${p.slug}" onclick="closeSearch()" style="display:flex;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid var(--border);text-decoration:none;color:inherit;">
+                    <img src="${p.img || ''}" alt="${p.name}" style="width:56px;height:56px;object-fit:cover;border-radius:10px;background:#f5f5f5;flex-shrink:0;">
+                    <div>
+                        <div style="font-weight:700;font-size:0.95rem;color:var(--secondary);margin-bottom:3px;">${p.name}</div>
+                        <div style="font-size:0.85rem;color:var(--primary);font-weight:700;">₹${p.price}</div>
+                    </div>
+                </a>`).join('');
+        } catch(e) {
+            container.innerHTML = '<p style="color:#aaa;font-size:0.9rem;">Something went wrong.</p>';
+        }
+    }, 300);
+}
+
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeSearch();
+});
 
 // API Interactions
 async function addToCart(productId, quantity = 1, variationId = null) {
