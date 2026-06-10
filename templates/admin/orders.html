@@ -68,7 +68,7 @@
         </div>
         
         <div id="admin-order-info" style="display: none;">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+            <div class="modal-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
                 <div>
                     <h4 style="font-weight: 700; font-size: 0.85rem; margin-bottom: 10px; color: #111; text-transform: uppercase; letter-spacing: 0.5px;">Customer Info</h4>
                     <p style="margin: 0 0 6px; font-size: 0.9rem;"><strong style="color:#555;">Name:</strong> <span id="info-username"></span></p>
@@ -98,10 +98,10 @@
             <form id="admin-order-form" onsubmit="submitAdminOrderUpdate(event)" style="border-top: 1.5px solid #eee; padding-top: 20px;">
                 <input type="hidden" id="edit-order-id">
                 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                <div class="modal-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
                     <div>
                         <label style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 8px; color: #444;">Order Status</label>
-                        <select id="edit-order-status" style="width: 100%; padding: 12px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.9rem; background:#fff;">
+                        <select id="edit-order-status" style="width: 100%; padding: 12px; border: 1.5px solid var(--border-color); border-radius: 8px; font-family: inherit; font-size: 0.9rem; background:#fff;">
                             <option value="Pending">Pending</option>
                             <option value="Shipped">Shipped</option>
                             <option value="Paid">Paid</option>
@@ -119,7 +119,7 @@
                     
                     <div id="edit-return-status-group" style="display: none;">
                         <label style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 8px; color: #444;">Request Status</label>
-                        <select id="edit-return-status" style="width: 100%; padding: 12px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.9rem; background:#fff;">
+                        <select id="edit-return-status" style="width: 100%; padding: 12px; border: 1.5px solid var(--border-color); border-radius: 8px; font-family: inherit; font-size: 0.9rem; background:#fff;">
                             <option value="Pending">Pending</option>
                             <option value="Approved">Approved</option>
                             <option value="Rejected">Rejected</option>
@@ -127,7 +127,7 @@
                     </div>
                 </div>
                 
-                <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                <div class="modal-buttons" style="display: flex; gap: 12px; justify-content: flex-end;">
                     <button type="button" class="btn btn-secondary" onclick="closeAdminOrderModal()" style="padding: 10px 20px; font-weight:700;">Close</button>
                     <button type="submit" class="btn btn-primary" id="admin-save-btn" style="padding: 10px 25px; font-weight:700;">Save Changes</button>
                 </div>

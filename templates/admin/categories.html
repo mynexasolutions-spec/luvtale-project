@@ -7,8 +7,8 @@
         <p style="color: var(--text-muted);">Manage product categories and collections.</p>
     </div>
     <div class="header-right" style="display: flex; gap: 15px;">
-        <a href="{{ url_for('admin_add_subcategory_page') }}" class="btn" style="background: #FDE2E7; color: var(--primary); border-radius: 12px; font-weight: 600; padding: 12px 20px;"><i class="fas fa-plus"></i> Add SubCategory</a>
-        <a href="{{ url_for('admin_add_category') }}" class="btn btn-primary" style="border-radius: 12px; font-weight: 600; padding: 12px 20px;"><i class="fas fa-plus"></i> Add New Category</a>
+        <a href="{{ url_for('admin_add_subcategory_page') }}" class="btn btn-category-action" style="background: #FDE2E7; color: var(--primary); border-radius: 12px; font-weight: 600; padding: 12px 20px;"><i class="fas fa-plus"></i> Add SubCategory</a>
+        <a href="{{ url_for('admin_add_category') }}" class="btn btn-primary btn-category-action" style="border-radius: 12px; font-weight: 600; padding: 12px 20px;"><i class="fas fa-plus"></i> Add New Category</a>
     </div>
 </div>
 
@@ -27,7 +27,7 @@
                 {% for cat in categories %}
                 <tr style="background: #fff; transition: transform 0.2s;">
                     <td style="padding: 10px 20px; border-radius: 15px 0 0 15px;">
-                        <div style="display: flex; align-items: center; gap: 15px;">
+                        <div class="category-item-container" style="display: flex; align-items: center; gap: 15px;">
                             <div style="width: 60px; height: 60px; background: #FFFAF3; border-radius: 15px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid #FEEB9D;">
                                 {% if cat.img %}
                                 <img src="{{ cat.img }}" alt="{{ cat.name }}" style="width: 100%; height: 100%; object-fit: cover;">

@@ -107,7 +107,7 @@
                 style="padding: 15px 30px; background: #fff; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
                 <div class="header-left" style="display: flex; align-items: center; gap: 20px; flex: 1;">
                     <button class="mobile-toggle" id="sidebarToggle"
-                        style="display: none; background: none; border: none; font-size: 1.2rem; cursor: pointer;">
+                        style="background: none; border: none; font-size: 1.2rem; cursor: pointer;">
                         <i class="fas fa-bars"></i>
                     </button>
                     <div class="search-bar" style="position: relative; width: 100%; max-width: 400px;">
@@ -202,10 +202,6 @@
             dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
         });
 
-        document.addEventListener('click', function () {
-            dropdownContent.style.display = 'none';
-            document.querySelector('.notifications-dropdown').style.display = 'none';
-        });
 
         // Notifications Toggle
         const notifyBtn = document.querySelector('.admin-notifications');
@@ -229,8 +225,25 @@
             });
         }
 
-        document.getElementById('sidebarToggle').addEventListener('click', function () {
-            document.querySelector('.admin-container').classList.toggle('sidebar-active');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const adminContainer = document.querySelector('.admin-container');
+        const sidebar = document.querySelector('.sidebar');
+
+        sidebarToggle.addEventListener('click', function (e) {
+            e.stopPropagation();
+            adminContainer.classList.toggle('sidebar-active');
+        });
+
+        sidebar.addEventListener('click', function (e) {
+            e.stopPropagation();
+        });
+
+        document.addEventListener('click', function () {
+            dropdownContent.style.display = 'none';
+            document.querySelector('.notifications-dropdown').style.display = 'none';
+            if (adminContainer.classList.contains('sidebar-active')) {
+                adminContainer.classList.remove('sidebar-active');
+            }
         });
 
         // Auto-hide flash messages after 3 seconds
