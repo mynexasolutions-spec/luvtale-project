@@ -1165,6 +1165,21 @@ th {
         gap: 15px !important;
     }
 
+    .stat-card {
+        flex-direction: row !important;
+        justify-content: center !important;
+        align-items: center !important;
+        padding: 20px !important;
+        max-width: 280px !important;
+        width: 100% !important;
+        margin: 0 auto !important;
+    }
+
+    .stat-info {
+        display: block !important;
+        text-align: left !important;
+    }
+
     .modal-buttons {
         flex-direction: column !important;
         gap: 10px !important;
@@ -1176,15 +1191,29 @@ th {
         justify-content: center !important;
     }
 
-    .page-header {
+    .page-header, .dashboard-header {
         flex-direction: column !important;
-        align-items: flex-start !important;
+        align-items: center !important;
+        text-align: center !important;
         gap: 15px !important;
+        width: 100% !important;
+    }
+
+    .page-header .header-left, .dashboard-header .header-left {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+        width: 100% !important;
+    }
+
+    .page-header .header-left *, .dashboard-header .header-left * {
+        text-align: center !important;
     }
 
     .page-header .header-right {
         width: 100% !important;
-        justify-content: flex-start !important;
+        justify-content: center !important;
         flex-wrap: wrap !important;
         gap: 10px !important;
     }
@@ -1214,7 +1243,7 @@ th {
         gap: 1rem !important;
     }
 
-    .admin-page-header .admin-btn, 
+    .admin-page-header .admin-btn,
     .admin-page-header .btn {
         width: 100% !important;
         justify-content: center !important;
@@ -1238,7 +1267,8 @@ th {
 }
 
 /* Custom Select Inputs styling for premium UX */
-select, .form-control {
+select,
+.form-control {
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -1255,17 +1285,19 @@ select, .form-control {
     color: var(--text-main) !important;
     cursor: pointer !important;
     transition: all 0.3s ease !important;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.02) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02) !important;
     display: inline-block !important;
     outline: none !important;
 }
 
-select:hover, .form-control:hover {
+select:hover,
+.form-control:hover {
     border-color: var(--primary) !important;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.04) !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04) !important;
 }
 
-select:focus, .form-control:focus {
+select:focus,
+.form-control:focus {
     border-color: var(--primary) !important;
     box-shadow: 0 0 0 4px rgba(204, 13, 57, 0.1) !important;
-}
+}
