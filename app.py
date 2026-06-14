@@ -670,7 +670,8 @@ def admin_add_product():
         name = request.form.get('name')
         price = float(request.form.get('price') or 0)
         description = request.form.get('description')
-        category_id = request.form.get('category_id')
+        category_id = request.form.get('category_id') or None
+        brand_id = request.form.get('brand_id') or None
         stock_count = int(request.form.get('stock_count') or 0)
 
         img_primary = save_file(request.files.get('img_primary'))
@@ -682,7 +683,7 @@ def admin_add_product():
             img_primary=img_primary,
             description=description,
             category_id=category_id,
-            brand_id=request.form.get('brand_id'),
+            brand_id=brand_id,
             badge=request.form.get('badge'),
             product_type=product_type,
             stock_count=stock_count,
@@ -776,8 +777,8 @@ def admin_edit_product(id):
         product.slug = generate_unique_slug(request.form.get('slug') or product.name, product.id)
         product.price = float(request.form.get('price') or 0)
         product.description = request.form.get('description')
-        product.category_id = request.form.get('category_id')
-        product.brand_id = request.form.get('brand_id')
+        product.category_id = request.form.get('category_id') or None
+        product.brand_id = request.form.get('brand_id') or None
         product.badge = request.form.get('badge')
         product.product_type = request.form.get('product_type')
         product.stock_count = int(request.form.get('stock_count') or 0)
