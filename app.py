@@ -731,16 +731,25 @@ def admin_add_product():
             for i in range(len(var_names)):
                 if var_names[i]:
                     raw_stock = var_stocks[i] if i < len(var_stocks) else ''
-                    v_stock = int(raw_stock) if raw_stock else 0
+                    try:
+                        v_stock = int(raw_stock) if raw_stock else 0
+                    except ValueError:
+                        v_stock = 0
                     total_stock += v_stock
 
                     v_img_path = None
                     if i < len(var_imgs) and var_imgs[i] and var_imgs[i].filename:
                         v_img_path = save_file(var_imgs[i])
 
+                    raw_price = var_prices[i] if i < len(var_prices) else ''
+                    try:
+                        v_price = float(raw_price) if raw_price else price
+                    except ValueError:
+                        v_price = price
+
                     variation = ProductVariation(
                         product_id=new_product.id,
-                        price=float(var_prices[i]) if var_prices[i] else price,
+                        price=v_price,
                         stock_count=v_stock,
                         sku=f"{new_product.id}-{var_names[i]}",
                         img_primary=v_img_path
@@ -815,16 +824,36 @@ def admin_edit_product(id):
                 db.session.add(ProductAttribute(product_id=product.id, attribute_id=a_id))
 
         if product.product_type == 'variable':
-            # Clean up old variations — delete via ORM so cascade removes VariationOptions
+            # Keep track of old variation images by SKU to reuse them
             old_vars = ProductVariation.query.filter_by(product_id=product.id).all()
-            for ov in old_vars:
-                if ov.img_primary: delete_file(ov.img_primary)
-                db.session.delete(ov)
-            db.session.flush()
+            old_var_imgs = {ov.sku: ov.img_primary for ov in old_vars if ov.sku}
+
             var_names = request.form.getlist('var_name[]')
             var_prices = request.form.getlist('var_price[]')
             var_stocks = request.form.getlist('var_stock[]')
             var_imgs = request.files.getlist('var_img[]')
+
+            new_skus = {f"{product.id}-{name}" for name in var_names if name}
+
+            # Delete old variations, and only delete their files from Cloudinary if the SKU is not retained
+            # or if the user uploaded a new file for that SKU.
+            for ov in old_vars:
+                is_retained = ov.sku in new_skus
+                has_new_img = False
+                if is_retained:
+                    try:
+                        name_part = ov.sku.split('-', 1)[1] if '-' in ov.sku else ov.sku
+                        idx = var_names.index(name_part)
+                        if idx < len(var_imgs) and var_imgs[idx] and var_imgs[idx].filename:
+                            has_new_img = True
+                    except ValueError:
+                        pass
+
+                if ov.img_primary and (not is_retained or has_new_img):
+                    delete_file(ov.img_primary)
+
+                db.session.delete(ov)
+            db.session.flush()
 
             # Pre-load all attribute values once — avoids N*M DB round-trips
             attr_value_map = {av.value.lower(): av.id for av in AttributeValue.query.all()}
@@ -834,16 +863,27 @@ def admin_edit_product(id):
             for i in range(len(var_names)):
                 if var_names[i]:
                     raw_stock = var_stocks[i] if i < len(var_stocks) else ''
-                    v_stock = int(raw_stock) if raw_stock else 0
+                    try:
+                        v_stock = int(raw_stock) if raw_stock else 0
+                    except ValueError:
+                        v_stock = 0
                     total_stock += v_stock
 
                     v_img_path = None
                     if i < len(var_imgs) and var_imgs[i] and var_imgs[i].filename:
                         v_img_path = save_file(var_imgs[i])
+                    else:
+                        v_img_path = old_var_imgs.get(f"{product.id}-{var_names[i]}")
+
+                    raw_price = var_prices[i] if i < len(var_prices) else ''
+                    try:
+                        v_price = float(raw_price) if raw_price else product.price
+                    except ValueError:
+                        v_price = product.price
 
                     variation = ProductVariation(
                         product_id=product.id,
-                        price=float(var_prices[i]) if var_prices[i] else product.price,
+                        price=v_price,
                         stock_count=v_stock,
                         sku=f"{product.id}-{var_names[i]}",
                         img_primary=v_img_path
