@@ -1100,8 +1100,10 @@ def admin_edit_attribute(id):
         # Handle values
         values_str = request.form.get('values')
         if values_str:
-            # Simple sync: delete and re-add
-            AttributeValue.query.filter_by(attribute_id=attr.id).delete()
+            value_ids = [v.id for v in AttributeValue.query.filter_by(attribute_id=attr.id).all()]
+            if value_ids:
+                VariationOption.query.filter(VariationOption.attribute_value_id.in_(value_ids)).delete(synchronize_session=False)
+                AttributeValue.query.filter(AttributeValue.id.in_(value_ids)).delete(synchronize_session=False)
             vals = [v.strip() for v in values_str.split(',') if v.strip()]
             for val in vals:
                 new_val = AttributeValue(attribute_id=attr.id, value=val)
@@ -1168,7 +1170,14 @@ def admin_delete_product(id):
         delete_file(img.img_url)
     for var in product.variations:
         delete_file(var.img_primary)
-        
+
+    variation_ids = [var.id for var in product.variations]
+    if variation_ids:
+        VariationOption.query.filter(VariationOption.variation_id.in_(variation_ids)).delete(synchronize_session=False)
+
+    Review.query.filter_by(product_id=product.id).delete(synchronize_session=False)
+    db.session.execute(product_subcategories.delete().where(product_subcategories.c.product_id == product.id))
+
     db.session.delete(product)
     db.session.commit()
     flash('Product and all associated images deleted successfully!', 'info')
@@ -1209,6 +1218,9 @@ def admin_delete_gallery_image(id):
 @admin_required
 def admin_delete_attribute(id):
     attr = Attribute.query.get_or_404(id)
+    value_ids = [v.id for v in attr.values]
+    if value_ids:
+        VariationOption.query.filter(VariationOption.attribute_value_id.in_(value_ids)).delete(synchronize_session=False)
     db.session.delete(attr)
     db.session.commit()
     flash('Attribute deleted successfully!', 'info')
