@@ -1,10 +1,12 @@
-from flask import Flask, render_template, session, redirect, url_for, request, jsonify, flash, abort
+from flask import Flask, render_template, session, redirect, url_for, request, jsonify, flash
 from functools import wraps
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 from werkzeug.utils import secure_filename
+from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import re
+import markdown
 from datetime import datetime
 import cloudinary
 import cloudinary.uploader
@@ -18,6 +20,9 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'luvtale_secret_key')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Public URL of the Next.js customer frontend, which now owns all customer-facing pages.
+FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:3001')
 
 # Cloudinary Config
 cloudinary.config(
@@ -230,7 +235,7 @@ def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not session.get('admin_logged_in') and session.get('user_role') != 'admin':
-            return redirect(url_for('login'))
+            return redirect(url_for('admin_login'))
         return f(*args, **kwargs)
     return decorated_function
 
@@ -279,7 +284,295 @@ def inject_admin_notifications():
         'notif_count': len(notifications)
     }
 
+# --- CSRF PROTECTION (double-submit cookie, scoped to /api/*) ---
+import secrets
+
+CSRF_SAFE_METHODS = {'GET', 'HEAD', 'OPTIONS'}
+
+@app.before_request
+def ensure_csrf_token():
+    if 'csrf_token' not in session:
+        session['csrf_token'] = secrets.token_hex(16)
+
+@app.before_request
+def enforce_csrf():
+    if (request.path.startswith('/api/')
+            and not request.path.startswith('/api/admin/')
+            and request.method not in CSRF_SAFE_METHODS):
+        sent = request.headers.get('X-CSRFToken')
+        if not sent or sent != session.get('csrf_token'):
+            return jsonify({'success': False, 'message': 'Invalid or missing CSRF token'}), 403
+
+@app.after_request
+def set_csrf_cookie(response):
+    token = session.get('csrf_token')
+    if token:
+        response.set_cookie('csrf_token', token, httponly=False, samesite='Lax')
+    return response
+
+# --- SERIALIZERS ---
+def serialize_product_card(p):
+    return {
+        'id': p.id,
+        'name': p.name,
+        'slug': p.slug,
+        'price': p.price,
+        'old_price': p.old_price,
+        'badge': p.badge,
+        'img_primary': p.img_primary,
+        'img_secondary': p.img_secondary,
+        'rating': p.rating,
+        'stock_status': p.stock_status,
+        'category_name': p.category.name if p.category else None,
+    }
+
+def serialize_category(c):
+    return {
+        'id': c.id,
+        'name': c.name,
+        'img': c.img,
+        'bg': c.bg,
+        'items_count': c.items_count,
+        'is_hot': c.is_hot,
+        'is_new': c.is_new,
+        'subcategories': [{'id': s.id, 'name': s.name} for s in c.subcategories],
+    }
+
+def serialize_user(u):
+    return {
+        'id': u.id,
+        'username': u.username,
+        'role': u.role,
+        'email': u.email or '',
+        'phone': u.phone or '',
+        'address': u.address or '',
+    }
+
 # --- API ROUTES ---
+
+@app.route('/api/categories')
+def api_categories():
+    categories = Category.query.all()
+    return jsonify([serialize_category(c) for c in categories])
+
+@app.route('/api/home')
+def api_home():
+    trending_products = Product.query.filter_by(is_trending=True).order_by(Product.id.desc()).limit(8).all()
+    bestseller_products = Product.query.filter_by(is_bestseller=True).order_by(Product.id.desc()).limit(8).all()
+    featured_products = Product.query.filter_by(is_featured=True).order_by(Product.id.desc()).limit(8).all()
+    if not trending_products:
+        trending_products = Product.query.order_by(Product.id.desc()).limit(8).all()
+    if not bestseller_products:
+        bestseller_products = Product.query.order_by(Product.id.desc()).limit(8).all()
+    if not featured_products:
+        featured_products = Product.query.order_by(Product.id.desc()).limit(8).all()
+    reviews = Review.query.all()
+    return jsonify({
+        'trending_products': [serialize_product_card(p) for p in trending_products],
+        'bestseller_products': [serialize_product_card(p) for p in bestseller_products],
+        'featured_products': [serialize_product_card(p) for p in featured_products],
+        'reviews': [{'id': r.id, 'customer_name': r.customer_name, 'rating': r.rating, 'comment': r.comment} for r in reviews],
+    })
+
+@app.route('/api/shop')
+def api_shop():
+    category_ids = request.args.getlist('category', type=int)
+    subcategory_ids = request.args.getlist('subcategory', type=int)
+    collections = request.args.getlist('collection')
+    min_price = request.args.get('min_price', type=float)
+    max_price = request.args.get('max_price', type=float)
+    sort = request.args.get('sort')
+
+    query = Product.query
+
+    if category_ids:
+        query = query.filter(Product.category_id.in_(category_ids))
+
+    if subcategory_ids:
+        query = query.join(Product.subcategories).filter(SubCategory.id.in_(subcategory_ids))
+
+    if collections:
+        from sqlalchemy import or_
+        collection_filters = []
+        if 'trending' in collections:
+            collection_filters.append(Product.is_trending == True)
+        if 'bestseller' in collections:
+            collection_filters.append(Product.is_bestseller == True)
+        if 'featured' in collections:
+            collection_filters.append(Product.is_featured == True)
+        if collection_filters:
+            query = query.filter(or_(*collection_filters))
+
+    if min_price is not None:
+        query = query.filter(Product.price >= min_price)
+    if max_price is not None:
+        query = query.filter(Product.price <= max_price)
+
+    if sort == 'low':
+        query = query.order_by(Product.price.asc())
+    elif sort == 'high':
+        query = query.order_by(Product.price.desc())
+    else:
+        query = query.order_by(Product.id.desc())
+
+    products = query.all()
+    return jsonify({
+        'products': [serialize_product_card(p) for p in products],
+        'category_ids': category_ids,
+        'subcategory_ids': subcategory_ids,
+    })
+
+@app.route('/api/product-detail/<slug>')
+def api_product_detail(slug):
+    product = Product.query.filter_by(slug=slug).first()
+    if not product:
+        return jsonify({'success': False, 'message': 'Product not found'}), 404
+
+    variation_id = request.args.get('v', type=int)
+    current_variation = ProductVariation.query.get(variation_id) if variation_id else None
+
+    reviews = Review.query.filter_by(product_id=product.id).all()
+    related_products = []
+    if product.category_id:
+        related_products = Product.query.filter(
+            Product.category_id == product.category_id,
+            Product.id != product.id
+        ).order_by(Product.id.desc()).limit(4).all()
+
+    variations = []
+    for v in product.variations:
+        variations.append({
+            'id': v.id,
+            'price': v.price,
+            'stock_count': v.stock_count,
+            'stock_status': v.stock_status,
+            'sku': v.sku,
+            'img_primary': v.img_primary,
+            'images': [img.img_url for img in v.images],
+            'options': [
+                {
+                    'attribute_id': o.attribute_value.attribute_id,
+                    'attribute': o.attribute_value.attribute.name,
+                    'attribute_value_id': o.attribute_value_id,
+                    'value': o.attribute_value.value,
+                } for o in v.options
+            ],
+        })
+
+    description_raw = product.description or (
+        "Elevate your wardrobe with this exquisite piece. Crafted with the finest materials and an "
+        "eye for timeless detail, this selection from Luvtale Boutique defines modern luxury and sophistication."
+    )
+
+    attributes = []
+    if product.product_type == 'variable':
+        for pa in product.product_attributes:
+            attr = pa.attribute
+            used_value_ids = set()
+            for v in product.variations:
+                for opt in v.options:
+                    if opt.attribute_value.attribute_id == attr.id:
+                        used_value_ids.add(opt.attribute_value_id)
+            attributes.append({
+                'id': attr.id,
+                'name': attr.name,
+                'values': [
+                    {'id': val.id, 'value': val.value}
+                    for val in attr.values if val.id in used_value_ids
+                ],
+            })
+
+    return jsonify({
+        'product': {
+            **serialize_product_card(product),
+            'description_html': markdown.markdown(description_raw, extensions=['tables']),
+            'product_type': product.product_type,
+            'stock_count': product.stock_count,
+            'size_chart': product.size_chart,
+            'category_id': product.category_id,
+            'img_secondary': product.img_secondary,
+            'images': [img.img_url for img in product.images if not img.variation_id],
+            'variations': variations,
+            'attributes': attributes,
+        },
+        'current_variation_id': current_variation.id if current_variation else None,
+        'reviews': [{'id': r.id, 'customer_name': r.customer_name, 'rating': r.rating, 'comment': r.comment} for r in reviews],
+        'related_products': [serialize_product_card(p) for p in related_products],
+    })
+
+@app.route('/api/auth/session')
+def api_auth_session():
+    user = User.query.get(session['user_id']) if session.get('user_id') else None
+    return jsonify({'user': serialize_user(user) if user else None})
+
+@app.route('/api/auth/login', methods=['POST'])
+def api_auth_login():
+    data = request.get_json() or {}
+    username = data.get('username', '')
+    password = data.get('password', '')
+    user = User.query.filter_by(username=username).first()
+    if not user or not check_password_hash(user.password, password):
+        return jsonify({'success': False, 'message': 'Invalid username or password.'}), 401
+
+    session['user_id'] = user.id
+    session['username'] = user.username
+    session['user_role'] = user.role
+    session['admin_logged_in'] = user.role == 'admin'
+    return jsonify({'success': True, 'user': serialize_user(user)})
+
+@app.route('/api/auth/signup', methods=['POST'])
+def api_auth_signup():
+    data = request.get_json() or {}
+    username = data.get('username', '')
+    password = data.get('password', '')
+    confirm_password = data.get('confirm_password', '')
+
+    if not username or not password:
+        return jsonify({'success': False, 'message': 'Username and password are required.'}), 400
+    if password != confirm_password:
+        return jsonify({'success': False, 'message': 'Passwords do not match.'}), 400
+    if User.query.filter_by(username=username).first():
+        return jsonify({'success': False, 'message': 'Username already exists.'}), 400
+
+    new_user = User(username=username, password=generate_password_hash(password))
+    db.session.add(new_user)
+    db.session.commit()
+    return jsonify({'success': True})
+
+@app.route('/api/auth/logout', methods=['POST'])
+def api_auth_logout():
+    session.clear()
+    return jsonify({'success': True})
+
+@app.route('/api/auth/profile', methods=['GET', 'POST'])
+def api_auth_profile():
+    if not session.get('user_id'):
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 401
+    user = User.query.get(session['user_id'])
+
+    if request.method == 'POST':
+        data = request.get_json() or {}
+        user.email = data.get('email', user.email)
+        user.phone = data.get('phone', user.phone)
+        user.address = data.get('address', user.address)
+        db.session.commit()
+
+    orders = Order.query.filter_by(user_id=user.id).order_by(Order.date.desc()).all()
+    return jsonify({
+        'user': serialize_user(user),
+        'orders': [{
+            'id': o.id,
+            'order_number': o.order_number,
+            'total_amount': o.total_amount,
+            'status': o.status,
+            'date': o.date.isoformat(),
+            'payment_method': o.payment_method,
+            'return_exchange_type': o.return_exchange_type,
+            'return_exchange_reason': o.return_exchange_reason,
+            'return_exchange_status': o.return_exchange_status,
+        } for o in orders],
+    })
+
 @app.route('/api/product/<int:id>')
 def get_product_api(id):
     product = Product.query.get_or_404(id)
@@ -311,204 +604,29 @@ def search_api():
 
 @app.route('/')
 def home():
-    categories = Category.query.all()
-    trending_products = Product.query.filter_by(is_trending=True).order_by(Product.id.desc()).limit(8).all()
-    bestseller_products = Product.query.filter_by(is_bestseller=True).order_by(Product.id.desc()).limit(8).all()
-    featured_products = Product.query.filter_by(is_featured=True).order_by(Product.id.desc()).limit(8).all()
-    if not trending_products:
-        trending_products = Product.query.order_by(Product.id.desc()).limit(8).all()
-    if not bestseller_products:
-        bestseller_products = Product.query.order_by(Product.id.desc()).limit(8).all()
-    if not featured_products:
-        featured_products = Product.query.order_by(Product.id.desc()).limit(8).all()
-    reviews = Review.query.all()
-    return render_template('index.html', 
-                           categories=categories, 
-                           trending_products=trending_products, 
-                           bestseller_products=bestseller_products, 
-                           featured_products=featured_products,
-                           reviews=reviews)
+    # The customer-facing site is now the Next.js app; this endpoint only still
+    # exists so url_for('home') keeps working (e.g. the admin panel's "View Main
+    # Site" link) and so a stray visit to the Flask origin lands somewhere useful.
+    return redirect(FRONTEND_URL)
 
-@app.route('/shop')
-def shop():
-    category_ids = request.args.getlist('category', type=int)
-    subcategory_ids = request.args.getlist('subcategory', type=int)
-    collections = request.args.getlist('collection')
-    min_price = request.args.get('min_price', type=float)
-    max_price = request.args.get('max_price', type=float)
-    sort = request.args.get('sort')
-    
-    categories = Category.query.all()
-    query = Product.query
-    
-    if category_ids:
-        query = query.filter(Product.category_id.in_(category_ids))
-    
-    if subcategory_ids:
-        query = query.join(Product.subcategories).filter(SubCategory.id.in_(subcategory_ids))
-        
-    if collections:
-        collection_filters = []
-        if 'trending' in collections:
-            collection_filters.append(Product.is_trending == True)
-        if 'bestseller' in collections:
-            collection_filters.append(Product.is_bestseller == True)
-        if 'featured' in collections:
-            collection_filters.append(Product.is_featured == True)
-        if collection_filters:
-            from sqlalchemy import or_
-            query = query.filter(or_(*collection_filters))
-    
-    if min_price is not None:
-        query = query.filter(Product.price >= min_price)
-    if max_price is not None:
-        query = query.filter(Product.price <= max_price)
-        
-    if sort == 'low':
-        query = query.order_by(Product.price.asc())
-    elif sort == 'high':
-        query = query.order_by(Product.price.desc())
-    else:
-        query = query.order_by(Product.id.desc())
-        
-    products = query.all()
-    return render_template('shop.html', 
-                           categories=categories, 
-                           products=products, 
-                           category_ids=category_ids, 
-                           subcategory_ids=subcategory_ids)
-
-@app.route('/about')
-def about():
-    return render_template('about.html')
-
-@app.route('/contact')
-def contact():
-    return render_template('contact.html')
-
-@app.route('/privacy-policy')
-def privacy_policy():
-    return render_template('policy.html', title="Privacy Policy", content="Our Privacy Policy explains how we collect, use, and protect your personal information...")
-
-@app.route('/terms-conditions')
-def terms_conditions():
-    return render_template('policy.html', title="Terms & Conditions", content="By using our boutique, you agree to our terms of service, which include...")
-
-@app.route('/shipping-policy')
-def shipping_policy():
-    return render_template('policy.html', title="Shipping Policy", content="We offer worldwide shipping. Orders are processed within 2-3 business days...")
-
-@app.route('/refund-policy')
-def refund_policy():
-    return render_template('policy.html', title="Cancellation & Refund Policy", content="We offer a 14-day return policy for unused items. Refunds will be processed to the original payment method...")
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    # If already logged in, show profile details instead of redirecting or showing login form
-    if session.get('user_id') or session.get('admin_logged_in'):
-        user = None
-        if session.get('user_id'):
-            user = User.query.get(session['user_id'])
-        
-        # If admin is logged in but doesn't have a DB record yet, resolve it
-        if not user and session.get('admin_logged_in'):
-            user = User.query.filter_by(username='admin').first()
-            if not user:
-                user = User(username='admin', password='admin123', role='admin', email='admin@luvtale.com')
-                db.session.add(user)
-                db.session.commit()
-            session['user_id'] = user.id
-            session['user_role'] = 'admin'
-            session['username'] = 'admin'
-            
-        if user:
-            orders = Order.query.filter_by(user_id=user.id).order_by(Order.date.desc()).all()
-            categories = Category.query.all()
-            return render_template('profile.html', user=user, orders=orders, categories=categories)
-
-    # Always pop authentication-related variables on any /login request to ensure a clean slate,
-    # while preserving guest cart and wishlist session data.
-    session.pop('admin_logged_in', None)
-    session.pop('user_role', None)
-    session.pop('user_id', None)
-    session.pop('username', None)
+@app.route('/admin/login', methods=['GET', 'POST'])
+def admin_login():
+    if session.get('admin_logged_in'):
+        return redirect(url_for('admin_dashboard'))
 
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        if username == 'admin' and password == 'admin123':
-            user = User.query.filter_by(username='admin').first()
-            if not user:
-                user = User(username='admin', password='admin123', role='admin', email='admin@luvtale.com')
-                db.session.add(user)
-                db.session.commit()
-            session['admin_logged_in'] = True
-            session['user_role'] = 'admin'
-            session['username'] = username
-            session['user_id'] = user.id
-            flash('Admin login successful!', 'success')
-            return redirect(url_for('admin_dashboard'))
         user = User.query.filter_by(username=username).first()
-        if user and user.password == password:
+        if user and user.role == 'admin' and check_password_hash(user.password, password):
             session['user_id'] = user.id
             session['username'] = user.username
             session['user_role'] = user.role
+            session['admin_logged_in'] = True
             flash('Login successful!', 'success')
-            if user.role == 'admin':
-                session['admin_logged_in'] = True
-                return redirect(url_for('admin_dashboard'))
-            else:
-                session['admin_logged_in'] = False
-            return redirect(url_for('home'))
-        else:
-            flash('Invalid username or password.', 'error')
-    return render_template('auth.html')
-
-@app.route('/signup', methods=['POST'])
-def signup():
-    username = request.form.get('username')
-    password = request.form.get('password')
-    confirm_password = request.form.get('confirm_password')
-    if password != confirm_password:
-        flash('Passwords do not match.', 'error')
-        return redirect(url_for('login'))
-    if User.query.filter_by(username=username).first():
-        flash('Username already exists.', 'error')
-        return redirect(url_for('login'))
-    new_user = User(username=username, password=password)
-    db.session.add(new_user)
-    db.session.commit()
-    flash('Account created! Please login.', 'success')
-    return redirect(url_for('login'))
-
-@app.route('/profile')
-def profile():
-    if not session.get('user_id'):
-        flash('Please login to view your profile.', 'info')
-        return redirect(url_for('login'))
-    user = User.query.get(session['user_id'])
-    # In a real app, we'd have a relationship for orders
-    orders = Order.query.filter_by(user_id=user.id).order_by(Order.date.desc()).all()
-    categories = Category.query.all()
-    return render_template('profile.html', user=user, orders=orders, categories=categories)
-
-@app.route('/update-profile', methods=['POST'])
-def update_profile():
-    if not session.get('user_id'):
-        return jsonify({'success': False, 'message': 'Unauthorized'}), 401
-    user = User.query.get(session['user_id'])
-    user.email = request.form.get('email')
-    user.phone = request.form.get('phone')
-    user.address = request.form.get('address')
-    db.session.commit()
-    flash('Profile updated successfully!', 'success')
-    return redirect(url_for('profile'))
-
-@app.route('/logout')
-def logout():
-    session.clear()
-    flash('Logged out.', 'info')
-    return redirect(url_for('home'))
+            return redirect(url_for('admin_dashboard'))
+        flash('Invalid admin ID or password.', 'error')
+    return render_template('admin/login.html')
 
 # --- ADMIN ROUTES ---
 
@@ -658,8 +776,10 @@ def admin_profile():
 def admin_logout():
     session.pop('admin_logged_in', None)
     session.pop('user_role', None)
+    session.pop('user_id', None)
+    session.pop('username', None)
     flash('Logged out successfully.', 'info')
-    return redirect(url_for('login'))
+    return redirect(url_for('admin_login'))
 
 # Forms
 @app.route('/admin/products/add', methods=['GET', 'POST'])
@@ -1402,47 +1522,6 @@ def seed_db():
              
             print("Database seeded with visual demo items!")
 
-@app.route('/product/<slug>')
-def product_detail(slug):
-    product = Product.query.filter_by(slug=slug).first()
-    if not product:
-        try:
-            prod_id = int(slug)
-            product = Product.query.get(prod_id)
-            if product:
-                return redirect(url_for('product_detail', slug=product.slug or slugify(product.name)), code=301)
-        except ValueError:
-            pass
-    if not product:
-        abort(404)
-    variation_id = request.args.get('v', type=int)
-    current_variation = None
-    
-    if variation_id:
-        current_variation = ProductVariation.query.get(variation_id)
-    elif product.product_type == 'variable' and product.variations:
-        current_variation = None
-        
-    categories = Category.query.all()
-    reviews = Review.query.filter_by(product_id=product.id).all()
-    related_products = []
-    if product.category_id:
-        related_products = Product.query.filter(
-            Product.category_id == product.category_id,
-            Product.id != product.id
-        ).order_by(Product.id.desc()).limit(4).all()
-    return render_template('product_detail.html', product=product, categories=categories, current_variation=current_variation, reviews=reviews, related_products=related_products)
-
-@app.route('/cart')
-def cart_page():
-    categories = Category.query.all()
-    return render_template('cart.html', categories=categories)
-
-@app.route('/wishlist')
-def wishlist_page():
-    categories = Category.query.all()
-    return render_template('wishlist.html', categories=categories)
-
 @app.route('/api/add-to-cart/<int:id>', methods=['POST'])
 def api_add_to_cart(id):
     product = Product.query.get(id)
@@ -1734,7 +1813,8 @@ def api_wishlist_data():
             'name': p.name,
             'slug': p.slug,
             'price': p.price,
-            'img': p.img_primary
+            'img': p.img_primary,
+            'category_name': p.category.name if p.category else None,
         })
     return jsonify({'wishlist': wishlist_data, 'count': len(wishlist_ids)})
 

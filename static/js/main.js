@@ -1,5 +1,10 @@
 // Luvtale Boutique Global Scripts
 
+function getCsrfToken() {
+    const match = document.cookie.match(/(?:^|;\s*)csrf_token=([^;]+)/);
+    return match ? decodeURIComponent(match[1]) : '';
+}
+
 // Sidebar Cart Logic
 function openCart() {
     const sidebar = document.getElementById('cart-sidebar');
@@ -101,7 +106,7 @@ async function addToCart(productId, quantity = 1, variationId = null) {
 
         const response = await fetch(url, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrfToken() },
             body: JSON.stringify({ quantity: quantity })
         });
         const data = await response.json();
@@ -119,7 +124,8 @@ async function addToCart(productId, quantity = 1, variationId = null) {
 async function addToWishlist(productId) {
     try {
         const response = await fetch(`/api/add-to-wishlist/${productId}`, {
-            method: 'POST'
+            method: 'POST',
+            headers: { 'X-CSRFToken': getCsrfToken() }
         });
         const data = await response.json();
         if (data.success) {
@@ -174,7 +180,7 @@ async function updateQuantity(productId, delta) {
     try {
         const res = await fetch(`/api/update-cart/${productId}`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrfToken() },
             body: JSON.stringify({ delta: delta })
         });
         const data = await res.json();
@@ -188,7 +194,7 @@ async function updateQuantity(productId, delta) {
 async function removeFromCart(productId) {
     if (!confirm('Remove this item from your bag?')) return;
     try {
-        const res = await fetch(`/api/remove-from-cart/${productId}`, { method: 'POST' });
+        const res = await fetch(`/api/remove-from-cart/${productId}`, { method: 'POST', headers: { 'X-CSRFToken': getCsrfToken() } });
         const data = await res.json();
         if (data.success) {
             updateBadges(data.cart_count, null);
