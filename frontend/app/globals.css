@@ -5109,7 +5109,8 @@
         .breadcrumb-container {
             display: flex;
             align-items: center;
-            gap: 10px;
+            flex-wrap: wrap;
+            gap: 8px 10px;
             font-size: 0.9rem;
             font-weight: 600;
         }
@@ -5127,6 +5128,26 @@
         }
         .breadcrumb .current {
             color: var(--title);
+            word-break: break-word;
+        }
+
+        @media (max-width: 768px) {
+            .breadcrumb {
+                margin-bottom: 20px;
+                padding: 0 16px;
+            }
+            .breadcrumb-container {
+                font-size: 0.8rem;
+                gap: 6px 8px;
+            }
+            .breadcrumb-container .separator:last-of-type {
+                display: none;
+            }
+            .breadcrumb .current {
+                width: 100%;
+                display: block;
+                margin-top: 2px;
+            }
         }
 
         .product-page-wrap {
@@ -6579,28 +6600,47 @@
 
         @media (max-width: 768px) {
             .product-page-wrap {
-                padding: 40px 0;
+                padding: 30px 16px !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                overflow-x: hidden !important;
+            }
+            .product-detail-container {
+                padding: 0 !important;
+                margin: 0 auto !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                gap: 24px !important;
             }
             .main-img-box {
-                padding: 20px;
+                padding: 0 !important;
+                background: none !important;
+                border: none !important;
             }
-            .main-img-box img {
-                max-height: 350px;
+            .main-img-box img,
+            .product-gallery .main-img-box #main-view {
+                width: 100% !important;
+                height: auto !important;
+                max-height: none !important;
+                object-fit: contain !important;
+                border-radius: 16px !important;
             }
             .thumbs-grid {
-                gap: 10px;
+                gap: 8px !important;
             }
             .thumb-card {
-                padding: 8px;
+                padding: 4px !important;
             }
             .thumb-card img {
-                height: 70px;
+                height: 52px !important;
             }
             .p-title-serif {
-                font-size: 2.2rem;
+                font-size: 1.75rem !important;
+                line-height: 1.25 !important;
             }
             .p-price-row {
-                font-size: 1.8rem;
+                font-size: 1.6rem !important;
+                margin-bottom: 20px !important;
             }
         }
 

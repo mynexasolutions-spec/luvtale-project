@@ -23,7 +23,7 @@ export default function ShopProductCard({ product }: { product: ProductCardType 
       <div className="trending-product-img-wrap">
         {product.badge && <span className="trending-badge">{product.badge}</span>}
         <div className="trending-img-container">
-          <Link href={`/product/${product.slug}`} style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <Link href={`/product/${product.slug}`} style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }} prefetch={false}>
             {product.img_primary && (
               <Image
                 src={product.img_primary}
@@ -36,7 +36,7 @@ export default function ShopProductCard({ product }: { product: ProductCardType 
           </Link>
         </div>
         <div className="product-card-actions">
-          <Link href={`/product/${product.slug}`} className="quick-view-btn">
+          <Link href={`/product/${product.slug}`} className="quick-view-btn" prefetch={false}>
             Quick View
           </Link>
           <div className="action-icons">
@@ -53,7 +53,7 @@ export default function ShopProductCard({ product }: { product: ProductCardType 
         <span className="p-card-cat" style={{ display: "block", fontSize: "0.65rem", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", marginBottom: 5 }}>
           {product.category_name || "Luxury"}
         </span>
-        <Link href={`/product/${product.slug}`} className="product-name">
+        <Link href={`/product/${product.slug}`} className="product-name" prefetch={false}>
           {product.name}
         </Link>
         <div className="price-rating-wrap">

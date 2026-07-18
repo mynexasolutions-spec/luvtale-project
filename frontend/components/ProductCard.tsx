@@ -24,7 +24,7 @@ export default function ProductCard({ product }: { product: ProductCardType }) {
           )}
         </div>
         <div className="product-card-actions">
-          <Link href={`/product/${product.slug}`} className="quick-view-btn">
+          <Link href={`/product/${product.slug}`} className="quick-view-btn" prefetch={false}>
             Quick View
           </Link>
           <div className="action-icons">
@@ -38,7 +38,7 @@ export default function ProductCard({ product }: { product: ProductCardType }) {
         </div>
       </div>
       <div className="product-info">
-        <Link href={`/product/${product.slug}`} className="product-name">
+        <Link href={`/product/${product.slug}`} className="product-name" prefetch={false}>
           {product.name}
         </Link>
         <div className="price-rating-wrap">
@@ -53,7 +53,7 @@ export default function ProductCard({ product }: { product: ProductCardType }) {
           </div>
         </div>
         <div className="product-mobile-actions">
-          <Link href={`/product/${product.slug}`} className="btn-mobile-quickview">
+          <Link href={`/product/${product.slug}`} className="btn-mobile-quickview" prefetch={false}>
             Quick View
           </Link>
           <div className="mobile-action-icons">
