@@ -56,8 +56,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Connection pool: pre-ping avoids "server closed the connection" stalls on
 # Neon/Supabase-style managed Postgres; recycle avoids stale-idle sockets.
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
-    'pool_size': 10,
-    'max_overflow': 20,
+    'pool_size': 3,
+    'max_overflow': 2,
     'pool_pre_ping': True,
     'pool_recycle': 300,
 }
