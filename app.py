@@ -1603,26 +1603,50 @@ def admin_delete_review(id):
 
 # --- DELETE ROUTES ---
 
-@app.route('/admin/products/delete/<int:id>')
+def _perform_fast_product_delete(product_id):
+    try:
+        # Collect all image URLs for Cloudinary background deletion in 1 single UNION query
+        raw_imgs = db.session.execute(text("""
+            SELECT img_primary AS url FROM product WHERE id = :pid AND img_primary IS NOT NULL AND img_primary != ''
+            UNION ALL
+            SELECT img_secondary AS url FROM product WHERE id = :pid AND img_secondary IS NOT NULL AND img_secondary != ''
+            UNION ALL
+            SELECT size_chart AS url FROM product WHERE id = :pid AND size_chart IS NOT NULL AND size_chart != ''
+            UNION ALL
+            SELECT img_primary AS url FROM product_variation WHERE product_id = :pid AND img_primary IS NOT NULL AND img_primary != ''
+            UNION ALL
+            SELECT img_url AS url FROM product_image WHERE product_id = :pid OR variation_id IN (SELECT id FROM product_variation WHERE product_id = :pid)
+        """), {'pid': product_id}).fetchall()
+        trash = [row[0] for row in raw_imgs if row[0]]
+    except Exception as e:
+        app.logger.warning(f'Error collecting delete images: {e}')
+        trash = []
+
+    # Execute all database deletions in 1 single server-side SQL batch statement
+    db.session.execute(text("""
+        DELETE FROM variation_option WHERE variation_id IN (SELECT id FROM product_variation WHERE product_id = :pid);
+        DELETE FROM product_image WHERE product_id = :pid OR variation_id IN (SELECT id FROM product_variation WHERE product_id = :pid);
+        DELETE FROM product_variation WHERE product_id = :pid;
+        DELETE FROM product_attribute WHERE product_id = :pid;
+        DELETE FROM review WHERE product_id = :pid;
+        DELETE FROM product_subcategories WHERE product_id = :pid;
+        DELETE FROM product WHERE id = :pid;
+    """), {'pid': product_id})
+    db.session.commit()
+
+    # Cloudinary images deleted asynchronously on a background thread
+    if trash:
+        delete_files_async(trash)
+    return True
+
+
+@app.route('/admin/products/delete/<int:id>', methods=['GET', 'POST', 'DELETE'])
 @admin_required
 def admin_delete_product(id):
-    product = Product.query.get_or_404(id)
-
-    trash = [product.img_primary, product.img_secondary, product.size_chart]
-    trash.extend(img.img_url for img in product.images)
-    for var in product.variations:
-        trash.append(var.img_primary)
-        trash.extend(pi.img_url for pi in var.images)
-
-    variation_ids = [var.id for var in product.variations]
-    if variation_ids:
-        VariationOption.query.filter(VariationOption.variation_id.in_(variation_ids)).delete(synchronize_session=False)
-    Review.query.filter_by(product_id=product.id).delete(synchronize_session=False)
-    db.session.execute(product_subcategories.delete().where(product_subcategories.c.product_id == product.id))
-    db.session.delete(product)
-    db.session.commit()
-    delete_files_async(trash)
-    flash('Product and all associated images deleted successfully!', 'info')
+    _perform_fast_product_delete(id)
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.is_json or request.args.get('ajax'):
+        return jsonify({'success': True, 'message': 'Product deleted successfully!'})
+    flash('Product deleted successfully!', 'success')
     return redirect(url_for('admin_products'))
 
 
@@ -2331,8 +2355,7 @@ def api_user_delete_product(id):
     if product.user_id != user_id:
         return jsonify({'success': False, 'message': 'Unauthorized to delete this product.'}), 403
 
-    db.session.delete(product)
-    db.session.commit()
+    _perform_fast_product_delete(product.id)
     return jsonify({'success': True, 'message': 'Product deleted successfully!'})
 
 

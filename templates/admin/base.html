@@ -184,7 +184,51 @@
                 .dropdown-content a:hover {
                     background: #F8F9FB;
                 }
+
+                @keyframes toastSlideIn {
+                    from {
+                        opacity: 0;
+                        transform: translateY(-20px) scale(0.95);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0) scale(1);
+                    }
+                }
+
+                .toast-notification {
+                    animation: toastSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+                }
             </style>
+
+            <!-- Toast Notifications Container -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                <div id="toast-container" style="position: fixed; top: 25px; right: 25px; z-index: 99999; display: flex; flex-direction: column; gap: 10px; max-width: 420px; width: calc(100% - 50px); pointer-events: none;">
+                  {% for category, message in messages %}
+                    <div class="toast-notification toast-{{ category }}" style="pointer-events: auto; display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-radius: 12px; background: #ffffff; box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15); border-left: 5px solid {% if category == 'success' %}#10B981{% elif category == 'error' or category == 'danger' %}#EF4444{% elif category == 'info' %}#3B82F6{% else %}var(--primary){% endif %}; transition: all 0.35s ease;">
+                      <div style="font-size: 1.25rem; display: flex; align-items: center; color: {% if category == 'success' %}#10B981{% elif category == 'error' or category == 'danger' %}#EF4444{% elif category == 'info' %}#3B82F6{% else %}var(--primary){% endif %};">
+                        {% if category == 'success' %}
+                          <i class="fas fa-check-circle"></i>
+                        {% elif category == 'error' or category == 'danger' %}
+                          <i class="fas fa-exclamation-circle"></i>
+                        {% elif category == 'info' %}
+                          <i class="fas fa-info-circle"></i>
+                        {% else %}
+                          <i class="fas fa-bell"></i>
+                        {% endif %}
+                      </div>
+                      <div style="flex: 1; font-size: 0.92rem; font-weight: 600; color: #1F2937; line-height: 1.4;">
+                        {{ message }}
+                      </div>
+                      <button onclick="this.parentElement.remove()" style="background: none; border: none; color: #9CA3AF; cursor: pointer; font-size: 1rem; padding: 4px; line-height: 1; display: flex; align-items: center; justify-content: center; border-radius: 6px; transition: all 0.2s;" onmouseover="this.style.color='#374151'; this.style.background='#F3F4F6';" onmouseout="this.style.color='#9CA3AF'; this.style.background='transparent';">
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            {% endwith %}
 
             <section class="content-area">
                 {% block content %}{% endblock %}
@@ -246,15 +290,57 @@
             }
         });
 
-        // Auto-hide flash messages after 3 seconds
+        // Global Toast Notification Helper
+        window.showToast = function (message, category = 'success') {
+            let container = document.getElementById('toast-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'toast-container';
+                container.style.cssText = 'position: fixed; top: 25px; right: 25px; z-index: 99999; display: flex; flex-direction: column; gap: 10px; max-width: 420px; width: calc(100% - 50px); pointer-events: none;';
+                document.body.appendChild(container);
+            }
+
+            const isSuccess = category === 'success';
+            const isError = category === 'error' || category === 'danger';
+            const icon = isSuccess ? 'fa-check-circle' : (isError ? 'fa-exclamation-circle' : 'fa-info-circle');
+            const color = isSuccess ? '#10B981' : (isError ? '#EF4444' : '#3B82F6');
+
+            const toast = document.createElement('div');
+            toast.className = `toast-notification toast-${category}`;
+            toast.style.cssText = `pointer-events: auto; display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-radius: 12px; background: #ffffff; box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15); border-left: 5px solid ${color}; transition: all 0.35s ease;`;
+
+            toast.innerHTML = `
+                <div style="font-size: 1.25rem; display: flex; align-items: center; color: ${color};">
+                    <i class="fas ${icon}"></i>
+                </div>
+                <div style="flex: 1; font-size: 0.92rem; font-weight: 600; color: #1F2937; line-height: 1.4;">
+                    ${message}
+                </div>
+                <button onclick="this.parentElement.remove()" style="background: none; border: none; color: #9CA3AF; cursor: pointer; font-size: 1rem; padding: 4px; line-height: 1; display: flex; align-items: center; justify-content: center; border-radius: 6px; transition: all 0.2s;" onmouseover="this.style.color='#374151'; this.style.background='#F3F4F6';" onmouseout="this.style.color='#9CA3AF'; this.style.background='transparent';">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(-15px) scale(0.95)';
+                toast.style.transition = 'all 0.35s ease';
+                setTimeout(() => toast.remove(), 350);
+            }, 4000);
+        };
+
+        // Auto-hide toast notifications rendered from backend flash()
         document.addEventListener('DOMContentLoaded', function () {
-            const flashes = document.querySelectorAll('.flash-alert');
-            flashes.forEach(flash => {
+            const toasts = document.querySelectorAll('.toast-notification');
+            toasts.forEach(toast => {
                 setTimeout(() => {
-                    flash.style.opacity = '0';
-                    flash.style.transition = 'opacity 0.5s ease';
-                    setTimeout(() => flash.remove(), 500);
-                }, 3000);
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateY(-15px) scale(0.95)';
+                    toast.style.transition = 'all 0.35s ease';
+                    setTimeout(() => toast.remove(), 350);
+                }, 4000);
             });
         });
     </script>
