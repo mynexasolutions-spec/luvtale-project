@@ -312,15 +312,16 @@
             top: 0;
             left: 0;
             right: 0;
-
             z-index: 1001;
-            background: var(--light-dark); /* yellow based */
-            border-bottom: 1px solid #e5c35e; /* warm separator */
+            background: #ffffff !important; /* Clean white navbar */
+            border-bottom: 1px solid #e5e7eb;
             transition: all .3s
         }
 
         .site-header.scrolled {
-            box-shadow: 0 4px 20px rgba(120, 95, 30, 0.15)
+            background: #ffffff !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border-bottom: 1px solid #e5e7eb;
         }
 
         .main-bar {
@@ -346,7 +347,7 @@
         }
 
         .site-header .logo {
-            color: #000; /* High contrast on yellow */
+            color: #000000;
         }
 
         /* Desktop Nav */
@@ -360,14 +361,13 @@
         .nav-desktop a {
             font-size: 15px;
             font-weight: 600;
-            color: #1a1a1a; /* Dark on yellow background */
+            color: #000000; /* Black text on white navbar */
             position: relative;
             padding: 4px 0;
             display: inline-flex;
             align-items: center;
             gap: 6px;
             font-family: var(--font-family-title);
-            /* text aur icon ke beech gap */
         }
 
         .nav-desktop a::after {
@@ -377,7 +377,7 @@
             height: 12px;
             background: url('../images/icons/star.svg') no-repeat center;
             background-size: contain;
-            filter: brightness(0); /* Black star icon for yellow theme */
+            filter: brightness(0); /* Black star icon on white navbar */
         }
 
         .nav-desktop a:hover {
@@ -398,18 +398,18 @@
             align-items: center;
             justify-content: center;
             border-radius: 50%;
-            border: 1.5px solid rgba(0, 0, 0, 0.12);
-            background: #fff;
+            border: 1.5px solid #e5e7eb;
+            background: #f9fafb;
             cursor: pointer;
             transition: all .3s;
             position: relative;
-            color: #000;
+            color: #000000;
         }
 
         .icon-btn:hover {
             border-color: var(--primary);
             background: var(--primary);
-            color: #fff
+            color: #ffffff
         }
 
         .admin-btn {
@@ -448,8 +448,8 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            border: 1.5px solid rgba(0, 0, 0, 0.12);
-            background: #fff;
+            border: 1.5px solid #e5e7eb;
+            background: #f9fafb;
             border-radius: 8px
         }
 
@@ -457,7 +457,7 @@
             display: block;
             width: 20px;
             height: 2px;
-            background: #000;
+            background: #000000;
             transition: all .3s
         }
 
@@ -481,8 +481,8 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: #FFFDF6; /* soft luxury cream */
-            border-top: 1px solid #e5c35e;
+            background: #ffffff;
+            border-top: 1px solid #e5e7eb;
             z-index: 1000;
             overflow-y: auto;
             padding: 40px 24px;
@@ -3614,11 +3614,11 @@
         }
 
         .site-header.scrolled {
-            background: rgba(254, 235, 157, 0.8);
+            background: #ffffff !important;
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            box-shadow: 0 4px 30px rgba(120, 95, 30, 0.15);
-            border-bottom-color: transparent;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border-bottom: 1px solid #e5e7eb;
         }
 
         /* ═══════════════════════════════════════════
@@ -7667,7 +7667,8 @@
                 top: 0 !important;
                 left: 0 !important;
                 right: 0 !important;
-                box-shadow: 0 4px 15px rgba(120, 95, 30, 0.1) !important;
+                background: #ffffff !important;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08) !important;
                 z-index: 1001 !important;
             }
             html, body {

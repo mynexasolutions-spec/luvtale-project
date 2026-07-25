@@ -7,7 +7,7 @@
     --card-bg: #ffffff;
     --text-main: #000;
     --text-muted: #5E626F;
-    --border-color: #FEEB9D;
+    --border-color: #E5E7EB;
     --success: #10b981;
     --warning: #f59e0b;
     --error: #ef4444;
@@ -109,10 +109,10 @@ body {
 }
 
 .sidebar-nav li.active a {
-    background: var(--sand);
-    color: var(--primary);
+    background: #000000;
+    color: #ffffff;
     border-left-color: var(--primary);
-    box-shadow: 0 4px 12px rgba(199, 86, 106, 0.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .sidebar-nav a:hover {
