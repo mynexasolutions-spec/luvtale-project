@@ -1,6 +1,6 @@
 import PolicyLayout from "@/components/PolicyLayout";
 
-export const metadata = { title: "Shipping Policy | Luvtale Boutique" };
+export const metadata = { title: "Shipping Policy | Luvtale" };
 
 export default function ShippingPolicyPage() {
   return (
@@ -11,7 +11,7 @@ export default function ShippingPolicyPage() {
     >
       <h3>1. Domestic Shipping</h3>
       <p>
-        Luvtale Boutique delivers all across India. We offer standard free shipping on all orders, with no minimum
+        Luvtale delivers all across India. We offer standard free shipping on all orders, with no minimum
         purchase required. We partner with leading logistics providers to ensure safe and timely delivery of your
         luxury boutique items.
       </p>
@@ -36,7 +36,7 @@ export default function ShippingPolicyPage() {
 
       <h3>5. Customs, Duties &amp; Taxes</h3>
       <p>
-        For international shipments, Luvtale Boutique is not responsible for any customs duties, taxes, or clearance
+        For international shipments, Luvtale is not responsible for any customs duties, taxes, or clearance
         fees levied by the destination country. These charges are the sole responsibility of the customer.
       </p>
 

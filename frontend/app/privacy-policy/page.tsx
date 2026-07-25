@@ -1,6 +1,6 @@
 import PolicyLayout from "@/components/PolicyLayout";
 
-export const metadata = { title: "Privacy Policy | Luvtale Boutique" };
+export const metadata = { title: "Privacy Policy | Luvtale" };
 
 export default function PrivacyPolicyPage() {
   return (
@@ -11,7 +11,7 @@ export default function PrivacyPolicyPage() {
     >
       <h3>1. Collection of Information</h3>
       <p>
-        At Luvtale Boutique, we collect information from you when you register on our site, place an order,
+        At Luvtale, we collect information from you when you register on our site, place an order,
         subscribe to our newsletter, or fill out a form. When ordering or registering on our site, as appropriate,
         you may be asked to enter your name, e-mail address, mailing address, phone number, or credit card
         information.
@@ -49,7 +49,7 @@ export default function PrivacyPolicyPage() {
       <p>
         We value your privacy rights and have taken the necessary precautions to be in compliance with global
         standards, including GDPR, CCPA, and regional Indian SPDI Rules. You have the right to request access to,
-        deletion of, or correction of your personal data collected by Luvtale Boutique at any time by contacting our
+        deletion of, or correction of your personal data collected by Luvtale at any time by contacting our
         support team.
       </p>
     </PolicyLayout>

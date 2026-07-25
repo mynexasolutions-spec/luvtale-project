@@ -1,4 +1,4 @@
-// Luvtale Boutique Global Scripts
+// Luvtale Global Scripts
 
 function getCsrfToken() {
     const match = document.cookie.match(/(?:^|;\s*)csrf_token=([^;]+)/);
@@ -88,7 +88,7 @@ function handleSearch(val) {
                         <div style="font-size:0.85rem;color:var(--primary);font-weight:700;">₹${p.price}</div>
                     </div>
                 </a>`).join('');
-        } catch(e) {
+        } catch (e) {
             container.innerHTML = '<p style="color:#aaa;font-size:0.9rem;">Something went wrong.</p>';
         }
     }, 300);
@@ -250,7 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
         button.addEventListener('click', () => {
             const faqItem = button.parentElement;
             faqItem.classList.toggle('active');
-            
+
             // Close other items if one is opened
             document.querySelectorAll('.faq-item').forEach(item => {
                 if (item !== faqItem) {
@@ -293,10 +293,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Scroll Listeners for Header Glassmorphism and Back-To-Top
     const header = document.getElementById('header');
     const scrollTopBtn = document.getElementById('scroll-top');
-    
+
     function handleScroll() {
         const scrollY = window.scrollY;
-        
+
         // Header scrolled state
         if (header) {
             if (scrollY > 50) {
@@ -305,7 +305,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 header.classList.remove('scrolled');
             }
         }
-        
+
         // Back to top button
         if (scrollTopBtn) {
             if (scrollY > 300) {
@@ -321,15 +321,15 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Hamburger Menu Toggle
-window.toggleMenu = function(e) {
-    if(e) e.stopPropagation();
+window.toggleMenu = function (e) {
+    if (e) e.stopPropagation();
     const hamburger = document.getElementById('hamburger');
     const mobileNav = document.getElementById('mobile-nav');
-    
+
     if (hamburger && mobileNav) {
         hamburger.classList.toggle('active');
         mobileNav.classList.toggle('open');
-        
+
         if (mobileNav.classList.contains('open')) {
             document.body.style.overflow = 'hidden';
         } else {
@@ -339,7 +339,7 @@ window.toggleMenu = function(e) {
 };
 
 // Close nav when tapping outside
-document.addEventListener('click', function(e) {
+document.addEventListener('click', function (e) {
     const mobileNav = document.getElementById('mobile-nav');
     const hamburger = document.getElementById('hamburger');
     if (mobileNav && mobileNav.classList.contains('open')) {

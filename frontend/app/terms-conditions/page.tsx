@@ -1,6 +1,6 @@
 import PolicyLayout from "@/components/PolicyLayout";
 
-export const metadata = { title: "Terms & Conditions | Luvtale Boutique" };
+export const metadata = { title: "Terms & Conditions | Luvtale" };
 
 export default function TermsConditionsPage() {
   return (
@@ -11,14 +11,14 @@ export default function TermsConditionsPage() {
     >
       <h3>1. Terms of Service</h3>
       <p>
-        By accessing and purchasing from Luvtale Boutique, you agree to comply with and be bound by the following
+        By accessing and purchasing from Luvtale, you agree to comply with and be bound by the following
         terms and conditions. These terms apply to all visitors, users, and others who access or use our services.
       </p>
 
       <h3>2. Intellectual Property Rights</h3>
       <p>
         All content, designs, images, logos, graphics, and text on this website are the intellectual property of
-        Luvtale Boutique and are protected by applicable copyright and trademark laws. Unauthorized use or
+        Luvtale and are protected by applicable copyright and trademark laws. Unauthorized use or
         reproduction of these materials is strictly prohibited.
       </p>
 
@@ -40,7 +40,7 @@ export default function TermsConditionsPage() {
 
       <h3>5. Limitation of Liability</h3>
       <p>
-        Luvtale Boutique shall not be liable for any direct, indirect, incidental, special, or consequential damages
+        Luvtale shall not be liable for any direct, indirect, incidental, special, or consequential damages
         resulting from the use or inability to use our products or services, or for the cost of procurement of
         substitute goods.
       </p>

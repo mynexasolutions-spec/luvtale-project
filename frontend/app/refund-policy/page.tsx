@@ -1,6 +1,6 @@
 import PolicyLayout from "@/components/PolicyLayout";
 
-export const metadata = { title: "Cancellation & Refund Policy | Luvtale Boutique" };
+export const metadata = { title: "Cancellation & Refund Policy | Luvtale" };
 
 export default function RefundPolicyPage() {
   return (

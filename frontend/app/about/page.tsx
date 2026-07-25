@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export const metadata = { title: "About Us | Luvtale Boutique" };
+export const metadata = { title: "About Us | Luvtale" };
 
 export default function AboutPage() {
   return (
@@ -23,7 +23,7 @@ export default function AboutPage() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800"
-                alt="Luvtale Boutique Storefront"
+                alt="Luvtale Storefront"
                 className="about-story-image"
                 loading="lazy"
               />

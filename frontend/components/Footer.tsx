@@ -51,13 +51,12 @@ export default function Footer({ categories }: { categories: Category[] }) {
             <ul className="footer-contact">
               <li><i className="fas fa-envelope"></i> <span>luvtaleofficial@gmail.com</span></li>
               <li><i className="fab fa-whatsapp"></i> <span>WhatsApp: +91 9140300085</span></li>
-              <li><i className="fab fa-whatsapp"></i> <span>WhatsApp: +91 8766280955</span></li>
               <li><i className="fas fa-phone-alt"></i> <span>Call: +91 9696231554</span></li>
             </ul>
           </div>
         </div>
         <div className="footer-bottom">
-          <p>© 2026 Luvtale Boutique. All rights reserved.</p>
+          <p>© 2026 Luvtale. All rights reserved.</p>
           <div className="footer-payment">
             <span className="payment-badge">VISA</span>
             <span className="payment-badge">MC</span>

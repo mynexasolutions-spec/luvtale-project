@@ -1,6 +1,6 @@
 import ContactForm from "@/components/ContactForm";
 
-export const metadata = { title: "Contact Us | Luvtale Boutique" };
+export const metadata = { title: "Contact Us | Luvtale" };
 
 export default function ContactPage() {
   return (
@@ -22,9 +22,9 @@ export default function ContactPage() {
                   <div>
                     <h4>Visit Us</h4>
                     <p>
-                      123 Boutique Street, Fashion District
+                      421-A, Near Dada Jungi Lane, Shahpur Jat
                       <br />
-                      New York, NY 10001
+                      New Delhi - 110049
                     </p>
                   </div>
                 </div>
@@ -46,9 +46,6 @@ export default function ContactPage() {
                         +91 9140300085
                       </a>
                       <br />
-                      <a href="https://wa.me/918766280955" target="_blank" rel="noopener">
-                        +91 8766280955
-                      </a>
                     </p>
                   </div>
                 </div>
