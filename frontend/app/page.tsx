@@ -55,10 +55,7 @@ export default async function Home() {
                 <i className="fas fa-shipping-fast"></i>
                 <span>Free Shipping ₹500+</span>
               </div>
-              <div className="hero-trust-badge">
-                <i className="fas fa-undo"></i>
-                <span>Easy Returns</span>
-              </div>
+
               <div className="hero-trust-badge">
                 <i className="fas fa-shield-alt"></i>
                 <span>Secure Payment</span>
@@ -68,14 +65,6 @@ export default async function Home() {
               <div className="stat">
                 <span className="stat-num">6.3k+</span>
                 <span className="stat-label">Happy Customers</span>
-              </div>
-              <div className="stat">
-                <span className="stat-num">500+</span>
-                <span className="stat-label">Products</span>
-              </div>
-              <div className="stat">
-                <span className="stat-num">50+</span>
-                <span className="stat-label">Brands</span>
               </div>
             </div>
           </div>
@@ -254,23 +243,7 @@ export default async function Home() {
                 <span className="heritage-stat-label">Authentic Craft</span>
               </div>
             </div>
-            <div className="heritage-locations">
-              <span className="heritage-loc-label">Crafted from:</span>
-              <div className="heritage-location-tags">
-                <span className="heritage-loc-tag">
-                  <i className="fas fa-map-pin"></i> Varanasi
-                </span>
-                <span className="heritage-loc-tag">
-                  <i className="fas fa-map-pin"></i> Jaipur
-                </span>
-                <span className="heritage-loc-tag">
-                  <i className="fas fa-map-pin"></i> Kanchipuram
-                </span>
-                <span className="heritage-loc-tag">
-                  <i className="fas fa-map-pin"></i> Lucknow
-                </span>
-              </div>
-            </div>
+
             <Link href="/about" className="btn btn-primary heritage-cta">
               Discover Our Story <i className="fas fa-arrow-right"></i>
             </Link>
@@ -359,7 +332,7 @@ export default async function Home() {
                 </h3>
                 <p>Lightweight organzas, georgettes, and breezy designer kurtis for warm, effortless days.</p>
                 <div className="lookbook-footer-row">
-                  <Link href={`/shop?category=${categories[0]?.id ?? ""}`} className="lookbook-link">
+                  <Link href="/shop?category=29" className="lookbook-link">
                     Explore Collection <i className="fas fa-arrow-right"></i>
                   </Link>
                   <span className="lookbook-count">55 Pieces</span>

@@ -40,10 +40,24 @@ export default function ShopProductCard({ product }: { product: ProductCardType 
             Quick View
           </Link>
           <div className="action-icons">
-            <button className="circle-btn" onClick={() => addToWishlist(product.id)} aria-label="Add to wishlist">
+            <button
+              className="circle-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                addToWishlist(product.id);
+              }}
+              aria-label="Add to wishlist"
+            >
               <i className="far fa-heart"></i>
             </button>
-            <button className="circle-btn" onClick={() => addToCart(product.id)} aria-label="Add to cart">
+            <button
+              className="circle-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                addToCart(product.id);
+              }}
+              aria-label="Add to cart"
+            >
               <i className="fas fa-shopping-cart"></i>
             </button>
           </div>
@@ -62,10 +76,24 @@ export default function ShopProductCard({ product }: { product: ProductCardType 
             {product.old_price && <span className="old-price">₹{product.old_price}</span>}
           </div>
           <div className="shop-action-buttons">
-            <button className="action-btn-mini" onClick={() => addToWishlist(product.id)} aria-label="Add to wishlist">
+            <button
+              className="action-btn-mini"
+              onClick={(e) => {
+                e.stopPropagation();
+                addToWishlist(product.id);
+              }}
+              aria-label="Add to wishlist"
+            >
               <i className="far fa-heart"></i>
             </button>
-            <button className="action-btn-mini" onClick={() => addToCart(product.id)} aria-label="Add to cart">
+            <button
+              className="action-btn-mini"
+              onClick={(e) => {
+                e.stopPropagation();
+                addToCart(product.id);
+              }}
+              aria-label="Add to cart"
+            >
               <i className="fas fa-shopping-cart"></i>
             </button>
           </div>

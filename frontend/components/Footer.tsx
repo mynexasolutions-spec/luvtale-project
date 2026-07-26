@@ -49,6 +49,14 @@ export default function Footer({ categories }: { categories: Category[] }) {
           <div className="footer-col" style={{ minWidth: 250 }}>
             <h5>Contact Us</h5>
             <ul className="footer-contact">
+              <li>
+                <i className="fas fa-map-marker-alt" style={{ marginTop: "4px" }}></i>
+                <span>
+                  421-A, Near Dada Jungi Lane, Shahpur Jat
+                  <br />
+                  New Delhi - 110049
+                </span>
+              </li>
               <li><i className="fas fa-envelope"></i> <span>luvtaleofficial@gmail.com</span></li>
               <li><i className="fab fa-whatsapp"></i> <span>WhatsApp: +91 9140300085</span></li>
               <li><i className="fas fa-phone-alt"></i> <span>Call: +91 9696231554</span></li>

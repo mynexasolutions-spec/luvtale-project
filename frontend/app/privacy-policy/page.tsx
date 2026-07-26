@@ -7,50 +7,96 @@ export default function PrivacyPolicyPage() {
     <PolicyLayout
       active="/privacy-policy"
       title="Privacy Policy"
-      lead="Our Privacy Policy explains how we collect, use, and protect your personal information..."
+      lead="This Privacy Policy describes how your personal information is collected, used, and shared when you visit or make a purchase from Luvtale."
     >
-      <h3>1. Collection of Information</h3>
+      <h3>Personal Information We Collect</h3>
       <p>
-        At Luvtale, we collect information from you when you register on our site, place an order,
-        subscribe to our newsletter, or fill out a form. When ordering or registering on our site, as appropriate,
-        you may be asked to enter your name, e-mail address, mailing address, phone number, or credit card
-        information.
+        When you visit the Site, we automatically collect certain information about your device, including information about your web browser, IP address, time zone, and some of the cookies that are installed on your device. Additionally, as you browse the Site, we collect information about the individual web pages or products that you view, what websites or search terms referred you to the Site, and information about how you interact with the Site. We refer to this automatically-collected information as “Device Information”.
       </p>
 
-      <h3>2. Secure Database &amp; Billing Protection</h3>
+      <p>We collect Device Information using the following technologies:</p>
+      <ul>
+        <li>
+          <strong>“Cookies”</strong> are data files that are placed on your device or computer and often include an anonymous unique identifier. For more information about cookies, and how to disable cookies, visit{" "}
+          <a href="http://www.allaboutcookies.org" target="_blank" rel="noopener noreferrer" style={{ color: "var(--primary)" }}>
+            http://www.allaboutcookies.org
+          </a>.
+        </li>
+        <li>
+          <strong>“Log files”</strong> track actions occurring on the Site, and collect data including your IP address, browser type, Internet service provider, referring/exit pages, and date/time stamps.
+        </li>
+        <li>
+          <strong>“Web beacons”, “tags”, and “pixels”</strong> are electronic files used to record information about how you browse the Site.
+        </li>
+      </ul>
+
       <p>
-        We implement a variety of security measures to maintain the safety of your personal information when you
-        place an order or enter, submit, or access your personal information. We offer the use of a secure server.
-        All supplied sensitive/credit information is transmitted via Secure Socket Layer (SSL) technology and then
-        encrypted into our payment gateway providers&apos; database, only to be accessible by those authorized with
-        special access rights to such systems, and are required to keep the information confidential. After a
-        transaction, your private information (credit cards, social security numbers, financials, etc.) will not be
-        stored on our servers.
+        Additionally when you make a purchase or attempt to make a purchase through the Site, we collect certain information from you, including your name, billing address, shipping address, payment information, email address, and phone number. We refer to this information as “Order Information”.
+      </p>
+      <p>
+        When we talk about “Personal Information” in this Privacy Policy, we are talking both about Device Information and Order Information.
       </p>
 
-      <h3>3. Use of Cookies</h3>
+      <h3>How Do We Use Your Personal Information?</h3>
       <p>
-        Yes, we use cookies (which are small files that a site or its service provider transfers to your computer&apos;s
-        hard drive through your Web browser, if you allow) to help us remember and process the items in your
-        shopping cart, understand and save your preferences for future visits, and compile aggregate data about site
-        traffic and site interaction so that we can offer better site experiences and tools in the future.
+        We use the Order Information that we collect generally to fulfill any orders placed through the Site (including processing your payment information, arranging for shipping, and providing you with invoices and/or order confirmations). Additionally, we use this Order Information to:
+      </p>
+      <ul>
+        <li>Communicate with you;</li>
+        <li>Screen our orders for potential risk or fraud; and</li>
+        <li>When in line with the preferences you have shared with us, provide you with information or advertising relating to our products or services.</li>
+      </ul>
+      <p>
+        We use the Device Information that we collect to help us screen for potential risk and fraud (in particular, your IP address), and more generally to improve and optimize our Site (for example, by generating analytics about how our customers browse and interact with the Site, and to assess the success of our marketing and advertising campaigns).
       </p>
 
-      <h3>4. Sharing and Disclosure Rules</h3>
+      <h3>Sharing Your Personal Information</h3>
       <p>
-        We do not sell, trade, or otherwise transfer to outside parties your personally identifiable information.
-        This does not include trusted third parties who assist us in operating our website, conducting our business,
-        or servicing you, so long as those parties agree to keep this information confidential. We may also release
-        your information when we believe release is appropriate to comply with the law, enforce our site policies,
-        or protect ours or others&apos; rights, property, or safety.
+        We share your Personal Information with trusted third parties to help us use your Personal Information, as described above. For example, we use analytics and secure payment gateways to power our online store and to help us understand how our customers use the Site.
+      </p>
+      <p>
+        Finally, we may also share your Personal Information to comply with applicable laws and regulations, to respond to a subpoena, search warrant or other lawful request for information we receive, or to otherwise protect our rights.
       </p>
 
-      <h3>5. Compliance (GDPR, CCPA &amp; SPDI)</h3>
+      <h3>Behavioural Advertising</h3>
       <p>
-        We value your privacy rights and have taken the necessary precautions to be in compliance with global
-        standards, including GDPR, CCPA, and regional Indian SPDI Rules. You have the right to request access to,
-        deletion of, or correction of your personal data collected by Luvtale at any time by contacting our
-        support team.
+        As described above, we use your Personal Information to provide you with targeted advertisements or marketing communications we believe may be of interest to you.
+      </p>
+
+      <h3>Do Not Track</h3>
+      <p>
+        Please note that we do not alter our Site’s data collection and use practices when we see a Do Not Track signal from your browser.
+      </p>
+
+      <h3>Your Rights</h3>
+      <p>
+        You have the right to access personal information we hold about you and to ask that your personal information be corrected, updated, or deleted. If you would like to exercise this right, please contact us through the contact information below.
+      </p>
+
+      <h3>Data Retention</h3>
+      <p>
+        When you place an order through the Site, we will maintain your Order Information for our records unless and until you ask us to delete this information.
+      </p>
+
+      <h3>Changes</h3>
+      <p>
+        We may update this privacy policy from time to time in order to reflect, for example, changes to our practices or for other operational, legal or regulatory reasons.
+      </p>
+
+      <h3>Contact Us</h3>
+      <p>
+        For more information about our privacy practices, if you have questions, or if you would like to make a complaint, please contact us by email at{" "}
+        <a href="mailto:luvtaleofficial@gmail.com" className="policy-email">
+          luvtaleofficial@gmail.com
+        </a>{" "}
+        or by mail at:
+      </p>
+      <p>
+        <strong>Luvtale</strong>
+        <br />
+        421-A, Near Dada Jungi Lane, Shahpur Jat
+        <br />
+        New Delhi - 110049, India
       </p>
     </PolicyLayout>
   );

@@ -950,62 +950,52 @@
 
         .hero-stats {
             width: 100%;
-            max-width: 450px;
+            max-width: 480px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            gap: 20px;
-            margin-top: 40px;
-            padding: 18px 24px;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 249, 240, 0.95) 100%);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 24px;
-            border: 1.5px solid transparent;
-            background-clip: padding-box, border-box;
-            background-origin: padding-box, border-box;
-            background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 249, 240, 0.95) 100%), 
-                              linear-gradient(135deg, var(--primary) 0%, #FFD700 50%, var(--secondary) 100%);
-            box-shadow: 0 12px 36px rgba(204, 13, 57, 0.06), 0 0 15px rgba(254, 235, 157, 0.4);
-            flex-wrap: nowrap;
-            margin-left: 0;
+            justify-content: center;
+            margin-top: 28px;
             position: relative;
-            animation: statsGlow 4s ease-in-out infinite alternate;
         }
 
-        .stat {
+        .hero-stats .stat {
+            width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
-            flex: 1;
-            position: relative;
+            justify-content: center;
+            padding: 24px 48px;
+            border-radius: 9999px;
+            background: linear-gradient(180deg, #FFFDF8 0%, #FAF5EE 100%) padding-box,
+                        linear-gradient(110deg, #E52E52 0%, #FFB300 35%, #8C7B6B 70%, #1A1A1A 100%) border-box;
+            border: 2px solid transparent;
+            box-shadow: 0 12px 35px -5px rgba(229, 46, 82, 0.12), 0 4px 16px rgba(0, 0, 0, 0.04);
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .stat:not(:last-child)::after {
-            content: '';
-            position: absolute;
-            right: -10px;
-            top: 15%;
-            height: 70%;
-            width: 1px;
-            background: rgba(204, 13, 57, 0.15);
+        .hero-stats .stat:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 40px -5px rgba(229, 46, 82, 0.18), 0 6px 20px rgba(0, 0, 0, 0.06);
         }
 
-        .stat-num {
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--title);
-            line-height: 1.2;
+        .hero-stats .stat-num {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #000000;
+            line-height: 1.1;
             text-align: center;
             font-family: var(--font-family-title);
-
+            letter-spacing: -0.02em;
         }
 
-        .stat-label {
-            font-size: 13px;
-            color: var(--body);
-            font-family: var(--font-family-title);
+        .hero-stats .stat-label {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #6B7280;
+            font-family: var(--font-family-body);
             margin-top: 4px;
+            letter-spacing: 0.01em;
         }
 
         .hero-badge {
